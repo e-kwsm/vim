@@ -626,7 +626,7 @@ endif
 syn match  texRefZone		'\\cite\%([tp]\*\=\)\=' nextgroup=texRefOption,texCite
 
 " Handle newcommand, newenvironment : {{{1
-syn match  texNewCmd				"\\newcommand\>"			nextgroup=texCmdName skipwhite skipnl
+syn match  texNewCmd				"\\\%(new\|renew\|provide\)command\*\?\>"			nextgroup=texCmdName skipwhite skipnl
 if s:tex_fast =~# 'V'
   syn region texCmdName contained matchgroup=Delimiter start="{"rs=s+1  end="}"		nextgroup=texCmdArgs,texCmdBody skipwhite skipnl
   syn region texCmdArgs contained matchgroup=Delimiter start="\["rs=s+1 end="]"		nextgroup=texCmdBody skipwhite skipnl
