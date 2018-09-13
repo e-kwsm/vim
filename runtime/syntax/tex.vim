@@ -632,7 +632,7 @@ if s:tex_fast =~# 'V'
   syn region texCmdArgs contained matchgroup=Delimiter start="\["rs=s+1 end="]"		nextgroup=texCmdBody skipwhite skipnl
   syn region texCmdBody contained matchgroup=Delimiter start="{"rs=s+1 skip="\\\\\|\\[{}]"	matchgroup=Delimiter end="}" contains=@texCmdGroup
 endif
-syn match  texNewEnv				"\\newenvironment\>"			nextgroup=texEnvName skipwhite skipnl
+syn match  texNewEnv				"\\\%(re\)\?newenvironment\>"			nextgroup=texEnvName skipwhite skipnl
 if s:tex_fast =~# 'V'
   syn region texEnvName contained matchgroup=Delimiter start="{"rs=s+1  end="}"		nextgroup=texEnvBgn skipwhite skipnl
   syn region texEnvBgn  contained matchgroup=Delimiter start="{"rs=s+1  end="}"		nextgroup=texEnvEnd skipwhite skipnl contains=@texEnvGroup
