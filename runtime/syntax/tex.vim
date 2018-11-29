@@ -670,11 +670,15 @@ endif
 syn match  texRefZone		'\\cite\%([tp]\*\=\)\=\>' nextgroup=texRefOption,texCite
 
 " Handle (re)newcommand, (re)newenvironment : {{{1
-syn match  texNewCmd				"\\\%(\%(re\)\=new\|provide\)command\>\*\?"	nextgroup=texCmdName skipwhite skipnl
+syn match  texNewCmd				"\\\%(\%(re\)\=new\|provide\)command\>\*\?"	nextgroup=texCmdName,texCmdName2 skipwhite skipnl
 if s:tex_fast =~# 'V'
-  syn region texCmdName contained matchgroup=texDelimiter start="{"rs=s+1  end="}"		nextgroup=texCmdArgs,texCmdBody skipwhite skipnl
-  syn region texCmdArgs contained matchgroup=texDelimiter start="\["rs=s+1 end="]"		nextgroup=texCmdBody skipwhite skipnl
-  syn region texCmdBody contained matchgroup=texDelimiter start="{"rs=s+1 skip="\\\\\|\\[{}]"	matchgroup=texDelimiter end="}" contains=@texCmdGroup
+  "syn region texCmdName contained matchgroup=Delimiter start="{"rs=s+1  end="}"		nextgroup=texCmdArgs,texCmdBody skipwhite skipnl
+  "syn match  texCmdName contained "\%(\\[a-zA-Z@]\+\|{\s*\zs\\[a-zA-Z@]\+\ze\s*}\)"		nextgroup=texCmdArgs,texCmdBody skipwhite skipnl
+  syn match  texCmdName contained "{\?\s*\zs\\[a-zA-Z@]\+\ze\s*}\?"		nextgroup=texCmdArgs,texCmdBody skipwhite skipnl
+  syn match  texCmdName2 contained "{\s*\zs\\[a-zA-Z@]\+\ze\s*}"		nextgroup=texCmdArgs,texCmdBody skipwhite skipnl
+  "syn region texCmdArgs contained matchgroup=Delimiter start="\["rs=s+1 end="]"		nextgroup=texCmdBody skipwhite skipnl
+  syn match  texCmdArgs contained "\[\s*\d\s*\]"		nextgroup=texCmdBody skipwhite skipnl
+  syn region texCmdBody contained matchgroup=Delimiter start="{"rs=s+1 skip="\\\\\|\\[{}]"	matchgroup=Delimiter end="}" contains=@texCmdGroup
 endif
 syn match  texNewEnv				"\\\%(re\)\=newenvironment\>"		nextgroup=texEnvName skipwhite skipnl
 if s:tex_fast =~# 'V'
