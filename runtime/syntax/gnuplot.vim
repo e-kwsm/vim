@@ -50,30 +50,99 @@ syn region gnuplotString	start=+"+ skip=+\\"+ end=+"+ contains=gnuplotSpecial
 syn region gnuplotString	start="'" end="'"
 
 " built-in variables
-syn keyword gnuplotNumber	GNUTERM GPVAL_TERM GPVAL_TERMOPTIONS GPVAL_SPLOT
-syn keyword gnuplotNumber	GPVAL_OUTPUT GPVAL_ENCODING GPVAL_VERSION
-syn keyword gnuplotNumber	GPVAL_PATCHLEVEL GPVAL_COMPILE_OPTIONS
-syn keyword gnuplotNumber	GPVAL_MULTIPLOT GPVAL_PLOT GPVAL_VIEW_ZSCALE
-syn keyword gnuplotNumber	GPVAL_TERMINALS GPVAL_pi GPVAL_NaN
-syn keyword gnuplotNumber	GPVAL_ERRNO GPVAL_ERRMSG GPVAL_PWD
-syn keyword gnuplotNumber	pi NaN GPVAL_LAST_PLOT GPVAL_TERM_WINDOWID
-syn keyword gnuplotNumber	GPVAL_X_MIN GPVAL_X_MAX GPVAL_X_LOG
-syn keyword gnuplotNumber	GPVAL_DATA_X_MIN GPVAL_DATA_X_MAX GPVAL_Y_MIN
-syn keyword gnuplotNumber	GPVAL_Y_MAX GPVAL_Y_LOG GPVAL_DATA_Y_MIN
-syn keyword gnuplotNumber	GPVAL_DATA_Y_MAX GPVAL_X2_MIN GPVAL_X2_MAX
-syn keyword gnuplotNumber	GPVAL_X2_LOG GPVAL_DATA_X2_MIN GPVAL_DATA_X2_MAX
-syn keyword gnuplotNumber	GPVAL_Y2_MIN GPVAL_Y2_MAX GPVAL_Y2_LOG
-syn keyword gnuplotNumber	GPVAL_DATA_Y2_MIN GPVAL_DATA_Y2_MAX GPVAL_Z_MIN
-syn keyword gnuplotNumber	GPVAL_Z_MAX GPVAL_Z_LOG GPVAL_DATA_Z_MIN
-syn keyword gnuplotNumber	GPVAL_DATA_Z_MAX GPVAL_CB_MIN GPVAL_CB_MAX
-syn keyword gnuplotNumber	GPVAL_CB_LOG GPVAL_DATA_CB_MIN GPVAL_DATA_CB_MAX
-syn keyword gnuplotNumber	GPVAL_T_MIN GPVAL_T_MAX GPVAL_T_LOG GPVAL_U_MIN
-syn keyword gnuplotNumber	GPVAL_U_MAX GPVAL_U_LOG GPVAL_V_MIN GPVAL_V_MAX
-syn keyword gnuplotNumber	GPVAL_V_LOG GPVAL_R_MIN GPVAL_R_LOG
-syn keyword gnuplotNumber	GPVAL_TERM_XMIN GPVAL_TERM_XMAX GPVAL_TERM_YMIN
-syn keyword gnuplotNumber	GPVAL_TERM_YMAX GPVAL_TERM_XSIZE
-syn keyword gnuplotNumber	GPVAL_TERM_YSIZE GPVAL_VIEW_MAP GPVAL_VIEW_ROT_X
-syn keyword gnuplotNumber	GPVAL_VIEW_ROT_Z GPVAL_VIEW_SCALE
+syn keyword gnuplotNumber	GNUTERM
+
+syn keyword gnuplotNumber	GPVAL_TERM GPVAL_TERMOPTIONS
+syn keyword gnuplotNumber	GPVAL_OUTPUT
+syn keyword gnuplotNumber	GPVAL_ENCODING
+syn keyword gnuplotNumber	GPVAL_MINUS_SIGN
+syn keyword gnuplotNumber	GPVAL_MICRO
+syn keyword gnuplotNumber	GPVAL_X_MIN GPVAL_X_MAX
+syn keyword gnuplotNumber	GPVAL_Y_MIN GPVAL_Y_MAX
+syn keyword gnuplotNumber	GPVAL_DEGREE_SIGN
+syn keyword gnuplotNumber	GPVAL_VERSION GPVAL_PATCHLEVEL
+syn keyword gnuplotNumber	GPVAL_COMPILE_OPTIONS
+syn keyword gnuplotNumber	GPVAL_MULTIPLOT
+syn keyword gnuplotNumber	GPVAL_PLOT
+syn keyword gnuplotNumber	GPVAL_SPLOT
+syn keyword gnuplotNumber	GPVAL_TERMINALS
+syn keyword gnuplotNumber	GPVAL_pi
+syn keyword gnuplotNumber	GPVAL_NaN
+syn keyword gnuplotNumber	GPVAL_SYSNAME
+syn keyword gnuplotNumber	GPVAL_MACHINE
+syn keyword gnuplotNumber	GPVAL_BITS
+syn keyword gnuplotNumber	GPVAL_ERRNO
+syn keyword gnuplotNumber	GPVAL_ERRMSG
+syn keyword gnuplotNumber	GPVAL_SYSTEM_ERRNO
+syn keyword gnuplotNumber	GPVAL_SYSTEM_ERRMSG
+syn keyword gnuplotNumber	GPVAL_PWD
+syn keyword gnuplotNumber	GPVAL_LINENO
+
+syn keyword gnuplotNumber	GPVAL_LAST_PLOT
+syn keyword gnuplotNumber	GPVAL_X_MIN
+syn keyword gnuplotNumber	GPVAL_X_MAX
+syn keyword gnuplotNumber	GPVAL_X_LOG
+syn keyword gnuplotNumber	GPVAL_DATA_X_MIN
+syn keyword gnuplotNumber	GPVAL_DATA_X_MAX
+syn keyword gnuplotNumber	GPVAL_Y_MIN
+syn keyword gnuplotNumber	GPVAL_Y_MAX
+syn keyword gnuplotNumber	GPVAL_Y_LOG
+syn keyword gnuplotNumber	GPVAL_DATA_Y_MIN
+syn keyword gnuplotNumber	GPVAL_DATA_Y_MAX
+syn keyword gnuplotNumber	GPVAL_X2_MIN
+syn keyword gnuplotNumber	GPVAL_X2_MAX
+syn keyword gnuplotNumber	GPVAL_X2_LOG
+syn keyword gnuplotNumber	GPVAL_DATA_X2_MIN
+syn keyword gnuplotNumber	GPVAL_DATA_X2_MAX
+syn keyword gnuplotNumber	GPVAL_Y2_MIN
+syn keyword gnuplotNumber	GPVAL_Y2_MAX
+syn keyword gnuplotNumber	GPVAL_Y2_LOG
+syn keyword gnuplotNumber	GPVAL_DATA_Y2_MIN
+syn keyword gnuplotNumber	GPVAL_DATA_Y2_MAX
+syn keyword gnuplotNumber	GPVAL_Z_MIN
+syn keyword gnuplotNumber	GPVAL_Z_MAX
+syn keyword gnuplotNumber	GPVAL_Z_LOG
+syn keyword gnuplotNumber	GPVAL_DATA_Z_MIN
+syn keyword gnuplotNumber	GPVAL_DATA_Z_MAX
+syn keyword gnuplotNumber	GPVAL_CB_MIN
+syn keyword gnuplotNumber	GPVAL_CB_MAX
+syn keyword gnuplotNumber	GPVAL_CB_LOG
+syn keyword gnuplotNumber	GPVAL_DATA_CB_MIN
+syn keyword gnuplotNumber	GPVAL_DATA_CB_MAX
+syn keyword gnuplotNumber	GPVAL_T_MIN
+syn keyword gnuplotNumber	GPVAL_T_MAX
+syn keyword gnuplotNumber	GPVAL_T_LOG
+syn keyword gnuplotNumber	GPVAL_U_MIN
+syn keyword gnuplotNumber	GPVAL_U_MAX
+syn keyword gnuplotNumber	GPVAL_U_LOG
+syn keyword gnuplotNumber	GPVAL_V_MIN
+syn keyword gnuplotNumber	GPVAL_V_MAX
+syn keyword gnuplotNumber	GPVAL_V_LOG
+syn keyword gnuplotNumber	GPVAL_R_MIN
+syn keyword gnuplotNumber	GPVAL_R_MAX
+syn keyword gnuplotNumber	GPVAL_R_LOG
+syn keyword gnuplotNumber	GPVAL_TERM_XMIN
+syn keyword gnuplotNumber	GPVAL_TERM_XMAX
+syn keyword gnuplotNumber	GPVAL_TERM_YMIN
+syn keyword gnuplotNumber	GPVAL_TERM_YMAX
+syn keyword gnuplotNumber	GPVAL_TERM_XSIZE
+syn keyword gnuplotNumber	GPVAL_TERM_YSIZE
+syn keyword gnuplotNumber	GPVAL_TERM_SCALE
+syn keyword gnuplotNumber	GPVAL_TERM_HCHAR
+syn keyword gnuplotNumber	GPVAL_TERM_VCHAR
+syn keyword gnuplotNumber	GPVAL_VIEW_MAP
+syn keyword gnuplotNumber	GPVAL_VIEW_ROT_X
+syn keyword gnuplotNumber	GPVAL_VIEW_ROT_Z
+syn keyword gnuplotNumber	GPVAL_VIEW_SCALE
+syn keyword gnuplotNumber	GPVAL_VIEW_ZSCALE
+syn keyword gnuplotNumber	GPVAL_VIEW_AZIMUTH
+syn keyword gnuplotNumber	GPVAL_VIEW_XCENT
+syn keyword gnuplotNumber	GPVAL_VIEW_YCENT
+syn keyword gnuplotNumber	GPVAL_VIEW_RADIUS
+
+syn keyword gnuplotNumber	GPVAL_TERM_WINDOWID
+syn keyword gnuplotNumber	ARG0 ARGC ARGV
+syn keyword gnuplotNumber	pi NaN
 
 " function name variables
 syn match gnuplotNumber		"GPFUN_[a-zA-Z_]*"
