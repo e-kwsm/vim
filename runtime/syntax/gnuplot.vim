@@ -1,5 +1,5 @@
 " Vim syntax file
-" Language:	gnuplot 4.7.0
+" Language:	gnuplot 5.2.8
 " Maintainer:	Josh Wainwright <wainwright DOT ja AT gmail DOT com>
 " Last Maintainer:	Andrew Rasmussen andyras@users.sourceforge.net
 " Original Maintainer:	John Hoelzel johnh51@users.sourceforge.net
@@ -26,7 +26,7 @@ if exists("b:current_syntax")
   finish
 endif
 
-" ---- Special characters ---- "
+" ---- Special characters ---- " {{{1
 
 " no harm in just matching any \[char] within double quotes, right?
 syn match gnuplotSpecial	"\\." contained
@@ -40,66 +40,170 @@ syn match gnuplotUnit		"\d+pt"
 " external (shell) commands are special
 syn region gnuplotExternal	start="^\s*!" end="$"
 
-" ---- Comments ---- "
+" ---- Comments ---- " {{{1
 
 syn region gnuplotComment	start="#" end="$" contains=gnuplotTodo,@Spell
 
-" ---- Constants ---- "
+" ---- Constants ---- " {{{1
 
 " strings
 syn region gnuplotString	start=+"+ skip=+\\"+ end=+"+ contains=gnuplotSpecial,@Spell
 syn region gnuplotString	start="'" end="'" contains=@Spell
 
 " built-in variables
-syn keyword gnuplotNumber	GNUTERM GPVAL_TERM GPVAL_TERMOPTIONS GPVAL_SPLOT
-syn keyword gnuplotNumber	GPVAL_OUTPUT GPVAL_ENCODING GPVAL_VERSION
-syn keyword gnuplotNumber	GPVAL_PATCHLEVEL GPVAL_COMPILE_OPTIONS
-syn keyword gnuplotNumber	GPVAL_MULTIPLOT GPVAL_PLOT GPVAL_VIEW_ZSCALE
-syn keyword gnuplotNumber	GPVAL_TERMINALS GPVAL_pi GPVAL_NaN
-syn keyword gnuplotNumber	GPVAL_ERRNO GPVAL_ERRMSG GPVAL_PWD
-syn keyword gnuplotNumber	pi NaN GPVAL_LAST_PLOT GPVAL_TERM_WINDOWID
-syn keyword gnuplotNumber	GPVAL_X_MIN GPVAL_X_MAX GPVAL_X_LOG
-syn keyword gnuplotNumber	GPVAL_DATA_X_MIN GPVAL_DATA_X_MAX GPVAL_Y_MIN
-syn keyword gnuplotNumber	GPVAL_Y_MAX GPVAL_Y_LOG GPVAL_DATA_Y_MIN
-syn keyword gnuplotNumber	GPVAL_DATA_Y_MAX GPVAL_X2_MIN GPVAL_X2_MAX
-syn keyword gnuplotNumber	GPVAL_X2_LOG GPVAL_DATA_X2_MIN GPVAL_DATA_X2_MAX
-syn keyword gnuplotNumber	GPVAL_Y2_MIN GPVAL_Y2_MAX GPVAL_Y2_LOG
-syn keyword gnuplotNumber	GPVAL_DATA_Y2_MIN GPVAL_DATA_Y2_MAX GPVAL_Z_MIN
-syn keyword gnuplotNumber	GPVAL_Z_MAX GPVAL_Z_LOG GPVAL_DATA_Z_MIN
-syn keyword gnuplotNumber	GPVAL_DATA_Z_MAX GPVAL_CB_MIN GPVAL_CB_MAX
-syn keyword gnuplotNumber	GPVAL_CB_LOG GPVAL_DATA_CB_MIN GPVAL_DATA_CB_MAX
-syn keyword gnuplotNumber	GPVAL_T_MIN GPVAL_T_MAX GPVAL_T_LOG GPVAL_U_MIN
-syn keyword gnuplotNumber	GPVAL_U_MAX GPVAL_U_LOG GPVAL_V_MIN GPVAL_V_MAX
-syn keyword gnuplotNumber	GPVAL_V_LOG GPVAL_R_MIN GPVAL_R_LOG
-syn keyword gnuplotNumber	GPVAL_TERM_XMIN GPVAL_TERM_XMAX GPVAL_TERM_YMIN
-syn keyword gnuplotNumber	GPVAL_TERM_YMAX GPVAL_TERM_XSIZE
-syn keyword gnuplotNumber	GPVAL_TERM_YSIZE GPVAL_VIEW_MAP GPVAL_VIEW_ROT_X
-syn keyword gnuplotNumber	GPVAL_VIEW_ROT_Z GPVAL_VIEW_SCALE
+syn keyword gnuplotNumber	GNUTERM
+
+syn keyword gnuplotNumber	GPVAL_TERM GPVAL_TERMOPTIONS
+syn keyword gnuplotNumber	GPVAL_OUTPUT
+syn keyword gnuplotNumber	GPVAL_ENCODING
+syn keyword gnuplotNumber	GPVAL_MINUS_SIGN
+syn keyword gnuplotNumber	GPVAL_MICRO
+syn keyword gnuplotNumber	GPVAL_X_MIN GPVAL_X_MAX
+syn keyword gnuplotNumber	GPVAL_Y_MIN GPVAL_Y_MAX
+syn keyword gnuplotNumber	GPVAL_DEGREE_SIGN
+syn keyword gnuplotNumber	GPVAL_VERSION GPVAL_PATCHLEVEL
+syn keyword gnuplotNumber	GPVAL_COMPILE_OPTIONS
+syn keyword gnuplotNumber	GPVAL_MULTIPLOT
+syn keyword gnuplotNumber	GPVAL_PLOT
+syn keyword gnuplotNumber	GPVAL_SPLOT
+syn keyword gnuplotNumber	GPVAL_TERMINALS
+syn keyword gnuplotNumber	GPVAL_pi
+syn keyword gnuplotNumber	GPVAL_NaN
+syn keyword gnuplotNumber	GPVAL_SYSNAME
+syn keyword gnuplotNumber	GPVAL_MACHINE
+syn keyword gnuplotNumber	GPVAL_BITS
+syn keyword gnuplotNumber	GPVAL_ERRNO
+syn keyword gnuplotNumber	GPVAL_ERRMSG
+syn keyword gnuplotNumber	GPVAL_SYSTEM_ERRNO
+syn keyword gnuplotNumber	GPVAL_SYSTEM_ERRMSG
+syn keyword gnuplotNumber	GPVAL_PWD
+syn keyword gnuplotNumber	GPVAL_LINENO
+
+syn keyword gnuplotNumber	GPVAL_LAST_PLOT
+syn keyword gnuplotNumber	GPVAL_X_MIN
+syn keyword gnuplotNumber	GPVAL_X_MAX
+syn keyword gnuplotNumber	GPVAL_X_LOG
+syn keyword gnuplotNumber	GPVAL_DATA_X_MIN
+syn keyword gnuplotNumber	GPVAL_DATA_X_MAX
+syn keyword gnuplotNumber	GPVAL_Y_MIN
+syn keyword gnuplotNumber	GPVAL_Y_MAX
+syn keyword gnuplotNumber	GPVAL_Y_LOG
+syn keyword gnuplotNumber	GPVAL_DATA_Y_MIN
+syn keyword gnuplotNumber	GPVAL_DATA_Y_MAX
+syn keyword gnuplotNumber	GPVAL_X2_MIN
+syn keyword gnuplotNumber	GPVAL_X2_MAX
+syn keyword gnuplotNumber	GPVAL_X2_LOG
+syn keyword gnuplotNumber	GPVAL_DATA_X2_MIN
+syn keyword gnuplotNumber	GPVAL_DATA_X2_MAX
+syn keyword gnuplotNumber	GPVAL_Y2_MIN
+syn keyword gnuplotNumber	GPVAL_Y2_MAX
+syn keyword gnuplotNumber	GPVAL_Y2_LOG
+syn keyword gnuplotNumber	GPVAL_DATA_Y2_MIN
+syn keyword gnuplotNumber	GPVAL_DATA_Y2_MAX
+syn keyword gnuplotNumber	GPVAL_Z_MIN
+syn keyword gnuplotNumber	GPVAL_Z_MAX
+syn keyword gnuplotNumber	GPVAL_Z_LOG
+syn keyword gnuplotNumber	GPVAL_DATA_Z_MIN
+syn keyword gnuplotNumber	GPVAL_DATA_Z_MAX
+syn keyword gnuplotNumber	GPVAL_CB_MIN
+syn keyword gnuplotNumber	GPVAL_CB_MAX
+syn keyword gnuplotNumber	GPVAL_CB_LOG
+syn keyword gnuplotNumber	GPVAL_DATA_CB_MIN
+syn keyword gnuplotNumber	GPVAL_DATA_CB_MAX
+syn keyword gnuplotNumber	GPVAL_T_MIN
+syn keyword gnuplotNumber	GPVAL_T_MAX
+syn keyword gnuplotNumber	GPVAL_T_LOG
+syn keyword gnuplotNumber	GPVAL_U_MIN
+syn keyword gnuplotNumber	GPVAL_U_MAX
+syn keyword gnuplotNumber	GPVAL_U_LOG
+syn keyword gnuplotNumber	GPVAL_V_MIN
+syn keyword gnuplotNumber	GPVAL_V_MAX
+syn keyword gnuplotNumber	GPVAL_V_LOG
+syn keyword gnuplotNumber	GPVAL_R_MIN
+syn keyword gnuplotNumber	GPVAL_R_MAX
+syn keyword gnuplotNumber	GPVAL_R_LOG
+syn keyword gnuplotNumber	GPVAL_TERM_XMIN
+syn keyword gnuplotNumber	GPVAL_TERM_XMAX
+syn keyword gnuplotNumber	GPVAL_TERM_YMIN
+syn keyword gnuplotNumber	GPVAL_TERM_YMAX
+syn keyword gnuplotNumber	GPVAL_TERM_XSIZE
+syn keyword gnuplotNumber	GPVAL_TERM_YSIZE
+syn keyword gnuplotNumber	GPVAL_TERM_SCALE
+syn keyword gnuplotNumber	GPVAL_TERM_HCHAR
+syn keyword gnuplotNumber	GPVAL_TERM_VCHAR
+syn keyword gnuplotNumber	GPVAL_VIEW_MAP
+syn keyword gnuplotNumber	GPVAL_VIEW_ROT_X
+syn keyword gnuplotNumber	GPVAL_VIEW_ROT_Z
+syn keyword gnuplotNumber	GPVAL_VIEW_SCALE
+syn keyword gnuplotNumber	GPVAL_VIEW_ZSCALE
+syn keyword gnuplotNumber	GPVAL_VIEW_AZIMUTH
+syn keyword gnuplotNumber	GPVAL_VIEW_XCENT
+syn keyword gnuplotNumber	GPVAL_VIEW_YCENT
+syn keyword gnuplotNumber	GPVAL_VIEW_RADIUS
+syn keyword gnuplotNumber	GPVAL_TERM_WINDOWID
+syn keyword gnuplotNumber	ARG0 ARGC ARGV
+syn keyword gnuplotNumber	pi NaN
+
+syn keyword gnuplotNumber	GPVAL_LAST_FIT
 
 " function name variables
 syn match gnuplotNumber		"GPFUN_\h*"
 
 " stats variables
-syn keyword gnuplotNumber	STATS_records STATS_outofrange STATS_invalid
-syn keyword gnuplotNumber	STATS_blank STATS_blocks STATS_columns STATS_min
-syn keyword gnuplotNumber	STATS_max STATS_index_min STATS_index_max
-syn keyword gnuplotNumber	STATS_lo_quartile STATS_median STATS_up_quartile
-syn keyword gnuplotNumber	STATS_mean STATS_stddev STATS_sum STATS_sumsq
-syn keyword gnuplotNumber	STATS_correlation STATS_slope STATS_intercept
-syn keyword gnuplotNumber	STATS_sumxy STATS_pos_min_y STATS_pos_max_y
-syn keyword gnuplotNumber	STATS_mean STATS_stddev STATS_mean_x STATS_sum_x
-syn keyword gnuplotNumber	STATS_stddev_x STATS_sumsq_x STATS_min_x
-syn keyword gnuplotNumber	STATS_max_x STATS_median_x STATS_lo_quartile_x
-syn keyword gnuplotNumber	STATS_up_quartile_x STATS_index_min_x
-syn keyword gnuplotNumber	STATS_index_max_x STATS_mean_y STATS_stddev_y
-syn keyword gnuplotNumber	STATS_sum_y STATS_sumsq_y STATS_min_y
-syn keyword gnuplotNumber	STATS_max_y STATS_median_y STATS_lo_quartile_y
-syn keyword gnuplotNumber	STATS_up_quartile_y STATS_index_min_y
-syn keyword gnuplotNumber	STATS_index_max_y STATS_correlation STATS_sumxy
+syn keyword gnuplotNumber	STATS_adev STATS_adev_x
+syn keyword gnuplotNumber	STATS_blank
+syn keyword gnuplotNumber	STATS_blocks
+syn keyword gnuplotNumber	STATS_columns
+syn keyword gnuplotNumber	STATS_correlation
+syn keyword gnuplotNumber	STATS_index_max STATS_index_max_x STATS_index_max_y
+syn keyword gnuplotNumber	STATS_index_min STATS_index_min_x STATS_index_min_y
+syn keyword gnuplotNumber	STATS_index_xxx
+syn keyword gnuplotNumber	STATS_intercept
+syn keyword gnuplotNumber	STATS_intercept_err
+syn keyword gnuplotNumber	STATS_invalid
+syn keyword gnuplotNumber	STATS_kurtosis STATS_kurtosis_x STATS_kurtosis_y
+syn keyword gnuplotNumber	STATS_kurtosis_err STATS_kurtosis_err_x
+syn keyword gnuplotNumber	STATS_lo_quartile STATS_lo_quartile_x STATS_lo_quartile_y
+syn keyword gnuplotNumber	STATS_max STATS_max_x STATS_max_y
+syn keyword gnuplotNumber	STATS_mean STATS_mean_x STATS_mean_y
+syn keyword gnuplotNumber	STATS_mean_err STATS_mean_err_x
+syn keyword gnuplotNumber	STATS_median STATS_median_x STATS_median_y
+syn keyword gnuplotNumber	STATS_min STATS_min_x STATS_min_y
+syn keyword gnuplotNumber	STATS_outofrange
+syn keyword gnuplotNumber	STATS_pos_max_y
+syn keyword gnuplotNumber	STATS_pos_min_y
+syn keyword gnuplotNumber	STATS_records
+syn keyword gnuplotNumber	STATS_size_x STATS_size_y
+syn keyword gnuplotNumber	STATS_skewness STATS_skewness_x STATS_skewness_y
+syn keyword gnuplotNumber	STATS_skewness_err STATS_skewness_err_x
+syn keyword gnuplotNumber	STATS_slope
+syn keyword gnuplotNumber	STATS_slope_err
+syn keyword gnuplotNumber	STATS_ssd STATS_ssd_x STATS_ssd_y
+syn keyword gnuplotNumber	STATS_stddev STATS_stddev_x STATS_stddev_y
+syn keyword gnuplotNumber	STATS_stddev_err STATS_stddev_err_x
+syn keyword gnuplotNumber	STATS_sum STATS_sum_x STATS_sum_y
+syn keyword gnuplotNumber	STATS_sumsq STATS_sumsq_x STATS_sumsq_y
+syn keyword gnuplotNumber	STATS_sumxy
+syn keyword gnuplotNumber	STATS_up_quartile STATS_up_quartile_x STATS_up_quartile_y
 
-" deprecated fit variables
-syn keyword gnuplotError	FIT_LIMIT FIT_MAXITER FIT_START_LAMBDA
-syn keyword gnuplotError	FIT_LAMBDA_FACTOR FIT_LOG FIT_SCRIPT
+" fit variables
+syn keyword gnuplotNumber	FIT_CONVERGED
+syn keyword gnuplotNumber	FIT_LAMBDA_FACTOR
+syn keyword gnuplotNumber	FIT_LIMIT
+syn keyword gnuplotNumber	FIT_LOG
+syn keyword gnuplotNumber	FIT_MAXITER
+syn keyword gnuplotNumber	FIT_NDF
+syn keyword gnuplotNumber	FIT_NITER
+syn keyword gnuplotNumber	FIT_P
+syn keyword gnuplotNumber	FIT_SCRIPT
+syn keyword gnuplotNumber	FIT_START_LAMBDA
+syn keyword gnuplotNumber	FIT_STDFIT
+syn keyword gnuplotNumber	FIT_WSSR
+syn match   gnuplotNumber	"FIT_COV_[a-zA-Z_]\+_[a-zA-Z_]\+"
+
+" no longer available
+"FIT_SKIP
+"FIT_INDEX
 
 " numbers, from c.vim
 
@@ -123,27 +227,74 @@ syn case    match
 " flag an octal number with wrong digits by not highlighting
 syn match   gnuplotOctalError	"\<0\o*[89]"
 
-" ---- Identifiers: Functions ---- "
+" ---- Identifiers: Functions ---- " {{{1
 
 " numerical functions
-syn keyword gnuplotFunc		abs acos acosh airy arg asin asinh atan atan2
-syn keyword gnuplotFunc		atanh EllipticK EllipticE EllipticPi besj0 besj1
-syn keyword gnuplotFunc		besy0 besy1 ceil cos cosh erf erfc exp expint
-syn keyword gnuplotFunc		floor gamma ibeta inverf igamma imag invnorm int
-syn keyword gnuplotFunc		lambertw lgamma log log10 norm rand real sgn sin
-syn keyword gnuplotFunc		sin sinh sqrt tan tanh voigt
+syn keyword gnuplotFunc		EllipticE
+syn keyword gnuplotFunc		EllipticK
+syn keyword gnuplotFunc		EllipticPi
+syn keyword gnuplotFunc		VP
+syn keyword gnuplotFunc		abs
+syn keyword gnuplotFunc		acos
+syn keyword gnuplotFunc		acosh
+syn keyword gnuplotFunc		airy
+syn keyword gnuplotFunc		arg
+syn keyword gnuplotFunc		asin
+syn keyword gnuplotFunc		asinh
+syn keyword gnuplotFunc		atan
+syn keyword gnuplotFunc		atan2
+syn keyword gnuplotFunc		atanh
+syn keyword gnuplotFunc		besj0
+syn keyword gnuplotFunc		besj1
+syn keyword gnuplotFunc		besy0
+syn keyword gnuplotFunc		besy1
+syn keyword gnuplotFunc		cdawson
+syn keyword gnuplotFunc		ceil
+syn keyword gnuplotFunc		cerf
+syn keyword gnuplotFunc		cos
+syn keyword gnuplotFunc		cosh
+syn keyword gnuplotFunc		erf
+syn keyword gnuplotFunc		erfc
+syn keyword gnuplotFunc		erfi
+syn keyword gnuplotFunc		exp
+syn keyword gnuplotFunc		expint
+syn keyword gnuplotFunc		faddeeva
+syn keyword gnuplotFunc		floor
+syn keyword gnuplotFunc		gamma
+syn keyword gnuplotFunc		ibeta
+syn keyword gnuplotFunc		igamma
+syn keyword gnuplotFunc		imag
+syn keyword gnuplotFunc		int
+syn keyword gnuplotFunc		inverf
+syn keyword gnuplotFunc		invnorm
+syn keyword gnuplotFunc		lambertw
+syn keyword gnuplotFunc		lgamma
+syn keyword gnuplotFunc		log
+syn keyword gnuplotFunc		log10
+syn keyword gnuplotFunc		norm
+syn keyword gnuplotFunc		rand
+syn keyword gnuplotFunc		real
+syn keyword gnuplotFunc		sgn
+syn keyword gnuplotFunc		sin
+syn keyword gnuplotFunc		sinh
+syn keyword gnuplotFunc		sqrt
+syn keyword gnuplotFunc		tan
+syn keyword gnuplotFunc		tanh
+syn keyword gnuplotFunc		voigt
 
-" string functions
-syn keyword gnuplotFunc		gprintf sprintf strlen strstrt substr strftime
-syn keyword gnuplotFunc		strptime system word words
+" timeseries functions
+syn keyword gnuplotFunc		tm_sec tm_min tm_hour tm_mday tm_mon tm_year tm_wday tm_yday
 
 " other functions
-syn keyword gnuplotFunc		column columnhead columnheader defined exists
-syn keyword gnuplotFunc		hsv2rgb stringcolumn timecolumn tm_hour tm_mday
-syn keyword gnuplotFunc		tm_min tm_mon tm_sec tm_wday tm_yday tm_year
-syn keyword gnuplotFunc		time valid value
+syn keyword gnuplotFunc		column stringcolumn strcol columnhead valid timecolumn
+syn keyword gnuplotFunc		sprintf gprintf strlen strstrt substr word words
+syn keyword gnuplotFunc		strftime strptime time system exist exists value
+syn keyword gnuplotFunc		hsv2rgb
 
-" ---- Statements ---- "
+" XXX
+syn keyword gnuplotFunc		columnheader
+
+" ---- Statements ---- " {{{1
 
 " common (builtin) variable names
 syn keyword gnuplotKeyword	x y t u v z s
@@ -486,11 +637,11 @@ syn match gnuplotKeyword	"\<transparent\>"
 
 syn match gnuplotMacro		"@\w*"
 
-" ---- Todos ---- "
+" ---- Todos ---- " {{{1
 
 syn keyword gnuplotTodo		contained TODO FIXME XXX
 
-" ---- Types: gnuplot commands ---- "
+" ---- Types: gnuplot commands ---- " {{{1
 
 " I set the commands as Types to distinguish them visually from keywords for the
 " commands.  This comes at the end of the syntax file because some commands
@@ -504,7 +655,7 @@ syn keyword gnuplotStatement	refresh replot rep reread reset save set show
 syn keyword gnuplotStatement	shell splot spstats stats system test undefine
 syn keyword gnuplotStatement	unset update
 
-" ---- Define the default highlighting ---- "
+" ---- Define the default highlighting ---- " {{{1
 " Only when an item doesn't have highlighting yet
 
 " ---- Comments ---- "
