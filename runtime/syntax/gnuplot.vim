@@ -139,13 +139,14 @@ syn keyword gnuplotNumber	GPVAL_VIEW_AZIMUTH
 syn keyword gnuplotNumber	GPVAL_VIEW_XCENT
 syn keyword gnuplotNumber	GPVAL_VIEW_YCENT
 syn keyword gnuplotNumber	GPVAL_VIEW_RADIUS
-
 syn keyword gnuplotNumber	GPVAL_TERM_WINDOWID
 syn keyword gnuplotNumber	ARG0 ARGC ARGV
 syn keyword gnuplotNumber	pi NaN
 
+syn keyword gnuplotNumber	GPVAL_LAST_FIT
+
 " function name variables
-syn match gnuplotNumber		"GPFUN_[a-zA-Z_]*"
+syn match gnuplotNumber		"GPFUN_[a-zA-Z_]\+"
 
 " stats variables
 syn keyword gnuplotNumber	STATS_adev STATS_adev_x
@@ -184,9 +185,24 @@ syn keyword gnuplotNumber	STATS_sumsq STATS_sumsq_x STATS_sumsq_y
 syn keyword gnuplotNumber	STATS_sumxy
 syn keyword gnuplotNumber	STATS_up_quartile STATS_up_quartile_x STATS_up_quartile_y
 
-" deprecated fit variables
-syn keyword gnuplotError	FIT_LIMIT FIT_MAXITER FIT_START_LAMBDA
-syn keyword gnuplotError	FIT_LAMBDA_FACTOR FIT_LOG FIT_SCRIPT
+" fit variables
+syn keyword gnuplotNumber	FIT_CONVERGED
+syn keyword gnuplotNumber	FIT_LAMBDA_FACTOR
+syn keyword gnuplotNumber	FIT_LIMIT
+syn keyword gnuplotNumber	FIT_LOG
+syn keyword gnuplotNumber	FIT_MAXITER
+syn keyword gnuplotNumber	FIT_NDF
+syn keyword gnuplotNumber	FIT_NITER
+syn keyword gnuplotNumber	FIT_P
+syn keyword gnuplotNumber	FIT_SCRIPT
+syn keyword gnuplotNumber	FIT_START_LAMBDA
+syn keyword gnuplotNumber	FIT_STDFIT
+syn keyword gnuplotNumber	FIT_WSSR
+syn match   gnuplotNumber	"FIT_COV_[a-zA-Z_]\+_[a-zA-Z_]\+"
+
+" no longer available
+"FIT_SKIP
+"FIT_INDEX
 
 " numbers, from c.vim
 
