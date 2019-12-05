@@ -1,9 +1,9 @@
 " Vim syntax file
-" Language:	gnuplot 4.7.0
+" Language:	gnuplot 5.2.8
 " Maintainer:	Josh Wainwright <wainwright DOT ja AT gmail DOT com>
 " Last Maintainer:	Andrew Rasmussen andyras@users.sourceforge.net
 " Original Maintainer:	John Hoelzel johnh51@users.sourceforge.net
-" Last Change:	2015-08-25
+" Last Change:	2019-08-25
 " Filenames:	*.gnu *.plt *.gpi *.gih *.gp *.gnuplot scripts: #!*gnuplot
 " URL:		http://www.vim.org/scripts/script.php?script_id=4873
 " Original URL:	http://johnh51.get.to/vim/syntax/gnuplot.vim
@@ -79,22 +79,41 @@ syn keyword gnuplotNumber	GPVAL_VIEW_ROT_Z GPVAL_VIEW_SCALE
 syn match gnuplotNumber		"GPFUN_[a-zA-Z_]*"
 
 " stats variables
-syn keyword gnuplotNumber	STATS_records STATS_outofrange STATS_invalid
-syn keyword gnuplotNumber	STATS_blank STATS_blocks STATS_columns STATS_min
-syn keyword gnuplotNumber	STATS_max STATS_index_min STATS_index_max
-syn keyword gnuplotNumber	STATS_lo_quartile STATS_median STATS_up_quartile
-syn keyword gnuplotNumber	STATS_mean STATS_stddev STATS_sum STATS_sumsq
-syn keyword gnuplotNumber	STATS_correlation STATS_slope STATS_intercept
-syn keyword gnuplotNumber	STATS_sumxy STATS_pos_min_y STATS_pos_max_y
-syn keyword gnuplotNumber	STATS_mean STATS_stddev STATS_mean_x STATS_sum_x
-syn keyword gnuplotNumber	STATS_stddev_x STATS_sumsq_x STATS_min_x
-syn keyword gnuplotNumber	STATS_max_x STATS_median_x STATS_lo_quartile_x
-syn keyword gnuplotNumber	STATS_up_quartile_x STATS_index_min_x
-syn keyword gnuplotNumber	STATS_index_max_x STATS_mean_y STATS_stddev_y
-syn keyword gnuplotNumber	STATS_sum_y STATS_sumsq_y STATS_min_y
-syn keyword gnuplotNumber	STATS_max_y STATS_median_y STATS_lo_quartile_y
-syn keyword gnuplotNumber	STATS_up_quartile_y STATS_index_min_y
-syn keyword gnuplotNumber	STATS_index_max_y STATS_correlation STATS_sumxy
+syn keyword gnuplotNumber	STATS_adev STATS_adev_x
+syn keyword gnuplotNumber	STATS_blank
+syn keyword gnuplotNumber	STATS_blocks
+syn keyword gnuplotNumber	STATS_columns
+syn keyword gnuplotNumber	STATS_correlation
+syn keyword gnuplotNumber	STATS_index_max STATS_index_max_x STATS_index_max_y
+syn keyword gnuplotNumber	STATS_index_min STATS_index_min_x STATS_index_min_y
+syn keyword gnuplotNumber	STATS_index_xxx
+syn keyword gnuplotNumber	STATS_intercept
+syn keyword gnuplotNumber	STATS_intercept_err
+syn keyword gnuplotNumber	STATS_invalid
+syn keyword gnuplotNumber	STATS_kurtosis STATS_kurtosis_x STATS_kurtosis_y
+syn keyword gnuplotNumber	STATS_kurtosis_err STATS_kurtosis_err_x
+syn keyword gnuplotNumber	STATS_lo_quartile STATS_lo_quartile_x STATS_lo_quartile_y
+syn keyword gnuplotNumber	STATS_max STATS_max_x STATS_max_y
+syn keyword gnuplotNumber	STATS_mean STATS_mean_x STATS_mean_y
+syn keyword gnuplotNumber	STATS_mean_err STATS_mean_err_x
+syn keyword gnuplotNumber	STATS_median STATS_median_x STATS_median_y
+syn keyword gnuplotNumber	STATS_min STATS_min_x STATS_min_y
+syn keyword gnuplotNumber	STATS_outofrange
+syn keyword gnuplotNumber	STATS_pos_max_y
+syn keyword gnuplotNumber	STATS_pos_min_y
+syn keyword gnuplotNumber	STATS_records
+syn keyword gnuplotNumber	STATS_size_x STATS_size_y
+syn keyword gnuplotNumber	STATS_skewness STATS_skewness_x STATS_skewness_y
+syn keyword gnuplotNumber	STATS_skewness_err STATS_skewness_err_x
+syn keyword gnuplotNumber	STATS_slope
+syn keyword gnuplotNumber	STATS_slope_err
+syn keyword gnuplotNumber	STATS_ssd STATS_ssd_x STATS_ssd_y
+syn keyword gnuplotNumber	STATS_stddev STATS_stddev_x STATS_stddev_y
+syn keyword gnuplotNumber	STATS_stddev_err STATS_stddev_err_x
+syn keyword gnuplotNumber	STATS_sum STATS_sum_x STATS_sum_y
+syn keyword gnuplotNumber	STATS_sumsq STATS_sumsq_x STATS_sumsq_y
+syn keyword gnuplotNumber	STATS_sumxy
+syn keyword gnuplotNumber	STATS_up_quartile STATS_up_quartile_x STATS_up_quartile_y
 
 " deprecated fit variables
 syn keyword gnuplotError	FIT_LIMIT FIT_MAXITER FIT_START_LAMBDA
