@@ -25,7 +25,7 @@ if exists("b:current_syntax")
   finish
 endif
 
-" ---- Special characters ---- "
+" ---- Special characters ---- " {{{1
 
 " no harm in just matching any \[char] within double quotes, right?
 syn match gnuplotSpecial	"\\." contained
@@ -39,11 +39,11 @@ syn match gnuplotUnit		"[0-9]+pt"
 " external (shell) commands are special
 syn region gnuplotExternal	start="!" end="$"
 
-" ---- Comments ---- "
+" ---- Comments ---- " {{{1
 
 syn region gnuplotComment	start="#" end="$" contains=gnuplotTodo
 
-" ---- Constants ---- "
+" ---- Constants ---- " {{{1
 
 " strings
 syn region gnuplotString	start=+"+ skip=+\\"+ end=+"+ contains=gnuplotSpecial
@@ -226,27 +226,74 @@ syn case    match
 " flag an octal number with wrong digits by not highlighting
 syn match   gnuplotOctalError	"\<0[0-7]*[89]"
 
-" ---- Identifiers: Functions ---- "
+" ---- Identifiers: Functions ---- " {{{1
 
 " numerical functions
-syn keyword gnuplotFunc		abs acos acosh airy arg asin asinh atan atan2
-syn keyword gnuplotFunc		atanh EllipticK EllipticE EllipticPi besj0 besj1
-syn keyword gnuplotFunc		besy0 besy1 ceil cos cosh erf erfc exp expint
-syn keyword gnuplotFunc		floor gamma ibeta inverf igamma imag invnorm int
-syn keyword gnuplotFunc		lambertw lgamma log log10 norm rand real sgn sin
-syn keyword gnuplotFunc		sin sinh sqrt tan tanh voigt
+syn keyword gnuplotFunc		EllipticE
+syn keyword gnuplotFunc		EllipticK
+syn keyword gnuplotFunc		EllipticPi
+syn keyword gnuplotFunc		VP
+syn keyword gnuplotFunc		abs
+syn keyword gnuplotFunc		acos
+syn keyword gnuplotFunc		acosh
+syn keyword gnuplotFunc		airy
+syn keyword gnuplotFunc		arg
+syn keyword gnuplotFunc		asin
+syn keyword gnuplotFunc		asinh
+syn keyword gnuplotFunc		atan
+syn keyword gnuplotFunc		atan2
+syn keyword gnuplotFunc		atanh
+syn keyword gnuplotFunc		besj0
+syn keyword gnuplotFunc		besj1
+syn keyword gnuplotFunc		besy0
+syn keyword gnuplotFunc		besy1
+syn keyword gnuplotFunc		cdawson
+syn keyword gnuplotFunc		ceil
+syn keyword gnuplotFunc		cerf
+syn keyword gnuplotFunc		cos
+syn keyword gnuplotFunc		cosh
+syn keyword gnuplotFunc		erf
+syn keyword gnuplotFunc		erfc
+syn keyword gnuplotFunc		erfi
+syn keyword gnuplotFunc		exp
+syn keyword gnuplotFunc		expint
+syn keyword gnuplotFunc		faddeeva
+syn keyword gnuplotFunc		floor
+syn keyword gnuplotFunc		gamma
+syn keyword gnuplotFunc		ibeta
+syn keyword gnuplotFunc		igamma
+syn keyword gnuplotFunc		imag
+syn keyword gnuplotFunc		int
+syn keyword gnuplotFunc		inverf
+syn keyword gnuplotFunc		invnorm
+syn keyword gnuplotFunc		lambertw
+syn keyword gnuplotFunc		lgamma
+syn keyword gnuplotFunc		log
+syn keyword gnuplotFunc		log10
+syn keyword gnuplotFunc		norm
+syn keyword gnuplotFunc		rand
+syn keyword gnuplotFunc		real
+syn keyword gnuplotFunc		sgn
+syn keyword gnuplotFunc		sin
+syn keyword gnuplotFunc		sinh
+syn keyword gnuplotFunc		sqrt
+syn keyword gnuplotFunc		tan
+syn keyword gnuplotFunc		tanh
+syn keyword gnuplotFunc		voigt
 
-" string functions
-syn keyword gnuplotFunc		gprintf sprintf strlen strstrt substr strftime
-syn keyword gnuplotFunc		strptime system word words
+" timeseries functions
+syn keyword gnuplotFunc		tm_sec tm_min tm_hour tm_mday tm_mon tm_year tm_wday tm_yday
 
 " other functions
-syn keyword gnuplotFunc		column columnhead columnheader defined exists
-syn keyword gnuplotFunc		hsv2rgb stringcolumn timecolumn tm_hour tm_mday
-syn keyword gnuplotFunc		tm_min tm_mon tm_sec tm_wday tm_yday tm_year
-syn keyword gnuplotFunc		time valid value
+syn keyword gnuplotFunc		column stringcolumn strcol columnhead valid timecolumn
+syn keyword gnuplotFunc		sprintf gprintf strlen strstrt substr word words
+syn keyword gnuplotFunc		strftime strptime time system exist exists value
+syn keyword gnuplotFunc		hsv2rgb
 
-" ---- Statements ---- "
+" XXX
+syn keyword gnuplotFunc		columnheader
+
+" ---- Statements ---- " {{{1
 
 " common (builtin) variable names
 syn keyword gnuplotKeyword	x y t u v z s
@@ -581,15 +628,15 @@ syn keyword gnuplotKeyword	nooutput
 " keywords for 'test' command
 syn keyword gnuplotKeyword	terminal palette rgb rbg grb gbr brg bgr
 
-" ---- Macros ---- "
+" ---- Macros ---- " {{{1
 
 syn region gnuplotMacro		start="@" end=" "
 
-" ---- Todos ---- "
+" ---- Todos ---- " {{{1
 
 syn keyword gnuplotTodo		contained TODO FIXME XXX
 
-" ---- Types: gnuplot commands ---- "
+" ---- Types: gnuplot commands ---- " {{{1
 
 " I set the commands as Types to distinguish them visually from keywords for the
 " commands.  This comes at the end of the syntax file because some commands
@@ -603,7 +650,7 @@ syn keyword gnuplotStatement	refresh replot rep reread reset save set show
 syn keyword gnuplotStatement	shell splot spstats stats system test undefine
 syn keyword gnuplotStatement	unset update
 
-" ---- Define the default highlighting ---- "
+" ---- Define the default highlighting ---- " {{{1
 " Only when an item doesn't have highlighting yet
 
 " ---- Comments ---- "
