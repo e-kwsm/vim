@@ -288,9 +288,9 @@ if b:fortran_dialect == "f08"
   syn keyword fortranIntrinsic        command_argument_count get_command get_command_argument get_environment_variable is_iostat_end is_iostat_eor move_alloc new_line selected_char_kind same_type_as extends_type_of
   " ISO_C_binding
   syn keyword fortranConstant         c_null_char c_alert c_backspace c_form_feed c_new_line c_carriage_return c_horizontal_tab c_vertical_tab
-  syn keyword fortranConstant         c_int c_short c_long c_long_long c_signed_char c_size_t c_int8_t c_int16_t c_int32_t c_int64_t c_int_least8_t c_int_least16_t c_int_least32_t c_int_least64_t c_int_fast8_t c_int_fast16_t c_int_fast32_t c_int_fast64_t c_intmax_t C_intptr_t c_float c_double c_long_double c_float_complex c_double_complex c_long_double_complex c_bool c_char c_null_ptr c_null_funptr
+  syn keyword fortranConstant         c_int c_short c_long c_long_long c_signed_char c_size_t c_int8_t c_int16_t c_int32_t c_int64_t c_int128_t c_int_least8_t c_int_least16_t c_int_least32_t c_int_least64_t c_int_least128_t c_int_fast8_t c_int_fast16_t c_int_fast32_t c_int_fast64_t c_int_fast128_t c_intmax_t C_intptr_t c_float c_double c_long_double c_float128 c_float_complex c_double_complex c_long_double_complex c_float128_complex c_bool c_char c_null_ptr c_null_funptr
   syn keyword fortranIntrinsic        iso_c_binding c_loc c_funloc c_associated  c_f_pointer c_f_procpointer
-  syn keyword fortranType             c_ptr c_funptr
+  syn keyword fortranType             c_ptr c_ptrdiff_t c_funptr
   " ISO_Fortran_env
   syn keyword fortranConstant         iso_fortran_env character_storage_size error_unit file_storage_size input_unit iostat_end iostat_eor numeric_storage_size output_unit
   " IEEE_arithmetic
