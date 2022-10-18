@@ -926,8 +926,12 @@ au BufNewFile,BufRead *.frt			setf reva
 " Fortran
 if has("fname_case")
   au BufNewFile,BufRead *.F,*.FOR,*.FPP,*.FTN,*.F77,*.F90,*.F95,*.F03,*.F08	setf fortran
+  " CUDA Fortran
+  au BufNewFile,BufRead *.CUF	 setf fortran
 endif
 au BufNewFile,BufRead *.for,*.fortran,*.fpp,*.ftn,*.f77,*.f90,*.f95,*.f03,*.f08	setf fortran
+" CUDA Fortran
+au BufNewFile,BufRead   *.cuf  setf fortran
 
 " Fortran or Forth
 au BufNewFile,BufRead *.f			call dist#ft#FTf()

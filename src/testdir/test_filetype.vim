@@ -300,7 +300,7 @@ def s:GetFilenameChecks(): dict<list<string>>
     focexec: ['file.fex', 'file.focexec'],
     form: ['file.frm'],
     forth: ['file.ft', 'file.fth', 'file.4th'],
-    fortran: ['file.f', 'file.for', 'file.fortran', 'file.fpp', 'file.ftn', 'file.f77', 'file.f90', 'file.f95', 'file.f03', 'file.f08'],
+    fortran: ['file.f', 'file.for', 'file.fortran', 'file.fpp', 'file.ftn', 'file.f77', 'file.f90', 'file.f95', 'file.f03', 'file.f08', 'file.cuf'],
     fpcmake: ['file.fpc'],
     framescript: ['file.fsl'],
     freebasic: ['file.fb'],
