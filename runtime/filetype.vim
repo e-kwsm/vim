@@ -1317,6 +1317,8 @@ au BufNewFile,BufRead *.y			call dist#ft#FTy()
 
 " Yaml
 au BufNewFile,BufRead */.kube/config,*/.kube/kuberc	setf yaml
+" MongDB configuration
+au BufNewFile,BufRead mongodb.conf		setf yaml
 
 " yum conf (close enough to dosini)
 au BufNewFile,BufRead */etc/yum.conf		setf dosini
