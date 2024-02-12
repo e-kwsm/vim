@@ -136,7 +136,7 @@ syn match fortranType           "\<enum\s*,\s*bind\s*(\s*c\s*)"
 syn match fortranType           "\<end\s*\%(enum\|type\)\>"
 syn match fortranType           "\<\%(end\s*\)\?enumeration\s\+type\>"
 syn match fortranType           "\<\%(end\s*\)\?\%(module\s\+\)\?procedure\>"
-syn match fortranType           "\%(simple \|pure \|impure \|recursive \|non_recursive \|elemental \|module \)\@17<=\%(real\|double precision\|integer\|logical\|complex\|character\)"
+syn match fortranType           "\<\%(simple\|pure\|impure\|recursive\|non_recursive\|elemental\|module\)\s\+\@17<=\%(real\|double precision\|integer\|logical\|complex\|character\)\>"
 syn match fortranTypeR	       	display "\<double\s*precision\>"
 syn match fortranTypeR  	display "\<double\s\+complex\>"
 syn keyword fortranAttribute    abstract allocatable bind codimension contiguous deferred dimension extends
@@ -243,7 +243,7 @@ syn match fortranSpecifier     	'\%(\%((\|,\|, *&\n\)\s*\)\@<=\%(new_index\|newu
 syn match fortranSpecifier     	'\%(\%((\|,\|, *&\n\)\s*\)\@<=\%(read\|readwrite\|rec\|recl\|round\|sequential\|sign\|size\)\ze\s*='
 syn match fortranSpecifier     	'\%(\%((\|,\|, *&\n\)\s*\)\@<=\%(source\|stat\|status\|stream\|team\|team_number\|unformatted\|unit\|until_count\|write\)\ze\s*='
 syn match fortranSpecifier      "\%((\s*\)\@<=\%(un\)\?formatted\ze\s*)"
-syn match fortranSpecifier      "\%(local\|local_init\|reduce\|shared\)\ze\s*("
+syn match fortranSpecifier      "\<\%(local\|local_init\|reduce\|shared\)\ze\s*("
 syn match fortranSpecifier      "\<default\s*(\s*none\s*)"
 syn keyword fortranIOR		format namelist
 
