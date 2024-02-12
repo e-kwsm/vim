@@ -136,7 +136,7 @@ syn match fortranType           "\<enum\s*,\s*bind\s*(\s*c\s*)"
 syn match fortranType           "\<end\s*\%(enum\|type\)\>"
 syn match fortranType           "\<\%(end\s*\)\?enumeration\s\+type\>"
 syn match fortranType           "\<\%(end\s*\)\?\%(module\s\+\)\?procedure\>"
-syn match fortranType           "\%(simple \|pure \|impure \|recursive \|non_recursive \|elemental \|module \)\@17<=\%(real\|double precision\|integer\|logical\|complex\|character\)"
+syn match fortranType           "\<\%(simple\|pure\|impure\|recursive\|non_recursive\|elemental\|module\)\s\+\@17<=\%(real\|double precision\|integer\|logical\|complex\|character\)\>"
 syn match fortranTypeR	       	display "\<double\s*precision\>"
 syn match fortranTypeR  	display "\<double\s\+complex\>"
 syn keyword fortranAttribute    abstract allocatable bind codimension contiguous deferred dimension extends
@@ -243,7 +243,7 @@ syn match fortranSpecifier     	'\%(\%((\|,\|, *&\n\)\s*\)\@<=\%(new_index\|newu
 syn match fortranSpecifier     	'\%(\%((\|,\|, *&\n\)\s*\)\@<=\%(read\|readwrite\|rec\|recl\|round\|sequential\|sign\|size\)\ze\s*='
 syn match fortranSpecifier     	'\%(\%((\|,\|, *&\n\)\s*\)\@<=\%(source\|stat\|status\|stream\|team\|team_number\|unformatted\|unit\|until_count\|write\)\ze\s*='
 syn match fortranSpecifier      "\%((\s*\)\@<=\%(un\)\?formatted\ze\s*)"
-syn match fortranSpecifier      "\%(local\|local_init\|reduce\|shared\)\ze\s*("
+syn match fortranSpecifier      "\<\%(local\|local_init\|reduce\|shared\)\ze\s*("
 syn match fortranSpecifier      "\<default\s*(\s*none\s*)"
 syn keyword fortranIOR		format namelist
 
@@ -274,7 +274,7 @@ syn match fortranStorageClassOb         "\<common\>\%(\s*\%(/\|\a\)\)\@="
 syn match fortranStorageClassOb         "\<equivalence\>\%(\s*(\)\@="
 
 syn keyword fortranConstant             c_null_char c_alert c_backspace c_form_feed c_new_line c_carriage_return c_horizontal_tab c_vertical_tab c_ptrdiff_t
-syn keyword fortranConstant             c_int c_short c_long c_long_long c_signed_char c_size_t c_int8_t c_int16_t c_int32_t c_int64_t c_int_least8_t c_int_least16_t c_int_least32_t c_int_least64_t c_int_fast8_t c_int_fast16_t c_int_fast32_t c_int_fast64_t c_intmax_t C_intptr_t c_float c_double c_long_double c_float_complex c_double_complex c_long_double_complex c_bool c_char c_null_ptr c_null_funptr
+syn keyword fortranConstant             c_int c_short c_long c_long_long c_signed_char c_size_t c_int8_t c_int16_t c_int32_t c_int64_t c_int128_t c_int_least8_t c_int_least16_t c_int_least32_t c_int_least64_t c_int_least128_t c_int_fast8_t c_int_fast16_t c_int_fast32_t c_int_fast64_t c_int_fast128_t c_intmax_t C_intptr_t c_float c_double c_long_double c_float128 c_float_complex c_double_complex c_long_double_complex c_float128_complex c_bool c_char c_null_ptr c_null_funptr
 syn keyword fortranConstant             character_storage_size error_unit file_storage_size input_unit iostat_end iostat_eor numeric_storage_size output_unit stat_failed_image stat_locked stat_locked_other_image stat_stopped_image stat_unlocked stat_unlocked_failed_image
 syn keyword fortranConstant             int8 int16 int32 int64 real16 real32 real64 real128 character_kinds integer_kinds logical_kinds real_kinds iostat_inquire_internal_unit initial_team current_team parent_team
 syn keyword fortranConstant             ieee_invalid ieee_overflow ieee_divide_by_zero ieee_underflow ieee_inexact ieee_usual ieee_all
