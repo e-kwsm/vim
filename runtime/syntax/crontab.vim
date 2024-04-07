@@ -21,18 +21,18 @@ syntax match crontabVar "^\s*\k\w*\s*="me=e-1
 
 syntax case ignore
 
-syntax match crontabMin "^\s*[-~0-9/,.*]\+" nextgroup=crontabHr skipwhite
-syntax match crontabHr "\s[-~0-9/,.*]\+" nextgroup=crontabDay skipwhite contained
-syntax match crontabDay "\s[-~0-9/,.*]\+" nextgroup=crontabMnth skipwhite contained
+syntax match crontabMin "^\s*\zs[-~0-9/,.*]\+" nextgroup=crontabHr skipwhite
+syntax match crontabHr "\s\+\zs[-~0-9/,.*]\+" nextgroup=crontabDay skipwhite contained
+syntax match crontabDay "\s\+\zs[-~0-9/,.*]\+" nextgroup=crontabMnth skipwhite contained
 
-syntax match crontabMnth "\s[-~a-z0-9/,.*]\+" nextgroup=crontabDow skipwhite contained
+syntax match crontabMnth "\s\+\zs[-~a-z0-9/,.*]\+" nextgroup=crontabDow skipwhite contained
 syntax keyword crontabMnth12 contained jan feb mar apr may jun jul aug sep oct nov dec
 
-syntax match crontabDow "\s[-~a-z0-9/,.*]\+" nextgroup=crontabCmd skipwhite contained
+syntax match crontabDow "\s\+\zs[-~a-z0-9/,.*]\+" nextgroup=crontabCmd skipwhite contained
 syntax keyword crontabDow7 contained sun mon tue wed thu fri sat
 
 syntax region crontabCmd start="\S" end="$" skipwhite contained keepend contains=crontabPercent
-syntax match crontabCmnt "^\s*#.*" contains=@Spell
+syntax match crontabCmnt "^\s*\zs#.*" contains=@Spell
 syntax match crontabPercent "[^\\]%.*"lc=1 contained
 
 " Define the default highlighting.
