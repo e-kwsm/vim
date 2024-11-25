@@ -34,9 +34,9 @@ syn region     poMsgID	matchgroup=poStatementMsgid start=+^msgid "+rs=e-1 matchg
 syn region     poMsgSTR	matchgroup=poStatementMsgstr start=+^msgstr\%(\>\|\[[\]0\[]\]\) "+rs=e-1 matchgroup=poStringSTR end=+\n\n+me=s-1 contains=poStringSTR,poStatementMsgstr
 syn region poStringCTxt	start=+"+ skip=+\\\\\|\\"+ end=+"+
 syn region poStringID	start=+"+ skip=+\\\\\|\\"+ end=+"+ contained
-                            \ contains=poSpecial,poFormat,poCommentKDE,poPluralKDE,poKDEdesktopFile,poHtml,poAcceleratorId,poHtmlNot,poVariable
+                            \ contains=poSpecial,poFormat,poCommentKDE,poPluralKDE,poKDEdesktopFile,poHtml,poAcceleratorId,poHtmlNot,poVariable,poQtFormat
 syn region poStringSTR	start=+"+ skip=+\\\\\|\\"+ end=+"+ contained
-                            \ contains=@Spell,poSpecial,poFormat,poHeaderItem,poCommentKDEError,poHeaderUndefined,poPluralKDEError,poMsguniqError,poKDEdesktopFile,poHtml,poAcceleratorStr,poHtmlNot,poVariable
+                            \ contains=@Spell,poSpecial,poFormat,poHeaderItem,poCommentKDEError,poHeaderUndefined,poPluralKDEError,poMsguniqError,poKDEdesktopFile,poHtml,poAcceleratorStr,poHtmlNot,poVariable,poQtFormat
 
 " Header and Copyright
 syn match     poHeaderItem "\<\%(Project-Id-Version\|Report-Msgid-Bugs-To\|POT-Creation-Date\|PO-Revision-Date\|Last-Translator\|Language-Team\|Language\|MIME-Version\|Content-Type\|Content-Transfer-Encoding\|Plural-Forms\|X-Generator\): " contained
@@ -92,6 +92,9 @@ syn region poPluralKDEError   start=+"\%(\|\s\+\)_n:+ms=s+1 end="\"\n\n"me=s-1 c
 syn match  poSpecial	contained "\\\%(x\x\+\|\o\{1,3}\|.\|$\)"
 syn match  poFormat	"%\%(\d\+\$\)\=[-+' #0*]*\%(\d*\|\*\|\*\d\+\$\)\%(\.\%(\d*\|\*\|\*\d\+\$\)\)\=\%([hlL]\|ll\)\=\%([diuoxXfeEgGcCsSpn]\|\[\^\=.[^]]*\]\)" contained
 syn match  poFormat	"%%" contained
+
+" qt-format (localized placeholder)
+syn match poQtFormat contained "%L\d"
 
 " msguniq and msgcat conflicts
 syn region poMsguniqError matchgroup=poMsguniqErrorMarkers  start="#-#-#-#-#"  end='#\%("\n"\|\)-\%("\n"\|\)#\%("\n"\|\)-\%("\n"\|\)#\%("\n"\|\)-\%("\n"\|\)#\%("\n"\|\)-\%("\n"\|\)#\%("\n"\|\)\\n' contained
@@ -150,6 +153,7 @@ hi def link poSpecial	    Special
 hi def link poAcceleratorId    Special
 hi def link poAcceleratorStr   Special
 hi def link poVariable         Special
+hi def link poQtFormat	       Special
 
 hi def link poMsguniqError        Special
 hi def link poMsguniqErrorMarkers Comment
