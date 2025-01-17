@@ -287,7 +287,7 @@ syn match texDelimiter		"&"
 syn match texDelimiter		"\\\\"
 
 " Tex/Latex Options: {{{1
-syn match texOption		"[^\\]\zs#\d\+\|^#\d\+"
+syn match texOption		"[^\\]\zs#\d\|^#\d"
 
 " texAccent (tnx to Karim Belabas) avoids annoying highlighting for accents: {{{1
 if b:tex_stylish
@@ -693,7 +693,7 @@ else
   syn match texDefName contained		"\\\A"					nextgroup=texDefParms,texCmdBody skipwhite skipnl
 endif
 syn match texDefParms  contained		"#[^{]*"	contains=texDefParm	nextgroup=texCmdBody skipwhite skipnl
-syn match  texDefParm  contained		"#\d\+"
+syn match  texDefParm  contained		"#\d"
 
 " TeX Lengths: {{{1
 syn match  texLength		"\<\d\+\([.,]\d\+\)\=\s*\(true\)\=\s*\(bp\|cc\|cm\|dd\|em\|ex\|in\|mm\|pc\|pt\|sp\)\>"
