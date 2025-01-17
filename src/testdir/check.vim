@@ -95,7 +95,7 @@ func CheckUnix()
   endif
 endfunc
 
-" Command to check for running on Linix
+" Command to check for running on Linux
 command CheckLinux call CheckLinux()
 func CheckLinux()
   if !has('linux')
@@ -108,6 +108,22 @@ command CheckNotBSD call CheckNotBSD()
 func CheckNotBSD()
   if has('bsd')
     throw 'Skipped: does not work on BSD'
+  endif
+endfunc
+
+" Command to check for not running on a MacOS
+command CheckNotMac call CheckNotMac()
+func CheckNotMac()
+  if has('mac')
+    throw 'Skipped: does not work on MacOS'
+  endif
+endfunc
+
+" Command to check for not running on a MacOS M1 system.
+command CheckNotMacM1 call CheckNotMacM1()
+func CheckNotMacM1()
+  if has('mac') && system('uname -a') =~ '\<arm64\>'
+    throw 'Skipped: does not work on MacOS M1'
   endif
 endfunc
 
@@ -141,6 +157,14 @@ command -nargs=1 CheckEnv call CheckEnv(<f-args>)
 func CheckEnv(name)
   if empty(eval('$' .. a:name))
     throw 'Skipped: Environment variable ' .. a:name .. ' is not set'
+  endif
+endfunc
+
+" Command to Check for pure X11 (no Wayland)
+command -nargs=0 CheckX11 call CheckX11()
+func CheckX11()
+  if !empty($WAYLAND_DISPLAY) || empty($DISPLAY)
+    throw 'Skipped: not pure X11 environment'
   endif
 endfunc
 
@@ -217,11 +241,28 @@ func CheckNotAsan()
   endif
 endfunc
 
+" Command to check for not running under valgrind
+command CheckNotValgrind call CheckNotValgrind()
+func CheckNotValgrind()
+  if RunningWithValgrind()
+    throw 'Skipped: does not work well with valgrind'
+  endif
+endfunc
+
 " Command to check for X11 based GUI
 command CheckX11BasedGui call CheckX11BasedGui()
 func CheckX11BasedGui()
   if !g:x11_based_gui
     throw 'Skipped: requires X11 based GUI'
+  endif
+endfunc
+
+" Command to check that there are two clipboards
+command CheckTwoClipboards call CheckTwoClipboards()
+func CheckTwoClipboards()
+  " avoid changing the clipboard here, only X11 supports both
+  if !has('X11')
+    throw 'Skipped: requires two clipboards'
   endif
 endfunc
 

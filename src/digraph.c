@@ -30,340 +30,13 @@ static void printdigraph(digr_T *dp, result_T *previous);
 static garray_T	user_digraphs = {0, 0, (int)sizeof(digr_T), 10, NULL};
 
 /*
+ * digraphs for Unicode from RFC1345
+ * (also work for ISO-8859-1 aka latin1)
+ *
  * Note: Characters marked with XX are not included literally, because some
  * compilers cannot handle them (Amiga SAS/C is the most picky one).
  */
-static digr_T digraphdefault[] =
-
-#ifdef HPUX_DIGRAPHS
-	/*
-	 * different HPUX digraphs
-	 */
-       {{'A', '`', 161},	// ¡
-	{'A', '^', 162},	// ¢
-	{'E', '`', 163},	// £
-	{'E', '^', 164},	// ¤
-	{'E', '"', 165},	// ¥
-	{'I', '^', 166},	// ¦
-	{'I', '"', 167},	// §
-	{'\'', '\'', 168},	// ¨
-	{'`', '`', 169},	// ©
-	{'^', '^', 170},	// ª
-	{'"', '"', 171},	// «
-	{'~', '~', 172},	// ¬
-	{'U', '`', 173},	// ­
-	{'U', '^', 174},	// ®
-	{'L', '=', 175},	// ¯
-	{'~', '_', 176},	// °
-	{'Y', '\'', 177},	// ±
-	{'y', '\'', 178},	// ²
-	{'~', 'o', 179},	// ³
-	{'C', ',', 180},	// ´
-	{'c', ',', 181},	// µ
-	{'N', '~', 182},	// ¶
-	{'n', '~', 183},	// ·
-	{'~', '!', 184},	// ¸
-	{'~', '?', 185},	// ¹
-	{'o', 'x', 186},	// º
-	{'L', '-', 187},	// »
-	{'Y', '=', 188},	// ¼
-	{'p', 'p', 189},	// ½
-	{'f', 'l', 190},	// ¾
-	{'c', '|', 191},	// ¿
-	{'a', '^', 192},	// À
-	{'e', '^', 193},	// Á
-	{'o', '^', 194},	// Â
-	{'u', '^', 195},	// Ã
-	{'a', '\'', 196},	// Ä
-	{'e', '\'', 197},	// Å
-	{'o', '\'', 198},	// Æ
-	{'u', '\'', 199},	// Ç
-	{'a', '`', 200},	// È
-	{'e', '`', 201},	// É
-	{'o', '`', 202},	// Ê
-	{'u', '`', 203},	// Ë
-	{'a', '"', 204},	// Ì
-	{'e', '"', 205},	// Í
-	{'o', '"', 206},	// Î
-	{'u', '"', 207},	// Ï
-	{'A', 'o', 208},	// Ð
-	{'i', '^', 209},	// Ñ
-	{'O', '/', 210},	// Ò
-	{'A', 'E', 211},	// Ó
-	{'a', 'o', 212},	// Ô
-	{'i', '\'', 213},	// Õ
-	{'o', '/', 214},	// Ö
-	{'a', 'e', 215},	// ×
-	{'A', '"', 216},	// Ø
-	{'i', '`', 217},	// Ù
-	{'O', '"', 218},	// Ú
-	{'U', '"', 219},	// Û
-	{'E', '\'', 220},	// Ü
-	{'i', '"', 221},	// Ý
-	{'s', 's', 222},	// Þ
-	{'O', '^', 223},	// ß
-	{'A', '\'', 224},	// à
-	{'A', '~', 225},	// á
-	{'a', '~', 226},	// â
-	{'D', '-', 227},	// ã
-	{'d', '-', 228},	// ä
-	{'I', '\'', 229},	// å
-	{'I', '`', 230},	// æ
-	{'O', '\'', 231},	// ç
-	{'O', '`', 232},	// è
-	{'O', '~', 233},	// é
-	{'o', '~', 234},	// ê
-	{'S', '~', 235},	// ë
-	{'s', '~', 236},	// ì
-	{'U', '\'', 237},	// í
-	{'Y', '"', 238},	// î
-	{'y', '"', 239},	// ï
-	{'p', '-', 240},	// ð
-	{'p', '~', 241},	// ñ
-	{'~', '.', 242},	// ò
-	{'j', 'u', 243},	// ó
-	{'P', 'p', 244},	// ô
-	{'3', '4', 245},	// õ
-	{'-', '-', 246},	// ö
-	{'1', '4', 247},	// ÷
-	{'1', '2', 248},	// ø
-	{'a', '_', 249},	// ù
-	{'o', '_', 250},	// ú
-	{'<', '<', 251},	// û
-	{'x', 'x', 252},	// ü
-	{'>', '>', 253},	// ý
-	{'+', '-', 254},	// þ
-	{'n', 'u', 255},	// x XX
-	{NUL, NUL, NUL}
-	};
-
-#else	// !HPUX_DIGRAPHS
-
-# ifdef EBCDIC
-
-	/*
-	 * EBCDIC - ISO digraphs
-	 * TODO: EBCDIC Table is Code-Page 1047
-	 */
-       {{'a', '^',    66},	// â
-	{'a', '"',    67},	// ä
-	{'a', '`',    68},	// à
-	{'a', '\'',   69},	// á
-	{'a', '~',    70},	// ã
-	{'a', '@',    71},	// å
-	{'a', 'a',    71},	// å
-	{'c', ',',    72},	// ç
-	{'n', '~',    73},	// ñ
-	{'c', '|',    74},	// ¢
-	{'e', '\'',   81},	// é
-	{'e', '^',    82},	// ê
-	{'e', '"',    83},	// ë
-	{'e', '`',    84},	// è
-	{'i', '\'',   85},	// í
-	{'i', '^',    86},	// î
-	{'i', '"',    87},	// ï
-	{'i', '`',    88},	// ì
-	{'s', 's',    89},	// ß
-	{'A', '^',    98},	// Â
-	{'A', '"',    99},	// Ä
-	{'A', '`',   100},	// À
-	{'A', '\'',  101},	// Á
-	{'A', '~',   102},	// Ã
-	{'A', '@',   103},	// Å
-	{'A', 'A',   103},	// Å
-	{'C', ',',   104},	// Ç
-	{'N', '~',   105},	// Ñ
-	{'|', '|',   106},	// ¦
-	{'o', '/',   112},	// ø
-	{'E', '\'',  113},	// É
-	{'E', '^',   114},	// Ê
-	{'E', '"',   115},	// Ë
-	{'E', '`',   116},	// È
-	{'I', '\'',  117},	// Í
-	{'I', '^',   118},	// Î
-	{'I', '"',   119},	// Ï
-	{'I', '`',   120},	// Ì
-	{'O', '/',   128},	// 0/ XX
-	{'<', '<',   138},	// «
-	{'>', '>',   139},	// »
-	{'d', '-',   140},	// ð
-	{'y', '\'',  141},	// ý
-	{'i', 'p',   142},	// þ
-	{'+', '-',   143},	// ±
-	{'~', 'o',   144},	// °
-	{'a', '-',   154},	// ª
-	{'o', '-',   155},	// º
-	{'a', 'e',   156},	// æ
-	{',', ',',   157},	// , XX
-	{'A', 'E',   158},	// Æ
-	{'o', 'x',   159},	// ¤ - currency symbol in ISO 8859-1
-	{'e', '=',   159},	// ¤ - euro symbol in ISO 8859-15
-	{'E', 'u',   159},	// ¤ - euro symbol in ISO 8859-15
-	{'j', 'u',   160},	// µ
-	{'y', '"',   167},	// x XX
-	{'~', '!',   170},	// ¡
-	{'~', '?',   171},	// ¿
-	{'D', '-',   172},	// Ð
-	{'I', 'p',   174},	// Þ
-	{'r', 'O',   175},	// ®
-	{'-', ',',   176},	// ¬
-	{'$', '$',   177},	// £
-	{'Y', '-',   178},	// ¥
-	{'~', '.',   179},	// ·
-	{'c', 'O',   180},	// ©
-	{'p', 'a',   181},	// §
-	{'p', 'p',   182},	// ¶
-	{'1', '4',   183},	// ¼
-	{'1', '2',   184},	// ½
-	{'3', '4',   185},	// ¾
-	{'Y', '\'',  186},	// Ý
-	{'"', '"',   187},	// ¨
-	{'-', '=',   188},	// ¯
-	{'\'', '\'', 190},	// ´
-	{'O', 'E',   191},	// × - OE in ISO 8859-15
-	{'/', '\\',  191},	// × - multiplication symbol in ISO 8859-1
-	{'-', '-',   202},	// ­
-	{'o', '^',   203},	// ô
-	{'o', '"',   204},	// ö
-	{'o', '`',   205},	// ò
-	{'o', '\'',  206},	// ó
-	{'o', '~',   207},	// õ
-	{'1', '1',   218},	// ¹
-	{'u', '^',   219},	// û
-	{'u', '"',   220},	// ü
-	{'u', '`',   221},	// ù
-	{'u', '\'',  222},	// ú
-	{':', '-',   225},	// ÷ - division symbol in ISO 8859-1
-	{'o', 'e',   225},	// ÷ - oe in ISO 8859-15
-	{'2', '2',   234},	// ²
-	{'O', '^',   235},	// Ô
-	{'O', '"',   236},	// Ö
-	{'O', '`',   237},	// Ò
-	{'O', '\'',  238},	// Ó
-	{'O', '~',   239},	// Õ
-	{'3', '3',   250},	// ³
-	{'U', '^',   251},	// Û
-	{'U', '"',   252},	// Ü
-	{'U', '`',   253},	// Ù
-	{'U', '\'',  254},	// Ú
-	{NUL, NUL, NUL}
-	};
-
-# else // EBCDIC
-#  ifdef OLD_DIGRAPHS
-
-	/*
-	 * digraphs compatible with Vim 5.x
-	 */
-       {{'~', '!', 161},	// ¡
-	{'c', '|', 162},	// ¢
-	{'$', '$', 163},	// £
-	{'o', 'x', 164},	// ¤ - currency symbol in ISO 8859-1
-	{'e', '=', 164},	// ¤ - euro symbol in ISO 8859-15
-	{'Y', '-', 165},	// ¥
-	{'|', '|', 166},	// ¦
-	{'p', 'a', 167},	// §
-	{'"', '"', 168},	// ¨
-	{'c', 'O', 169},	// ©
-	{'a', '-', 170},	// ª
-	{'<', '<', 171},	// «
-	{'-', ',', 172},	// ¬
-	{'-', '-', 173},	// ­
-	{'r', 'O', 174},	// ®
-	{'-', '=', 175},	// ¯
-	{'~', 'o', 176},	// °
-	{'+', '-', 177},	// ±
-	{'2', '2', 178},	// ²
-	{'3', '3', 179},	// ³
-	{'\'', '\'', 180},	// ´
-	{'j', 'u', 181},	// µ
-	{'p', 'p', 182},	// ¶
-	{'~', '.', 183},	// ·
-	{',', ',', 184},	// ¸
-	{'1', '1', 185},	// ¹
-	{'o', '-', 186},	// º
-	{'>', '>', 187},	// »
-	{'1', '4', 188},	// ¼
-	{'1', '2', 189},	// ½
-	{'3', '4', 190},	// ¾
-	{'~', '?', 191},	// ¿
-	{'A', '`', 192},	// À
-	{'A', '\'', 193},	// Á
-	{'A', '^', 194},	// Â
-	{'A', '~', 195},	// Ã
-	{'A', '"', 196},	// Ä
-	{'A', '@', 197},	// Å
-	{'A', 'A', 197},	// Å
-	{'A', 'E', 198},	// Æ
-	{'C', ',', 199},	// Ç
-	{'E', '`', 200},	// È
-	{'E', '\'', 201},	// É
-	{'E', '^', 202},	// Ê
-	{'E', '"', 203},	// Ë
-	{'I', '`', 204},	// Ì
-	{'I', '\'', 205},	// Í
-	{'I', '^', 206},	// Î
-	{'I', '"', 207},	// Ï
-	{'D', '-', 208},	// Ð
-	{'N', '~', 209},	// Ñ
-	{'O', '`', 210},	// Ò
-	{'O', '\'', 211},	// Ó
-	{'O', '^', 212},	// Ô
-	{'O', '~', 213},	// Õ
-	{'O', '"', 214},	// Ö
-	{'/', '\\', 215},	// × - multiplication symbol in ISO 8859-1
-	{'O', 'E', 215},	// × - OE in ISO 8859-15
-	{'O', '/', 216},	// Ø
-	{'U', '`', 217},	// Ù
-	{'U', '\'', 218},	// Ú
-	{'U', '^', 219},	// Û
-	{'U', '"', 220},	// Ü
-	{'Y', '\'', 221},	// Ý
-	{'I', 'p', 222},	// Þ
-	{'s', 's', 223},	// ß
-	{'a', '`', 224},	// à
-	{'a', '\'', 225},	// á
-	{'a', '^', 226},	// â
-	{'a', '~', 227},	// ã
-	{'a', '"', 228},	// ä
-	{'a', '@', 229},	// å
-	{'a', 'a', 229},	// å
-	{'a', 'e', 230},	// æ
-	{'c', ',', 231},	// ç
-	{'e', '`', 232},	// è
-	{'e', '\'', 233},	// é
-	{'e', '^', 234},	// ê
-	{'e', '"', 235},	// ë
-	{'i', '`', 236},	// ì
-	{'i', '\'', 237},	// í
-	{'i', '^', 238},	// î
-	{'i', '"', 239},	// ï
-	{'d', '-', 240},	// ð
-	{'n', '~', 241},	// ñ
-	{'o', '`', 242},	// ò
-	{'o', '\'', 243},	// ó
-	{'o', '^', 244},	// ô
-	{'o', '~', 245},	// õ
-	{'o', '"', 246},	// ö
-	{':', '-', 247},	// ÷ - division symbol in ISO 8859-1
-	{'o', 'e', 247},	// ÷ - oe in ISO 8859-15
-	{'o', '/', 248},	// ø
-	{'u', '`', 249},	// ù
-	{'u', '\'', 250},	// ú
-	{'u', '^', 251},	// û
-	{'u', '"', 252},	// ü
-	{'y', '\'', 253},	// ý
-	{'i', 'p', 254},	// þ
-	{'y', '"', 255},	// x XX
-	{NUL, NUL, NUL}
-	};
-#  else // OLD_DIGRAPHS
-
-	/*
-	 * digraphs for Unicode from RFC1345
-	 * (also work for ISO-8859-1 aka latin1)
-	 */
-       {
+static digr_T digraphdefault[] = {
 	{'N', 'U', 0x0a},	// LF for NUL
 	{'S', 'H', 0x01},
 	{'S', 'X', 0x02},
@@ -1180,6 +853,7 @@ static digr_T digraphdefault[] =
 	{'1', '\'', 0x2032},
 	{'2', '\'', 0x2033},
 	{'3', '\'', 0x2034},
+	{'4', '\'', 0x2057},
 	{'1', '"', 0x2035},
 	{'2', '"', 0x2036},
 	{'3', '"', 0x2037},
@@ -1758,12 +1432,8 @@ static digr_T digraphdefault[] =
 	{'f', 't', 0xfb05},
 	{'s', 't', 0xfb06},
 
-	{NUL, NUL, NUL}
-       };
-
-#  endif // OLD_DIGRAPHS
-# endif // EBCDIC
-#endif // !HPUX_DIGRAPHS
+	{NUL, NUL, NUL}  // end marker
+};
 
 /*
  * handle digraphs after typing a character
@@ -1864,31 +1534,30 @@ get_digraph(
     c = plain_vgetc();
     --no_mapping;
     --allow_keys;
-    if (c != ESC)		// ESC cancels CTRL-K
+
+    if (c == ESC)		// ESC cancels CTRL-K
+	return NUL;
+
+    if (IS_SPECIAL(c))	// insert special key code
+	return c;
+    if (cmdline)
     {
-	if (IS_SPECIAL(c))	// insert special key code
-	    return c;
-	if (cmdline)
-	{
-	    if (char2cells(c) == 1
+	if (char2cells(c) == 1
 #if defined(FEAT_CRYPT) || defined(FEAT_EVAL)
-		    && cmdline_star == 0
+		&& cmdline_star == 0
 #endif
-		    )
-		putcmdline(c, TRUE);
-	}
-#ifdef FEAT_CMDL_INFO
-	else
-	    add_to_showcmd(c);
-#endif
-	++no_mapping;
-	++allow_keys;
-	cc = plain_vgetc();
-	--no_mapping;
-	--allow_keys;
-	if (cc != ESC)	    // ESC cancels CTRL-K
-	    return digraph_get(c, cc, TRUE);
+	   )
+	    putcmdline(c, TRUE);
     }
+    else
+	add_to_showcmd(c);
+    ++no_mapping;
+    ++allow_keys;
+    cc = plain_vgetc();
+    --no_mapping;
+    --allow_keys;
+    if (cc != ESC)	    // ESC cancels CTRL-K
+	return digraph_get(c, cc, TRUE);
     return NUL;
 }
 
@@ -1927,7 +1596,7 @@ getexactdigraph(int char1, int char2, int meta_char)
     if (retval == 0)
     {
 	dp = digraphdefault;
-	for (i = 0; dp->char1 != 0; ++i)
+	while (dp->char1 != 0)
 	{
 	    if ((int)dp->char1 == char1 && (int)dp->char2 == char2)
 	    {
@@ -2014,14 +1683,14 @@ registerdigraph(int char1, int char2, int n)
     }
 
     // Add a new digraph to the table.
-    if (ga_grow(&user_digraphs, 1) == OK)
-    {
-	dp = (digr_T *)user_digraphs.ga_data + user_digraphs.ga_len;
-	dp->char1 = char1;
-	dp->char2 = char2;
-	dp->result = n;
-	++user_digraphs.ga_len;
-    }
+    if (ga_grow(&user_digraphs, 1) == FAIL)
+	return;
+
+    dp = (digr_T *)user_digraphs.ga_data + user_digraphs.ga_len;
+    dp->char1 = char1;
+    dp->char2 = char2;
+    dp->result = n;
+    ++user_digraphs.ga_len;
 }
 
 /*
@@ -2043,7 +1712,7 @@ check_digraph_chars_valid(int char1, int char2)
     }
     if (char1 == ESC || char2 == ESC)
     {
-	emsg(_("E104: Escape not allowed in digraph"));
+	emsg(_(e_escape_not_allowed_in_digraph));
 	return FALSE;
     }
     return TRUE;
@@ -2104,7 +1773,7 @@ listdigraphs(int use_headers)
     msg_putchar('\n');
 
     dp = digraphdefault;
-    for (i = 0; dp->char1 != NUL && !got_int; ++i)
+    while (dp->char1 != NUL && !got_int)
     {
 #if defined(USE_UNICODE_DIGRAPHS)
 	digr_T tmp;
@@ -2138,8 +1807,10 @@ listdigraphs(int use_headers)
 	ui_breakcheck();
 	++dp;
     }
-    must_redraw = CLEAR;    // clear screen, because some digraphs may be
-			    // wrong, in which case we messed up ScreenLines
+
+    // clear screen, because some digraphs may be wrong, in which case we
+    // messed up ScreenLines
+    set_must_redraw(UPD_CLEAR);
 }
 
     static void
@@ -2205,7 +1876,7 @@ digraph_getlist_common(int list_all, typval_T *rettv)
     if (list_all)
     {
 	dp = digraphdefault;
-	for (i = 0; dp->char1 != NUL && !got_int; ++i)
+	while (dp->char1 != NUL && !got_int)
 	{
 #ifdef USE_UNICODE_DIGRAPHS
 	    digr_T tmp;
@@ -2279,54 +1950,54 @@ printdigraph(digr_T *dp, result_T *previous)
     else
 	list_width = 11;
 
-    if (dp->result != 0)
-    {
+    if (dp->result == 0)
+	return;
+
 #if defined(USE_UNICODE_DIGRAPHS)
-	if (previous != NULL)
-	{
-	    int i;
+    if (previous != NULL)
+    {
+	int i;
 
-	    for (i = 0; header_table[i].dg_header != NULL; ++i)
-		if (*previous < header_table[i].dg_start
-			&& dp->result >= header_table[i].dg_start
-			&& dp->result < header_table[i + 1].dg_start)
-		{
-		    digraph_header(_(header_table[i].dg_header));
-		    break;
-		}
-	    *previous = dp->result;
-	}
-#endif
-	if (msg_col > Columns - list_width)
-	    msg_putchar('\n');
-	if (msg_col)
-	    while (msg_col % list_width != 0)
-		msg_putchar(' ');
-
-	p = buf;
-	*p++ = dp->char1;
-	*p++ = dp->char2;
-	*p++ = ' ';
-	*p = NUL;
-	msg_outtrans(buf);
-	p = buf;
-	if (has_mbyte)
-	{
-	    // add a space to draw a composing char on
-	    if (enc_utf8 && utf_iscomposing(dp->result))
-		*p++ = ' ';
-	    p += (*mb_char2bytes)(dp->result, p);
-	}
-	else
-	    *p++ = (char_u)dp->result;
-	*p = NUL;
-	msg_outtrans_attr(buf, HL_ATTR(HLF_8));
-	p = buf;
-	if (char2cells(dp->result) == 1)
-	    *p++ = ' ';
-	vim_snprintf((char *)p, sizeof(buf) - (p - buf), " %3d", dp->result);
-	msg_outtrans(buf);
+	for (i = 0; header_table[i].dg_header != NULL; ++i)
+	    if (*previous < header_table[i].dg_start
+		    && dp->result >= header_table[i].dg_start
+		    && dp->result < header_table[i + 1].dg_start)
+	    {
+		digraph_header(_(header_table[i].dg_header));
+		break;
+	    }
+	*previous = dp->result;
     }
+#endif
+    if (msg_col > Columns - list_width)
+	msg_putchar('\n');
+    if (msg_col)
+	while (msg_col % list_width != 0)
+	    msg_putchar(' ');
+
+    p = buf;
+    *p++ = dp->char1;
+    *p++ = dp->char2;
+    *p++ = ' ';
+    *p = NUL;
+    msg_outtrans(buf);
+    p = buf;
+    if (has_mbyte)
+    {
+	// add a space to draw a composing char on
+	if (enc_utf8 && utf_iscomposing(dp->result))
+	    *p++ = ' ';
+	p += (*mb_char2bytes)(dp->result, p);
+    }
+    else
+	*p++ = (char_u)dp->result;
+    *p = NUL;
+    msg_outtrans_attr(buf, HL_ATTR(HLF_8));
+    p = buf;
+    if (char2cells(dp->result) == 1)
+	*p++ = ' ';
+    vim_snprintf((char *)p, sizeof(buf) - (p - buf), " %3d", dp->result);
+    msg_outtrans(buf);
 }
 
 # ifdef FEAT_EVAL
@@ -2423,7 +2094,8 @@ f_digraph_get(typval_T *argvars, typval_T *rettv)
 
     if (has_mbyte)
 	buf[(*mb_char2bytes)(code, buf)] = NUL;
-    else {
+    else
+    {
 	buf[0] = code;
 	buf[1] = NUL;
     }
@@ -2443,17 +2115,15 @@ f_digraph_getlist(typval_T *argvars, typval_T *rettv)
 # ifdef FEAT_DIGRAPHS
     int     flag_list_all;
 
-    if (in_vim9script() && check_for_opt_bool_arg(argvars, 0) == FAIL)
+    if (check_for_opt_bool_arg(argvars, 0) == FAIL)
 	return;
 
     if (argvars[0].v_type == VAR_UNKNOWN)
 	flag_list_all = FALSE;
     else
     {
-	int         error = FALSE;
-	varnumber_T flag = tv_get_number_chk(&argvars[0], &error);
-	if (error)
-	    return;
+	varnumber_T flag = tv_get_bool(&argvars[0]);
+
 	flag_list_all = flag ? TRUE : FALSE;
     }
 
@@ -2596,7 +2266,7 @@ keymap_init(void)
 	    if (source_runtime(buf, 0) == FAIL)
 	    {
 		vim_free(buf);
-		return N_("E544: Keymap file not found");
+		return N_(e_keymap_file_not_found);
 	    }
 	}
 	vim_free(buf);
@@ -2620,9 +2290,9 @@ ex_loadkeymap(exarg_T *eap)
     int		i;
     char_u	*save_cpo = p_cpo;
 
-    if (!getline_equal(eap->getline, eap->cookie, getsourceline))
+    if (!sourcing_a_script(eap))
     {
-	emsg(_("E105: Using :loadkeymap not in a sourced file"));
+	emsg(_(e_using_loadkeymap_not_in_sourced_file));
 	return;
     }
 
@@ -2632,7 +2302,7 @@ ex_loadkeymap(exarg_T *eap)
     keymap_unload();
 
     curbuf->b_kmap_state = 0;
-    ga_init2(&curbuf->b_kmap_ga, (int)sizeof(kmap_T), 20);
+    ga_init2(&curbuf->b_kmap_ga, sizeof(kmap_T), 20);
 
     // Set 'cpoptions' to "C" to avoid line continuation.
     p_cpo = (char_u *)"C";
@@ -2642,7 +2312,7 @@ ex_loadkeymap(exarg_T *eap)
      */
     for (;;)
     {
-	line = eap->getline(0, eap->cookie, 0, TRUE);
+	line = eap->ea_getline(0, eap->cookie, 0, TRUE);
 	if (line == NULL)
 	    break;
 
@@ -2661,7 +2331,7 @@ ex_loadkeymap(exarg_T *eap)
 		    || *kp->from == NUL || *kp->to == NUL)
 	    {
 		if (kp->to != NULL && *kp->to == NUL)
-		    emsg(_("E791: Empty keymap entry"));
+		    emsg(_(e_empty_keymap_entry));
 		vim_free(kp->from);
 		vim_free(kp->to);
 	    }
@@ -2679,7 +2349,7 @@ ex_loadkeymap(exarg_T *eap)
 	vim_snprintf((char *)buf, sizeof(buf), "<buffer> %s %s",
 				((kmap_T *)curbuf->b_kmap_ga.ga_data)[i].from,
 				 ((kmap_T *)curbuf->b_kmap_ga.ga_data)[i].to);
-	(void)do_map(2, buf, LANGMAP, FALSE);
+	(void)do_map(MAPTYPE_NOREMAP, buf, MODE_LANGMAP, FALSE);
     }
 
     p_cpo = save_cpo;
@@ -2710,7 +2380,7 @@ keymap_unload(void)
     for (i = 0; i < curbuf->b_kmap_ga.ga_len; ++i)
     {
 	vim_snprintf((char *)buf, sizeof(buf), "<buffer> %s", kp[i].from);
-	(void)do_map(1, buf, LANGMAP, FALSE);
+	(void)do_map(MAPTYPE_UNMAP, buf, MODE_LANGMAP, FALSE);
     }
     keymap_clear(&curbuf->b_kmap_ga);
 

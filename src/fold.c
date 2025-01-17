@@ -65,8 +65,6 @@ static void foldDelMarker(linenr_T lnum, char_u *marker, int markerlen);
 static void foldUpdateIEMS(win_T *wp, linenr_T top, linenr_T bot);
 static void parseMarker(win_T *wp);
 
-static char *e_nofold = N_("E490: No fold found");
-
 /*
  * While updating the folds lines between invalid_top and invalid_bot have an
  * undefined fold level.  Only used for the window currently being updated.
@@ -109,7 +107,7 @@ copyFoldingState(win_T *wp_from, win_T *wp_to)
 
 // hasAnyFolding() {{{2
 /*
- * Return TRUE if there may be folded lines in the current window.
+ * Return TRUE if there may be folded lines in window "win".
  */
     int
 hasAnyFolding(win_T *win)
@@ -307,7 +305,7 @@ foldedCount(win_T *win, linenr_T lnum, foldinfo_T *infop)
     int
 foldmethodIsManual(win_T *wp)
 {
-    return (wp->w_p_fdm[3] == 'u');
+    return (wp->w_p_fdm[0] != NUL && wp->w_p_fdm[3] == 'u');
 }
 
 // foldmethodIsIndent() {{{2
@@ -327,7 +325,7 @@ foldmethodIsIndent(win_T *wp)
     int
 foldmethodIsExpr(win_T *wp)
 {
-    return (wp->w_p_fdm[1] == 'x');
+    return (wp->w_p_fdm[0] != NUL && wp->w_p_fdm[1] == 'x');
 }
 
 // foldmethodIsMarker() {{{2
@@ -337,7 +335,7 @@ foldmethodIsExpr(win_T *wp)
     int
 foldmethodIsMarker(win_T *wp)
 {
-    return (wp->w_p_fdm[2] == 'r');
+    return (wp->w_p_fdm[0] != NUL && wp->w_p_fdm[2] == 'r');
 }
 
 // foldmethodIsSyntax() {{{2
@@ -412,10 +410,10 @@ opFoldRange(
 	    (void)hasFolding(lnum, NULL, &lnum_next);
     }
     if (done == DONE_NOTHING)
-	emsg(_(e_nofold));
+	emsg(_(e_no_fold_found));
     // Force a redraw to remove the Visual highlighting.
     if (had_visual)
-	redraw_curbuf_later(INVERTED);
+	redraw_curbuf_later(UPD_INVERTED);
 }
 
 // openFold() {{{2
@@ -515,13 +513,14 @@ newFoldLevelWin(win_T *wp)
     void
 foldCheckClose(void)
 {
-    if (*p_fcl != NUL)	// can only be "all" right now
-    {
-	checkupdate(curwin);
-	if (checkCloseRec(&curwin->w_folds, curwin->w_cursor.lnum,
-							(int)curwin->w_p_fdl))
-	    changed_window_setting();
-    }
+    if (*p_fcl == NUL)
+	return;
+
+    // 'foldclose' can only be "all" right now
+    checkupdate(curwin);
+    if (checkCloseRec(&curwin->w_folds, curwin->w_cursor.lnum,
+		(int)curwin->w_p_fdl))
+	changed_window_setting();
 }
 
 // checkCloseRec() {{{2
@@ -552,7 +551,7 @@ checkCloseRec(garray_T *gap, linenr_T lnum, int level)
     return retval;
 }
 
-// foldCreateAllowed() {{{2
+// foldManualAllowed() {{{2
 /*
  * Return TRUE if it's allowed to manually create or delete a fold.
  * Give an error message and return FALSE if not.
@@ -563,9 +562,9 @@ foldManualAllowed(int create)
     if (foldmethodIsManual(curwin) || foldmethodIsMarker(curwin))
 	return TRUE;
     if (create)
-	emsg(_("E350: Cannot create fold with current 'foldmethod'"));
+	emsg(_(e_cannot_create_fold_with_current_foldmethod));
     else
-	emsg(_("E351: Cannot delete fold with current 'foldmethod'"));
+	emsg(_(e_cannot_delete_fold_with_current_foldmethod));
     return FALSE;
 }
 
@@ -646,59 +645,59 @@ foldCreate(linenr_T start, linenr_T end)
 	    i = (int)(fp - (fold_T *)gap->ga_data);
     }
 
-    if (ga_grow(gap, 1) == OK)
+    if (ga_grow(gap, 1) == FAIL)
+	return;
+
+    fp = (fold_T *)gap->ga_data + i;
+    ga_init2(&fold_ga, sizeof(fold_T), 10);
+
+    // Count number of folds that will be contained in the new fold.
+    for (cont = 0; i + cont < gap->ga_len; ++cont)
+	if (fp[cont].fd_top > end_rel)
+	    break;
+    if (cont > 0 && ga_grow(&fold_ga, cont) == OK)
     {
-	fp = (fold_T *)gap->ga_data + i;
-	ga_init2(&fold_ga, (int)sizeof(fold_T), 10);
+	// If the first fold starts before the new fold, let the new fold
+	// start there.  Otherwise the existing fold would change.
+	if (start_rel > fp->fd_top)
+	    start_rel = fp->fd_top;
 
-	// Count number of folds that will be contained in the new fold.
-	for (cont = 0; i + cont < gap->ga_len; ++cont)
-	    if (fp[cont].fd_top > end_rel)
-		break;
-	if (cont > 0 && ga_grow(&fold_ga, cont) == OK)
-	{
-	    // If the first fold starts before the new fold, let the new fold
-	    // start there.  Otherwise the existing fold would change.
-	    if (start_rel > fp->fd_top)
-		start_rel = fp->fd_top;
+	// When last contained fold isn't completely contained, adjust end
+	// of new fold.
+	if (end_rel < fp[cont - 1].fd_top + fp[cont - 1].fd_len - 1)
+	    end_rel = fp[cont - 1].fd_top + fp[cont - 1].fd_len - 1;
+	// Move contained folds to inside new fold.
+	mch_memmove(fold_ga.ga_data, fp, sizeof(fold_T) * cont);
+	fold_ga.ga_len += cont;
+	i += cont;
 
-	    // When last contained fold isn't completely contained, adjust end
-	    // of new fold.
-	    if (end_rel < fp[cont - 1].fd_top + fp[cont - 1].fd_len - 1)
-		end_rel = fp[cont - 1].fd_top + fp[cont - 1].fd_len - 1;
-	    // Move contained folds to inside new fold.
-	    mch_memmove(fold_ga.ga_data, fp, sizeof(fold_T) * cont);
-	    fold_ga.ga_len += cont;
-	    i += cont;
-
-	    // Adjust line numbers in contained folds to be relative to the
-	    // new fold.
-	    for (j = 0; j < cont; ++j)
-		((fold_T *)fold_ga.ga_data)[j].fd_top -= start_rel;
-	}
-	// Move remaining entries to after the new fold.
-	if (i < gap->ga_len)
-	    mch_memmove(fp + 1, (fold_T *)gap->ga_data + i,
-				     sizeof(fold_T) * (gap->ga_len - i));
-	gap->ga_len = gap->ga_len + 1 - cont;
-
-	// insert new fold
-	fp->fd_nested = fold_ga;
-	fp->fd_top = start_rel;
-	fp->fd_len = end_rel - start_rel + 1;
-
-	// We want the new fold to be closed.  If it would remain open because
-	// of using 'foldlevel', need to adjust fd_flags of containing folds.
-	if (use_level && !closed && level < curwin->w_p_fdl)
-	    closeFold(start, 1L);
-	if (!use_level)
-	    curwin->w_fold_manual = TRUE;
-	fp->fd_flags = FD_CLOSED;
-	fp->fd_small = MAYBE;
-
-	// redraw
-	changed_window_setting();
+	// Adjust line numbers in contained folds to be relative to the
+	// new fold.
+	for (j = 0; j < cont; ++j)
+	    ((fold_T *)fold_ga.ga_data)[j].fd_top -= start_rel;
     }
+    // Move remaining entries to after the new fold.
+    if (i < gap->ga_len)
+	mch_memmove(fp + 1, (fold_T *)gap->ga_data + i,
+		sizeof(fold_T) * (gap->ga_len - i));
+    gap->ga_len = gap->ga_len + 1 - cont;
+
+    // insert new fold
+    fp->fd_nested = fold_ga;
+    fp->fd_top = start_rel;
+    fp->fd_len = end_rel - start_rel + 1;
+
+    // We want the new fold to be closed.  If it would remain open because
+    // of using 'foldlevel', need to adjust fd_flags of containing folds.
+    if (use_level && !closed && level < curwin->w_p_fdl)
+	closeFold(start, 1L);
+    if (!use_level)
+	curwin->w_fold_manual = TRUE;
+    fp->fd_flags = FD_CLOSED;
+    fp->fd_small = MAYBE;
+
+    // redraw
+    changed_window_setting();
 }
 
 // deleteFold() {{{2
@@ -785,10 +784,10 @@ deleteFold(
     }
     if (!did_one)
     {
-	emsg(_(e_nofold));
+	emsg(_(e_no_fold_found));
 	// Force a redraw to remove the Visual highlighting.
 	if (had_visual)
-	    redraw_curbuf_later(INVERTED);
+	    redraw_curbuf_later(UPD_INVERTED);
     }
     else
 	// Deleting markers may make cursor column invalid.
@@ -831,10 +830,18 @@ foldUpdate(win_T *wp, linenr_T top, linenr_T bot)
 
     if (wp->w_folds.ga_len > 0)
     {
-	// Mark all folds from top to bot as maybe-small.
-	(void)foldFind(&wp->w_folds, top, &fp);
+	linenr_T	maybe_small_start = top;
+	linenr_T	maybe_small_end = bot;
+
+	// Mark all folds from top to bot (or bot to top) as maybe-small.
+	if (top > bot)
+	{
+	    maybe_small_start = bot;
+	    maybe_small_end = top;
+	}
+	(void)foldFind(&wp->w_folds, maybe_small_start, &fp);
 	while (fp < (fold_T *)wp->w_folds.ga_data + wp->w_folds.ga_len
-		&& fp->fd_top < bot)
+		&& fp->fd_top <= maybe_small_end)
 	{
 	    fp->fd_small = MAYBE;
 	    ++fp;
@@ -869,7 +876,7 @@ foldUpdate(win_T *wp, linenr_T top, linenr_T bot)
 foldUpdateAll(win_T *win)
 {
     win->w_foldinvalid = TRUE;
-    redraw_win_later(win, NOT_VALID);
+    redraw_win_later(win, UPD_NOT_VALID);
 }
 
 // foldMoveTo() {{{2
@@ -1020,7 +1027,7 @@ foldMoveTo(
     void
 foldInitWin(win_T *new_win)
 {
-    ga_init2(&new_win->w_folds, (int)sizeof(fold_T), 10);
+    ga_init2(&new_win->w_folds, sizeof(fold_T), 10);
 }
 
 // find_wl_entry() {{{2
@@ -1054,7 +1061,6 @@ find_wl_entry(win_T *win, linenr_T lnum)
 foldAdjustVisual(void)
 {
     pos_T	*start, *end;
-    char_u	*ptr;
 
     if (!VIsual_active || !hasAnyFolding(curwin))
 	return;
@@ -1071,19 +1077,19 @@ foldAdjustVisual(void)
     }
     if (hasFolding(start->lnum, &start->lnum, NULL))
 	start->col = 0;
-    if (hasFolding(end->lnum, NULL, &end->lnum))
-    {
-	ptr = ml_get(end->lnum);
-	end->col = (colnr_T)STRLEN(ptr);
-	if (end->col > 0 && *p_sel == 'o')
-	    --end->col;
-	// prevent cursor from moving on the trail byte
-	if (has_mbyte)
-	    mb_adjust_cursor();
-    }
+
+    if (!hasFolding(end->lnum, NULL, &end->lnum))
+	return;
+
+    end->col = ml_get_len(end->lnum);
+    if (end->col > 0 && *p_sel == 'o')
+	--end->col;
+    // prevent cursor from moving on the trail byte
+    if (has_mbyte)
+	mb_adjust_cursor();
 }
 
-// cursor_foldstart() {{{2
+// foldAdjustCursor() {{{2
 /*
  * Move the cursor to the first line of a closed fold.
  */
@@ -1130,7 +1136,7 @@ cloneFoldGrowArray(garray_T *from, garray_T *to)
 // foldFind() {{{2
 /*
  * Search for line "lnum" in folds of growarray "gap".
- * Set *fpp to the fold struct for the fold that contains "lnum" or
+ * Set "*fpp" to the fold struct for the fold that contains "lnum" or
  * the first fold below it (careful: it can be beyond the end of the array!).
  * Returns FALSE when there is no fold that contains "lnum".
  */
@@ -1209,11 +1215,11 @@ foldLevelWin(win_T *wp, linenr_T lnum)
     static void
 checkupdate(win_T *wp)
 {
-    if (wp->w_foldinvalid)
-    {
-	foldUpdate(wp, (linenr_T)1, (linenr_T)MAXLNUM); // will update all
-	wp->w_foldinvalid = FALSE;
-    }
+    if (!wp->w_foldinvalid)
+	return;
+
+    foldUpdate(wp, (linenr_T)1, (linenr_T)MAXLNUM); // will update all
+    wp->w_foldinvalid = FALSE;
 }
 
 // setFoldRepeat() {{{2
@@ -1235,7 +1241,7 @@ setFoldRepeat(linenr_T lnum, long count, int do_open)
 	{
 	    // Only give an error message when no fold could be opened.
 	    if (n == 0 && !(done & DONE_FOLD))
-		emsg(_(e_nofold));
+		emsg(_(e_no_fold_found));
 	    break;
 	}
     }
@@ -1387,7 +1393,7 @@ setManualFoldWin(
 	done |= DONE_FOLD;
     }
     else if (donep == NULL && wp == curwin)
-	emsg(_(e_nofold));
+	emsg(_(e_no_fold_found));
 
     if (donep != NULL)
 	*donep |= done;
@@ -1486,6 +1492,9 @@ deleteFoldRecurse(garray_T *gap)
 // foldMarkAdjust() {{{2
 /*
  * Update line numbers of folds for inserted/deleted lines.
+ *
+ * We are adjusting the folds in the range from line1 til line2,
+ * make sure that line2 does not get smaller than line1
  */
     void
 foldMarkAdjust(
@@ -1499,9 +1508,11 @@ foldMarkAdjust(
     // lines, set line2 so that only deleted lines have their folds removed.
     if (amount == MAXLNUM && line2 >= line1 && line2 - line1 >= -amount_after)
 	line2 = line1 - amount_after - 1;
+    if (line2 < line1)
+	line2 = line1;
     // If appending a line in Insert mode, it should be included in the fold
     // just above the line.
-    if ((State & INSERT) && amount == (linenr_T)1 && line2 == MAXLNUM)
+    if ((State & MODE_INSERT) && amount == (linenr_T)1 && line2 == MAXLNUM)
 	--line1;
     foldMarkAdjustRecurse(&wp->w_folds, line1, line2, amount, amount_after);
 }
@@ -1525,7 +1536,7 @@ foldMarkAdjustRecurse(
 
     // In Insert mode an inserted line at the top of a fold is considered part
     // of the fold, otherwise it isn't.
-    if ((State & INSERT) && amount == (linenr_T)1 && line2 == MAXLNUM)
+    if ((State & MODE_INSERT) && amount == (linenr_T)1 && line2 == MAXLNUM)
 	top = line1 + 1;
     else
 	top = line1;
@@ -1606,7 +1617,7 @@ foldMarkAdjustRecurse(
 		    if (amount == MAXLNUM)
 		    {
 			foldMarkAdjustRecurse(&fp->fd_nested,
-				  line1 - fp->fd_top,
+				  0,
 				  line2 - fp->fd_top,
 				  amount,
 				  amount_after + (fp->fd_top - top));
@@ -1616,7 +1627,7 @@ foldMarkAdjustRecurse(
 		    else
 		    {
 			foldMarkAdjustRecurse(&fp->fd_nested,
-				  line1 - fp->fd_top,
+				  0,
 				  line2 - fp->fd_top,
 				  amount,
 				  amount_after - amount);
@@ -1713,27 +1724,27 @@ checkSmall(
     int		count;
     int		n;
 
-    if (fp->fd_small == MAYBE)
-    {
-	// Mark any nested folds to maybe-small
-	setSmallMaybe(&fp->fd_nested);
+    if (fp->fd_small != MAYBE)
+	return;
 
-	if (fp->fd_len > curwin->w_p_fml)
-	    fp->fd_small = FALSE;
-	else
+    // Mark any nested folds to maybe-small
+    setSmallMaybe(&fp->fd_nested);
+
+    if (fp->fd_len > curwin->w_p_fml)
+	fp->fd_small = FALSE;
+    else
+    {
+	count = 0;
+	for (n = 0; n < fp->fd_len; ++n)
 	{
-	    count = 0;
-	    for (n = 0; n < fp->fd_len; ++n)
+	    count += plines_win_nofold(wp, fp->fd_top + lnum_off + n);
+	    if (count > curwin->w_p_fml)
 	    {
-		count += plines_win_nofold(wp, fp->fd_top + lnum_off + n);
-		if (count > curwin->w_p_fml)
-		{
-		    fp->fd_small = FALSE;
-		    return;
-		}
+		fp->fd_small = FALSE;
+		return;
 	    }
-	    fp->fd_small = TRUE;
 	}
+	fp->fd_small = TRUE;
     }
 }
 
@@ -1791,28 +1802,28 @@ foldAddMarker(linenr_T lnum, char_u *marker, int markerlen)
 
     // Allocate a new line: old-line + 'cms'-start + marker + 'cms'-end
     line = ml_get(lnum);
-    line_len = (int)STRLEN(line);
+    line_len = ml_get_len(lnum);
 
-    if (u_save(lnum - 1, lnum + 1) == OK)
+    if (u_save(lnum - 1, lnum + 1) != OK)
+	return;
+
+    // Check if the line ends with an unclosed comment
+    (void)skip_comment(line, FALSE, FALSE, &line_is_comment);
+    newline = alloc(line_len + markerlen + STRLEN(cms) + 1);
+    if (newline == NULL)
+	return;
+    STRCPY(newline, line);
+    // Append the marker to the end of the line
+    if (p == NULL || line_is_comment)
+	vim_strncpy(newline + line_len, marker, markerlen);
+    else
     {
-	// Check if the line ends with an unclosed comment
-	(void)skip_comment(line, FALSE, FALSE, &line_is_comment);
-	newline = alloc(line_len + markerlen + STRLEN(cms) + 1);
-	if (newline == NULL)
-	    return;
-	STRCPY(newline, line);
-	// Append the marker to the end of the line
-	if (p == NULL || line_is_comment)
-	    vim_strncpy(newline + line_len, marker, markerlen);
-	else
-	{
-	    STRCPY(newline + line_len, cms);
-	    STRNCPY(newline + line_len + (p - cms), marker, markerlen);
-	    STRCPY(newline + line_len + (p - cms) + markerlen, p + 2);
-	}
-
-	ml_replace(lnum, newline, FALSE);
+	STRCPY(newline + line_len, cms);
+	STRNCPY(newline + line_len + (p - cms), marker, markerlen);
+	STRCPY(newline + line_len + (p - cms) + markerlen, p + 2);
     }
+
+    ml_replace(lnum, newline, FALSE);
 }
 
 // deleteFoldMarkers() {{{2
@@ -1868,7 +1879,7 @@ foldDelMarker(linenr_T lnum, char_u *marker, int markerlen)
 	    {
 		// Also delete 'commentstring' if it matches.
 		cms2 = (char_u *)strstr((char *)cms, "%s");
-		if (p - line >= cms2 - cms
+		if (cms2 != NULL && p - line >= cms2 - cms
 			&& STRNCMP(p - (cms2 - cms), cms, cms2 - cms) == 0
 			&& STRNCMP(p + len, cms2 + 2, STRLEN(cms2 + 2)) == 0)
 		{
@@ -1879,7 +1890,7 @@ foldDelMarker(linenr_T lnum, char_u *marker, int markerlen)
 	    if (u_save(lnum - 1, lnum + 1) == OK)
 	    {
 		// Make new line: text-before-marker + text-after-marker
-		newline = alloc(STRLEN(line) - len + 1);
+		newline = alloc(ml_get_len(lnum) - len + 1);
 		if (newline != NULL)
 		{
 		    STRNCPY(newline, line, p - line);
@@ -1925,7 +1936,6 @@ get_foldtext(
     if (*wp->w_p_fdt != NUL)
     {
 	char_u	dashes[MAX_LEVEL + 2];
-	win_T	*save_curwin;
 	int	level;
 	char_u	*p;
 
@@ -1943,23 +1953,28 @@ get_foldtext(
 	set_vim_var_string(VV_FOLDDASHES, dashes, -1);
 	set_vim_var_nr(VV_FOLDLEVEL, (long)level);
 
-	// skip evaluating foldtext on errors
+	// skip evaluating 'foldtext' on errors
 	if (!got_fdt_error)
 	{
-	    save_curwin = curwin;
+	    win_T   *save_curwin = curwin;
+	    sctx_T  saved_sctx = current_sctx;
+
 	    curwin = wp;
 	    curbuf = wp->w_buffer;
+	    current_sctx = wp->w_p_script_ctx[WV_FDT];
 
-	    ++emsg_silent; // handle exceptions, but don't display errors
+	    ++emsg_off; // handle exceptions, but don't display errors
 	    text = eval_to_string_safe(wp->w_p_fdt,
-			 was_set_insecurely((char_u *)"foldtext", OPT_LOCAL));
-	    --emsg_silent;
+			   was_set_insecurely((char_u *)"foldtext", OPT_LOCAL),
+			   TRUE, TRUE);
+	    --emsg_off;
 
 	    if (text == NULL || did_emsg)
 		got_fdt_error = TRUE;
 
 	    curwin = save_curwin;
 	    curbuf = curwin->w_buffer;
+	    current_sctx = saved_sctx;
 	}
 	last_lnum = lnum;
 	last_wp   = wp;
@@ -2164,7 +2179,7 @@ foldUpdateIEMS(win_T *wp, linenr_T top, linenr_T bot)
 	bot = wp->w_buffer->b_ml.ml_line_count;
 	wp->w_foldinvalid = FALSE;
 
-	// Mark all folds a maybe-small.
+	// Mark all folds as maybe-small.
 	setSmallMaybe(&wp->w_folds);
     }
 
@@ -2245,7 +2260,14 @@ foldUpdateIEMS(win_T *wp, linenr_T top, linenr_T bot)
 	    getlevel = foldlevelDiff;
 #endif
 	else
+	{
 	    getlevel = foldlevelIndent;
+	    // Start one line back, because if the line above "top" has an
+	    // undefined fold level, folding it relies on the line under it,
+	    // which is "top".
+	    if (top > 1)
+		--fline.lnum;
+	}
 
 	// Backup to a line for which the fold level is defined.  Since it's
 	// always defined for line one, we will stop there.
@@ -2513,7 +2535,7 @@ foldUpdateIEMSRecurse(
 	     */
 	    while (!got_int)
 	    {
-		// set concat to 1 if it's allowed to concatenated this fold
+		// set concat to 1 if it's allowed to concatenate this fold
 		// with a previous one that touches it.
 		if (flp->start != 0 || flp->had_end <= MAX_LEVEL)
 		    concat = 0;
@@ -2558,6 +2580,7 @@ foldUpdateIEMSRecurse(
 					(long)(fp->fd_top - firstlnum));
 			    fp->fd_len += fp->fd_top - firstlnum;
 			    fp->fd_top = firstlnum;
+			    fp->fd_small = MAYBE;
 			    fold_changed = TRUE;
 			}
 			else if ((flp->start != 0 && lvl == level)
@@ -2636,7 +2659,7 @@ foldUpdateIEMSRecurse(
 			// to stop just above startlnum.
 			fp->fd_len = startlnum - fp->fd_top;
 			foldMarkAdjustRecurse(&fp->fd_nested,
-				(linenr_T)fp->fd_len, (linenr_T)MAXLNUM,
+				fp->fd_len, (linenr_T)MAXLNUM,
 						       (linenr_T)MAXLNUM, 0L);
 			fold_changed = TRUE;
 		    }
@@ -2864,13 +2887,13 @@ foldInsert(garray_T *gap, int i)
 {
     fold_T	*fp;
 
-    if (ga_grow(gap, 1) != OK)
+    if (ga_grow(gap, 1) == FAIL)
 	return FAIL;
     fp = (fold_T *)gap->ga_data + i;
     if (gap->ga_len > 0 && i < gap->ga_len)
 	mch_memmove(fp + 1, fp, sizeof(fold_T) * (gap->ga_len - i));
     ++gap->ga_len;
-    ga_init2(&fp->fd_nested, (int)sizeof(fold_T), 10);
+    ga_init2(&fp->fd_nested, sizeof(fold_T), 10);
     return OK;
 }
 
@@ -2910,7 +2933,8 @@ foldSplit(
     // any between top and bot, they have been removed by the caller.
     gap1 = &fp->fd_nested;
     gap2 = &fp[1].fd_nested;
-    if (foldFind(gap1, bot + 1 - fp->fd_top, &fp2))
+    (void)foldFind(gap1, bot + 1 - fp->fd_top, &fp2);
+    if (fp2 != NULL)
     {
 	len = (int)((fold_T *)gap1->ga_data + gap1->ga_len - fp2);
 	if (len > 0 && ga_grow(gap2, len) == OK)
@@ -3065,7 +3089,7 @@ truncate_fold(fold_T *fp, linenr_T end)
 
 #define fold_end(fp) ((fp)->fd_top + (fp)->fd_len - 1)
 #define valid_fold(fp, gap) ((gap)->ga_len > 0 && (fp) < ((fold_T *)(gap)->ga_data + (gap)->ga_len))
-#define fold_index(fp, gap) ((size_t)(fp - ((fold_T *)(gap)->ga_data)))
+#define fold_index(fp, gap) ((size_t)((fp) - ((fold_T *)(gap)->ga_data)))
 
     void
 foldMoveRange(garray_T *gap, linenr_T line1, linenr_T line2, linenr_T dest)
@@ -3309,7 +3333,7 @@ foldlevelExpr(fline_T *flp)
     // KeyTyped may be reset to 0 when calling a function which invokes
     // do_cmdline().  To make 'foldopen' work correctly restore KeyTyped.
     save_keytyped = KeyTyped;
-    n = eval_foldexpr(flp->wp->w_p_fde, &c);
+    n = eval_foldexpr(flp->wp, &c);
     KeyTyped = save_keytyped;
 
     switch (c)
@@ -3341,7 +3365,9 @@ foldlevelExpr(fline_T *flp)
 		  break;
 
 	// "<1", "<2", .. : end a fold with a certain level
-	case '<': flp->lvl_next = n - 1;
+	case '<': // To prevent an unexpected start of a new fold, the next
+		  // level must not exceed the level of the current fold.
+		  flp->lvl_next = MIN(flp->lvl, n - 1);
 		  flp->end = n;
 		  break;
 

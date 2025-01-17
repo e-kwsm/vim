@@ -30,8 +30,9 @@ virtual_active(void)
     if (virtual_op != MAYBE)
 	return virtual_op;
     return (cur_ve_flags == VE_ALL
-	    || ((cur_ve_flags & VE_BLOCK) && VIsual_active && VIsual_mode == Ctrl_V)
-	    || ((cur_ve_flags & VE_INSERT) && (State & INSERT)));
+	    || ((cur_ve_flags & VE_BLOCK) && VIsual_active
+						      && VIsual_mode == Ctrl_V)
+	    || ((cur_ve_flags & VE_INSERT) && (State & MODE_INSERT)));
 }
 
 /*
@@ -71,7 +72,7 @@ coladvance_force(colnr_T wcol)
  * Get the screen position of character col with a coladd in the cursor line.
  */
     int
-getviscol2(colnr_T col, colnr_T coladd UNUSED)
+getviscol2(colnr_T col, colnr_T coladd)
 {
     colnr_T	x;
     pos_T	pos;
@@ -84,7 +85,7 @@ getviscol2(colnr_T col, colnr_T coladd UNUSED)
 }
 
 /*
- * Try to advance the Cursor to the specified screen column.
+ * Try to advance the Cursor to the specified screen column "wantcol".
  * If virtual editing: fine tune the cursor position.
  * Note that all virtual positions off the end of a line should share
  * a curwin->w_cursor.col value (n.b. this is equal to STRLEN(line)),
@@ -93,29 +94,30 @@ getviscol2(colnr_T col, colnr_T coladd UNUSED)
  * return OK if desired column is reached, FAIL if not
  */
     int
-coladvance(colnr_T wcol)
+coladvance(colnr_T wantcol)
 {
-    int rc = getvpos(&curwin->w_cursor, wcol);
+    int rc = getvpos(&curwin->w_cursor, wantcol);
 
-    if (wcol == MAXCOL || rc == FAIL)
+    if (wantcol == MAXCOL || rc == FAIL)
 	curwin->w_valid &= ~VALID_VIRTCOL;
     else if (*ml_get_cursor() != TAB)
     {
 	// Virtcol is valid when not on a TAB
 	curwin->w_valid |= VALID_VIRTCOL;
-	curwin->w_virtcol = wcol;
+	curwin->w_virtcol = wantcol;
     }
     return rc;
 }
 
 /*
- * Return in "pos" the position of the cursor advanced to screen column "wcol".
+ * Return in "pos" the position of the cursor advanced to screen column
+ * "wantcol".
  * return OK if desired column is reached, FAIL if not
  */
     int
-getvpos(pos_T *pos, colnr_T wcol)
+getvpos(pos_T *pos, colnr_T wantcol)
 {
-    return coladvance2(pos, FALSE, virtual_active(), wcol);
+    return coladvance2(pos, FALSE, virtual_active(), wantcol);
 }
 
     static int
@@ -127,8 +129,8 @@ coladvance2(
 {
     colnr_T	wcol = wcol_arg;
     int		idx;
-    char_u	*ptr;
     char_u	*line;
+    int		linelen;
     colnr_T	col = 0;
     int		csize = 0;
     int		one_more;
@@ -136,27 +138,29 @@ coladvance2(
     int		head = 0;
 #endif
 
-    one_more = (State & INSERT)
+    one_more = (State & MODE_INSERT)
 		    || restart_edit != NUL
 		    || (VIsual_active && *p_sel != 'o')
 		    || ((get_ve_flags() & VE_ONEMORE) && wcol < MAXCOL);
     line = ml_get_buf(curbuf, pos->lnum, FALSE);
+    linelen = ml_get_buf_len(curbuf, pos->lnum);
 
     if (wcol >= MAXCOL)
     {
-	    idx = (int)STRLEN(line) - 1 + one_more;
+	    idx = linelen - 1 + one_more;
 	    col = wcol;
 
 	    if ((addspaces || finetune) && !VIsual_active)
 	    {
-		curwin->w_curswant = linetabsize(line) + one_more;
+		curwin->w_curswant = linetabsize(curwin, pos->lnum) + one_more;
 		if (curwin->w_curswant > 0)
 		    --curwin->w_curswant;
 	    }
     }
     else
     {
-	int width = curwin->w_width - win_col_off(curwin);
+	int		width = curwin->w_width - win_col_off(curwin);
+	chartabsize_T	cts;
 
 	if (finetune
 		&& curwin->w_p_wrap
@@ -164,12 +168,12 @@ coladvance2(
 		&& wcol >= (colnr_T)width
 		&& width > 0)
 	{
-	    csize = linetabsize(line);
+	    csize = linetabsize(curwin, pos->lnum);
 	    if (csize > 0)
 		csize--;
 
 	    if (wcol / width > (colnr_T)csize / width
-		    && ((State & INSERT) == 0 || (int)wcol > csize + 1))
+		    && ((State & MODE_INSERT) == 0 || (int)wcol > csize + 1))
 	    {
 		// In case of line wrapping don't move the cursor beyond the
 		// right screen edge.  In Insert mode allow going just beyond
@@ -179,19 +183,30 @@ coladvance2(
 	    }
 	}
 
-	ptr = line;
-	while (col <= wcol && *ptr != NUL)
+	init_chartabsize_arg(&cts, curwin, pos->lnum, 0, line, line);
+	while (cts.cts_vcol <= wcol && *cts.cts_ptr != NUL)
 	{
+#ifdef FEAT_PROP_POPUP
+	    int at_start = cts.cts_ptr == cts.cts_line;
+#endif
 	    // Count a tab for what it's worth (if list mode not on)
 #ifdef FEAT_LINEBREAK
-	    csize = win_lbr_chartabsize(curwin, line, ptr, col, &head);
-	    MB_PTR_ADV(ptr);
+	    csize = win_lbr_chartabsize(&cts, &head);
+	    MB_PTR_ADV(cts.cts_ptr);
 #else
-	    csize = lbr_chartabsize_adv(line, &ptr, col);
+	    csize = lbr_chartabsize_adv(&cts);
 #endif
-	    col += csize;
+	    cts.cts_vcol += csize;
+#ifdef FEAT_PROP_POPUP
+	    if (at_start)
+		// do not count the columns for virtual text above
+		cts.cts_vcol -= cts.cts_first_char;
+#endif
 	}
-	idx = (int)(ptr - line);
+	col = cts.cts_vcol;
+	idx = (int)(cts.cts_ptr - line);
+	clear_chartabsize_arg(&cts);
+
 	/*
 	 * Handle all the special cases.  The virtual_active() check
 	 * is needed to ensure that a virtual position off the end of
@@ -242,7 +257,6 @@ coladvance2(
 	    else
 	    {
 		// Break a tab
-		int	linelen = (int)STRLEN(line);
 		int	correct = wcol - col - csize + 1; // negative!!
 		char_u	*newline;
 		int	t, s = 0;
@@ -399,7 +413,7 @@ dec(pos_T *lp)
     {
 	// past end of line
 	p = ml_get(lp->lnum);
-	lp->col = (colnr_T)STRLEN(p);
+	lp->col = ml_get_len(lp->lnum);
 	if (has_mbyte)
 	    lp->col -= (*mb_head_off)(p, p + lp->col);
 	return 0;
@@ -422,7 +436,7 @@ dec(pos_T *lp)
 	// there is a prior line
 	lp->lnum--;
 	p = ml_get(lp->lnum);
-	lp->col = (colnr_T)STRLEN(p);
+	lp->col = ml_get_len(lp->lnum);
 	if (has_mbyte)
 	    lp->col -= (*mb_head_off)(p, p + lp->col);
 	return 1;
@@ -502,7 +516,6 @@ get_cursor_rel_lnum(
     void
 check_pos(buf_T *buf, pos_T *pos)
 {
-    char_u *line;
     colnr_T len;
 
     if (pos->lnum > buf->b_ml.ml_line_count)
@@ -510,8 +523,7 @@ check_pos(buf_T *buf, pos_T *pos)
 
     if (pos->col > 0)
     {
-	line = ml_get_buf(buf, pos->lnum, FALSE);
-	len = (colnr_T)STRLEN(line);
+	len = ml_get_buf_len(buf, pos->lnum);
 	if (pos->col > len)
 	    pos->col = len;
     }
@@ -557,7 +569,7 @@ check_cursor_col_win(win_T *win)
     colnr_T      oldcoladd = win->w_cursor.col + win->w_cursor.coladd;
     unsigned int cur_ve_flags = get_ve_flags();
 
-    len = (colnr_T)STRLEN(ml_get_buf(win->w_buffer, win->w_cursor.lnum, FALSE));
+    len = ml_get_buf_len(win->w_buffer, win->w_cursor.lnum);
     if (len == 0)
 	win->w_cursor.col = 0;
     else if (win->w_cursor.col >= len)
@@ -566,7 +578,7 @@ check_cursor_col_win(win_T *win)
 	// - in Insert mode or restarting Insert mode
 	// - in Visual mode and 'selection' isn't "old"
 	// - 'virtualedit' is set
-	if ((State & INSERT) || restart_edit
+	if ((State & MODE_INSERT) || restart_edit
 		|| (VIsual_active && *p_sel != 'o')
 		|| (cur_ve_flags & VE_ONEMORE)
 		|| virtual_active())
@@ -596,7 +608,7 @@ check_cursor_col_win(win_T *win)
 	    // Make sure that coladd is not more than the char width.
 	    // Not for the last character, coladd is then used when the cursor
 	    // is actually after the last character.
-	    if (win->w_cursor.col + 1 < len && win->w_cursor.coladd > 0)
+	    if (win->w_cursor.col + 1 < len)
 	    {
 		int cs, ce;
 
@@ -621,7 +633,31 @@ check_cursor(void)
     check_cursor_col();
 }
 
-#if defined(FEAT_TEXTOBJ) || defined(PROTO)
+/*
+ * Check if VIsual position is valid, correct it if not.
+ * Can be called when in Visual mode and a change has been made.
+ */
+    void
+check_visual_pos(void)
+{
+    if (VIsual.lnum > curbuf->b_ml.ml_line_count)
+    {
+	VIsual.lnum = curbuf->b_ml.ml_line_count;
+	VIsual.col = 0;
+	VIsual.coladd = 0;
+    }
+    else
+    {
+	int len = ml_get_len(VIsual.lnum);
+
+	if (VIsual.col > len)
+	{
+	    VIsual.col = len;
+	    VIsual.coladd = 0;
+	}
+    }
+}
+
 /*
  * Make sure curwin->w_cursor is not on the NUL at the end of the line.
  * Allow it when in Visual mode and 'selection' is not "old".
@@ -634,28 +670,29 @@ adjust_cursor_col(void)
 	    && gchar_cursor() == NUL)
 	--curwin->w_cursor.col;
 }
-#endif
 
 /*
- * When curwin->w_leftcol has changed, adjust the cursor position.
+ * Set "curwin->w_leftcol" to "leftcol".
+ * Adjust the cursor position if needed.
  * Return TRUE if the cursor was moved.
  */
     int
-leftcol_changed(void)
+set_leftcol(colnr_T leftcol)
 {
-    long	lastcol;
-    colnr_T	s, e;
     int		retval = FALSE;
-    long        siso = get_sidescrolloff_value();
+
+    // Return quickly when there is no change.
+    if (curwin->w_leftcol == leftcol)
+	return FALSE;
+    curwin->w_leftcol = leftcol;
 
     changed_cline_bef_curs();
-    lastcol = curwin->w_leftcol + curwin->w_width - curwin_col_off() - 1;
+    long lastcol = curwin->w_leftcol + curwin->w_width - curwin_col_off() - 1;
     validate_virtcol();
 
-    /*
-     * If the cursor is right or left of the screen, move it to last or first
-     * character.
-     */
+    // If the cursor is right or left of the screen, move it to last or first
+    // visible character.
+    long siso = get_sidescrolloff_value();
     if (curwin->w_virtcol > (colnr_T)(lastcol - siso))
     {
 	retval = TRUE;
@@ -667,11 +704,10 @@ leftcol_changed(void)
 	(void)coladvance((colnr_T)(curwin->w_leftcol + siso));
     }
 
-    /*
-     * If the start of the character under the cursor is not on the screen,
-     * advance the cursor one more char.  If this fails (last char of the
-     * line) adjust the scrolling.
-     */
+    // If the start of the character under the cursor is not on the screen,
+    // advance the cursor one more char.  If this fails (last char of the
+    // line) adjust the scrolling.
+    colnr_T	s, e;
     getvvcol(curwin, &curwin->w_cursor, &s, NULL, &e);
     if (e > (colnr_T)lastcol)
     {
@@ -690,7 +726,7 @@ leftcol_changed(void)
 
     if (retval)
 	curwin->w_set_curswant = TRUE;
-    redraw_later(NOT_VALID);
+    redraw_later(UPD_NOT_VALID);
     return retval;
 }
 
@@ -780,7 +816,7 @@ static struct modmasktable
     {MOD_MASK_MULTI_CLICK,	MOD_MASK_2CLICK,	(char_u)'2'},
     {MOD_MASK_MULTI_CLICK,	MOD_MASK_3CLICK,	(char_u)'3'},
     {MOD_MASK_MULTI_CLICK,	MOD_MASK_4CLICK,	(char_u)'4'},
-#ifdef MACOS_X
+#if defined(MACOS_X) || defined(FEAT_GUI_GTK)
     {MOD_MASK_CMD,		MOD_MASK_CMD,		(char_u)'D'},
 #endif
     // 'A' must be the last one
@@ -1057,6 +1093,7 @@ static struct key_name_entry
     {K_CURSORHOLD,	(char_u *)"CursorHold"},
     {K_IGNORE,		(char_u *)"Ignore"},
     {K_COMMAND,		(char_u *)"Cmd"},
+    {K_SCRIPT_COMMAND,	(char_u *)"ScriptCmd"},
     {K_FOCUSGAINED,	(char_u *)"FocusGained"},
     {K_FOCUSLOST,	(char_u *)"FocusLost"},
     {0,			NULL}
@@ -1092,25 +1129,27 @@ simplify_key(int key, int *modifiers)
     int	    key0;
     int	    key1;
 
-    if (*modifiers & (MOD_MASK_SHIFT | MOD_MASK_CTRL | MOD_MASK_ALT))
+    if (!(*modifiers & (MOD_MASK_SHIFT | MOD_MASK_CTRL)))
+	return key;
+
+    // TAB is a special case
+    if (key == TAB && (*modifiers & MOD_MASK_SHIFT))
     {
-	// TAB is a special case
-	if (key == TAB && (*modifiers & MOD_MASK_SHIFT))
+	*modifiers &= ~MOD_MASK_SHIFT;
+	return K_S_TAB;
+    }
+    key0 = KEY2TERMCAP0(key);
+    key1 = KEY2TERMCAP1(key);
+    for (i = 0; modifier_keys_table[i] != NUL; i += MOD_KEYS_ENTRY_SIZE)
+    {
+	if (key0 == modifier_keys_table[i + 3]
+		&& key1 == modifier_keys_table[i + 4]
+		&& (*modifiers & modifier_keys_table[i]))
 	{
-	    *modifiers &= ~MOD_MASK_SHIFT;
-	    return K_S_TAB;
+	    *modifiers &= ~modifier_keys_table[i];
+	    return TERMCAP2KEY(modifier_keys_table[i + 1],
+		    modifier_keys_table[i + 2]);
 	}
-	key0 = KEY2TERMCAP0(key);
-	key1 = KEY2TERMCAP1(key);
-	for (i = 0; modifier_keys_table[i] != NUL; i += MOD_KEYS_ENTRY_SIZE)
-	    if (key0 == modifier_keys_table[i + 3]
-		    && key1 == modifier_keys_table[i + 4]
-		    && (*modifiers & modifier_keys_table[i]))
-	    {
-		*modifiers &= ~modifier_keys_table[i];
-		return TERMCAP2KEY(modifier_keys_table[i + 1],
-						   modifier_keys_table[i + 2]);
-	    }
     }
     return key;
 }
@@ -1200,11 +1239,7 @@ get_special_key_name(int c, int modifiers)
 	}
 	if (table_idx < 0 && !vim_isprintc(c) && c < ' ')
 	{
-#ifdef EBCDIC
-	    c = CtrlChar(c);
-#else
 	    c += '@';
-#endif
 	    modifiers |= MOD_MASK_CTRL;
 	}
     }
@@ -1258,16 +1293,17 @@ get_special_key_name(int c, int modifiers)
 }
 
 /*
- * Try translating a <> name at (*srcp)[] to dst[].
- * Return the number of characters added to dst[], zero for no match.
- * If there is a match, srcp is advanced to after the <> name.
- * dst[] must be big enough to hold the result (up to six characters)!
+ * Try translating a <> name at "(*srcp)[]" to "dst[]".
+ * Return the number of characters added to "dst[]", zero for no match.
+ * If there is a match, "srcp" is advanced to after the <> name.
+ * "dst[]" must be big enough to hold the result (up to six characters)!
  */
     int
 trans_special(
     char_u	**srcp,
     char_u	*dst,
     int		flags,		// FSK_ values
+    int		escape_ks,	// escape K_SPECIAL bytes in the character
     int		*did_simplify)  // FSK_SIMPLIFY and found <C-H> or <A-x>
 {
     int		modifiers = 0;
@@ -1277,18 +1313,18 @@ trans_special(
     if (key == 0)
 	return 0;
 
-    return special_to_buf(key, modifiers, flags & FSK_KEYCODE, dst);
+    return special_to_buf(key, modifiers, escape_ks, dst);
 }
 
 /*
  * Put the character sequence for "key" with "modifiers" into "dst" and return
  * the resulting length.
- * When "keycode" is TRUE prefer key code, e.g. K_DEL instead of DEL.
+ * When "escape_ks" is TRUE escape K_SPECIAL bytes in the character.
  * The sequence is not NUL terminated.
  * This is how characters in a string are encoded.
  */
     int
-special_to_buf(int key, int modifiers, int keycode, char_u *dst)
+special_to_buf(int key, int modifiers, int escape_ks, char_u *dst)
 {
     int		dlen = 0;
 
@@ -1306,10 +1342,10 @@ special_to_buf(int key, int modifiers, int keycode, char_u *dst)
 	dst[dlen++] = KEY2TERMCAP0(key);
 	dst[dlen++] = KEY2TERMCAP1(key);
     }
-    else if (has_mbyte && !keycode)
-	dlen += (*mb_char2bytes)(key, dst + dlen);
-    else if (keycode)
+    else if (escape_ks)
 	dlen = (int)(add_char2buf(key, dst + dlen) - dst);
+    else if (has_mbyte)
+	dlen += (*mb_char2bytes)(key, dst + dlen);
     else
 	dst[dlen++] = key;
 
@@ -1317,8 +1353,9 @@ special_to_buf(int key, int modifiers, int keycode, char_u *dst)
 }
 
 /*
- * Try translating a <> name at (*srcp)[], return the key and modifiers.
- * srcp is advanced to after the <> name.
+ * Try translating a <> name at "(*srcp)[]", return the key and put modifiers
+ * in "modp".
+ * "srcp" is advanced to after the <> name.
  * returns 0 if there is no match.
  */
     int
@@ -1372,10 +1409,10 @@ find_special_key(
 	    bp += 3;	// skip t_xx, xx may be '-' or '>'
 	else if (STRNICMP(bp, "char-", 5) == 0)
 	{
-	    vim_str2nr(bp + 5, NULL, &l, STR2NR_ALL, NULL, NULL, 0, TRUE);
+	    vim_str2nr(bp + 5, NULL, &l, STR2NR_ALL, NULL, NULL, 0, TRUE, NULL);
 	    if (l == 0)
 	    {
-		emsg(_(e_invarg));
+		emsg(_(e_invalid_argument));
 		return 0;
 	    }
 	    bp += l + 5;
@@ -1410,10 +1447,10 @@ find_special_key(
 	    {
 		// <Char-123> or <Char-033> or <Char-0x33>
 		vim_str2nr(last_dash + 6, NULL, &l, STR2NR_ALL, NULL,
-								  &n, 0, TRUE);
+							    &n, 0, TRUE, NULL);
 		if (l == 0)
 		{
-		    emsg(_(e_invarg));
+		    emsg(_(e_invalid_argument));
 		    return 0;
 		}
 		key = (int)n;
@@ -1451,13 +1488,30 @@ find_special_key(
 		 */
 		key = simplify_key(key, &modifiers);
 
-		if (!(flags & FSK_KEYCODE))
+		if ((flags & FSK_KEYCODE) == 0)
 		{
 		    // don't want keycode, use single byte code
 		    if (key == K_BS)
 			key = BS;
 		    else if (key == K_DEL || key == K_KDEL)
 			key = DEL;
+		}
+		else if (key == 27
+			&& (flags & FSK_FROM_PART) != 0
+			&& (kitty_protocol_state == KKPS_ENABLED
+			    || kitty_protocol_state == KKPS_DISABLED))
+		{
+		    // Using the Kitty key protocol, which uses K_ESC for an
+		    // Esc character.  For the simplified keys use the Esc
+		    // character and set did_simplify, then in the
+		    // non-simplified keys use K_ESC.
+		    if ((flags & FSK_SIMPLIFY) != 0)
+		    {
+			if (did_simplify != NULL)
+			    *did_simplify = TRUE;
+		    }
+		    else
+			key = K_ESC;
 		}
 
 		// Normal Key with modifier: Try to make a single byte code.
@@ -1481,23 +1535,36 @@ find_special_key(
  * CTRL-2 is CTRL-@
  * CTRL-6 is CTRL-^
  * CTRL-- is CTRL-_
- * Also, <C-H> and <C-h> mean the same thing, always use "H".
+ * Also, unless no_reduce_keys is set then <C-H> and <C-h> mean the same thing,
+ * use "H".
  * Returns the possibly adjusted key.
  */
     int
 may_adjust_key_for_ctrl(int modifiers, int key)
 {
-    if (modifiers & MOD_MASK_CTRL)
+    if ((modifiers & MOD_MASK_CTRL) == 0)
+	return key;
+
+    if (ASCII_ISALPHA(key))
     {
-	if (ASCII_ISALPHA(key))
-	    return TOUPPER_ASC(key);
-	if (key == '2')
-	    return '@';
-	if (key == '6')
-	    return '^';
-	if (key == '-')
-	    return '_';
+#ifdef FEAT_TERMINAL
+	check_no_reduce_keys();  // may update the no_reduce_keys flag
+#endif
+	return no_reduce_keys == 0 ? TOUPPER_ASC(key) : key;
     }
+    if (key == '2')
+	return '@';
+    if (key == '6')
+	return '^';
+    if (key == '-')
+	return '_';
+
+    // On a Belgian keyboard AltGr $ is ']', on other keyboards '$' can only be
+    // obtained with Shift.  Assume that '$' without shift implies a Belgian
+    // keyboard, where CTRL-$ means CTRL-].
+    if (key == '$' && (modifiers & MOD_MASK_SHIFT) == 0)
+	return ']';
+
     return key;
 }
 
@@ -1506,16 +1573,21 @@ may_adjust_key_for_ctrl(int modifiers, int key)
  * When Ctrl is also used <C-H> and <C-S-H> are different, but <C-S-{> should
  * be <C-{>.  Same for <C-S-}> and <C-S-|>.
  * Also for <A-S-a> and <M-S-a>.
- * This includes all printable ASCII characters except numbers and a-z.
+ * This includes all printable ASCII characters except a-z.
+ * Digits are included because with AZERTY the Shift key is used to get them.
  */
     int
 may_remove_shift_modifier(int modifiers, int key)
 {
     if ((modifiers == MOD_MASK_SHIFT
 		|| modifiers == (MOD_MASK_SHIFT | MOD_MASK_ALT)
+#ifdef FEAT_GUI_GTK
+		|| modifiers == (MOD_MASK_SHIFT | MOD_MASK_CMD)
+#endif
 		|| modifiers == (MOD_MASK_SHIFT | MOD_MASK_META))
 	    && ((key >= '!' && key <= '/')
 		|| (key >= ':' && key <= 'Z')
+		|| vim_isdigit(key)
 		|| (key >= '[' && key <= '`')
 		|| (key >= '{' && key <= '~')))
 	return modifiers & ~MOD_MASK_SHIFT;
@@ -1559,21 +1631,12 @@ extract_modifiers(int key, int *modp, int simplify, int *did_simplify)
 	key = TOUPPER_ASC(key);
 
     if (simplify && (modifiers & MOD_MASK_CTRL)
-#ifdef EBCDIC
-	    // TODO: EBCDIC Better use:
-	    // && (Ctrl_chr(key) || key == '?')
-	    // ???
-	    && strchr("?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_", key)
-						       != NULL
-#else
-	    && ((key >= '?' && key <= '_') || ASCII_ISALPHA(key))
-#endif
-	    )
+	    && ((key >= '?' && key <= '_') || ASCII_ISALPHA(key)))
     {
 	key = Ctrl_chr(key);
 	modifiers &= ~MOD_MASK_CTRL;
 	// <C-@> is <Nul>
-	if (key == 0)
+	if (key == NUL)
 	    key = K_ZERO;
 	if (did_simplify != NULL)
 	    *did_simplify = TRUE;
@@ -1735,9 +1798,7 @@ set_fileformat(
     // This may cause the buffer to become (un)modified.
     check_status(curbuf);
     redraw_tabline = TRUE;
-#ifdef FEAT_TITLE
     need_maketitle = TRUE;	    // set window title later
-#endif
 }
 
 /*
@@ -1770,7 +1831,7 @@ call_shell(char_u *cmd, int opt)
     {
 	verbose_enter();
 	smsg(_("Calling shell to execute: \"%s\""), cmd == NULL ? p_sh : cmd);
-	out_char('\n');
+	msg_putchar_attr('\n', 0);
 	cursor_on();
 	verbose_leave();
     }
@@ -1782,7 +1843,7 @@ call_shell(char_u *cmd, int opt)
 
     if (*p_sh == NUL)
     {
-	emsg(_(e_shellempty));
+	emsg(_(e_shell_option_is_empty));
 	retval = -1;
     }
     else
@@ -1849,22 +1910,23 @@ call_shell(char_u *cmd, int opt)
 }
 
 /*
- * VISUAL, SELECTMODE and OP_PENDING State are never set, they are equal to
- * NORMAL State with a condition.  This function returns the real State.
+ * MODE_VISUAL, MODE_SELECT and MODE_OP_PENDING State are never set, they are
+ * equal to MODE_NORMAL State with a condition.  This function returns the real
+ * State.
  */
     int
 get_real_state(void)
 {
-    if (State & NORMAL)
+    if (State & MODE_NORMAL)
     {
 	if (VIsual_active)
 	{
 	    if (VIsual_select)
-		return SELECTMODE;
-	    return VISUAL;
+		return MODE_SELECT;
+	    return MODE_VISUAL;
 	}
 	else if (finish_op)
-	    return OP_PENDING;
+	    return MODE_OP_PENDING;
     }
     return State;
 }
@@ -1917,7 +1979,6 @@ vim_chdirfile(char_u *fname, char *trigger_autocmd)
 {
     char_u	old_dir[MAXPATHL];
     char_u	new_dir[MAXPATHL];
-    int		res;
 
     if (mch_dirname(old_dir, MAXPATHL) != OK)
 	*old_dir = NUL;
@@ -1927,16 +1988,18 @@ vim_chdirfile(char_u *fname, char *trigger_autocmd)
 
     if (pathcmp((char *)old_dir, (char *)new_dir, -1) == 0)
 	// nothing to do
-	res = OK;
-    else
-    {
-	res = mch_chdir((char *)new_dir) == 0 ? OK : FAIL;
+	return OK;
 
-	if (res == OK && trigger_autocmd != NULL)
-	    apply_autocmds(EVENT_DIRCHANGED, (char_u *)trigger_autocmd,
+    if (trigger_autocmd != NULL)
+	trigger_DirChangedPre((char_u *)trigger_autocmd, new_dir);
+
+    if (mch_chdir((char *)new_dir) != 0)
+	return FAIL;
+
+    if (trigger_autocmd != NULL)
+	apply_autocmds(EVENT_DIRCHANGED, (char_u *)trigger_autocmd,
 						       new_dir, FALSE, curbuf);
-    }
-    return res;
+    return OK;
 }
 #endif
 
@@ -2000,12 +2063,12 @@ cursorentry_T shape_table[SHAPE_IDX_COUNT] =
     {0,	0, 0, 100L, 100L, 100L, 0, 0, "sm", SHAPE_CURSOR},
 };
 
-#ifdef FEAT_MOUSESHAPE
+# ifdef FEAT_MOUSESHAPE
 /*
  * Table with names for mouse shapes.  Keep in sync with all the tables for
  * mch_set_mouse_shape()!.
  */
-static char * mshape_names[] =
+static char *mshape_names[] =
 {
     "arrow",	// default, must be the first one
     "blank",	// hidden
@@ -2025,7 +2088,9 @@ static char * mshape_names[] =
     "up-arrow",
     NULL
 };
-#endif
+
+#  define MSHAPE_NAMES_COUNT  (ARRAY_LENGTH(mshape_names) - 1)
+# endif
 
 /*
  * Parse the 'guicursor' option ("what" is SHAPE_CURSOR) or 'mouseshape'
@@ -2068,9 +2133,9 @@ parse_shape_opt(int what)
 	    commap = vim_strchr(modep, ',');
 
 	    if (colonp == NULL || (commap != NULL && commap < colonp))
-		return N_("E545: Missing colon");
+		return e_missing_colon_2;
 	    if (colonp == modep)
-		return N_("E546: Illegal mode");
+		return e_illegal_mode;
 
 	    /*
 	     * Repeat for all mode's before the colon.
@@ -2096,7 +2161,7 @@ parse_shape_opt(int what)
 				break;
 			if (idx == SHAPE_IDX_COUNT
 				   || (shape_table[idx].used_for & what) == 0)
-			    return N_("E546: Illegal mode");
+			    return e_illegal_mode;
 			if (len == 2 && modep[0] == 'v' && modep[1] == 'e')
 			    found_ve = TRUE;
 		    }
@@ -2135,7 +2200,7 @@ parse_shape_opt(int what)
 			    if (mshape_names[i] == NULL)
 			    {
 				if (!VIM_ISDIGIT(*p))
-				    return N_("E547: Illegal mouseshape");
+				    return e_illegal_mouseshape;
 				if (round == 2)
 				    shape_table[idx].mshape =
 					      getdigits(&p) + MSHAPE_NUMBERED;
@@ -2175,12 +2240,12 @@ parse_shape_opt(int what)
 			{
 			    p += len;
 			    if (!VIM_ISDIGIT(*p))
-				return N_("E548: digit expected");
+				return e_digit_expected;
 			    n = getdigits(&p);
 			    if (len == 3)   // "ver" or "hor"
 			    {
 				if (n == 0)
-				    return N_("E549: Illegal percentage");
+				    return e_illegal_percentage;
 				if (round == 2)
 				{
 				    if (TOLOWER_ASC(i) == 'v')
@@ -2283,7 +2348,7 @@ parse_shape_opt(int what)
 get_shape_idx(int mouse)
 {
 #ifdef FEAT_MOUSESHAPE
-    if (mouse && (State == HITRETURN || State == ASKMORE))
+    if (mouse && (State == MODE_HITRETURN || State == MODE_ASKMORE))
     {
 # ifdef FEAT_GUI
 	int x, y;
@@ -2298,15 +2363,15 @@ get_shape_idx(int mouse)
     if (mouse && drag_sep_line)
 	return SHAPE_IDX_VDRAG;
 #endif
-    if (!mouse && State == SHOWMATCH)
+    if (!mouse && State == MODE_SHOWMATCH)
 	return SHAPE_IDX_SM;
     if (State & VREPLACE_FLAG)
 	return SHAPE_IDX_R;
     if (State & REPLACE_FLAG)
 	return SHAPE_IDX_R;
-    if (State & INSERT)
+    if (State & MODE_INSERT)
 	return SHAPE_IDX_I;
-    if (State & CMDLINE)
+    if (State & MODE_CMDLINE)
     {
 	if (cmdline_at_end())
 	    return SHAPE_IDX_C;
@@ -2328,7 +2393,7 @@ get_shape_idx(int mouse)
 #endif
 
 # if defined(FEAT_MOUSESHAPE) || defined(PROTO)
-static int old_mouse_shape = 0;
+static int current_mouse_shape = 0;
 
 /*
  * Set the mouse shape:
@@ -2362,18 +2427,18 @@ update_mouseshape(int shape_idx)
 	shape_idx = -2;
 
     if (shape_idx == -2
-	    && old_mouse_shape != shape_table[SHAPE_IDX_CLINE].mshape
-	    && old_mouse_shape != shape_table[SHAPE_IDX_STATUS].mshape
-	    && old_mouse_shape != shape_table[SHAPE_IDX_VSEP].mshape)
+	    && current_mouse_shape != shape_table[SHAPE_IDX_CLINE].mshape
+	    && current_mouse_shape != shape_table[SHAPE_IDX_STATUS].mshape
+	    && current_mouse_shape != shape_table[SHAPE_IDX_VSEP].mshape)
 	return;
     if (shape_idx < 0)
 	new_mouse_shape = shape_table[get_shape_idx(TRUE)].mshape;
     else
 	new_mouse_shape = shape_table[shape_idx].mshape;
-    if (new_mouse_shape != old_mouse_shape)
+    if (new_mouse_shape != current_mouse_shape)
     {
 	mch_set_mouse_shape(new_mouse_shape);
-	old_mouse_shape = new_mouse_shape;
+	current_mouse_shape = new_mouse_shape;
     }
     postponed_mouseshape = FALSE;
 }
@@ -2381,28 +2446,47 @@ update_mouseshape(int shape_idx)
 
 #endif // CURSOR_SHAPE
 
+#if defined(FEAT_EVAL) || defined(PROTO)
+/*
+ * Mainly for tests: get the name of the current mouse shape.
+ */
+    void
+f_getmouseshape(typval_T *argvars UNUSED, typval_T *rettv)
+{
+    rettv->v_type = VAR_STRING;
+    rettv->vval.v_string = NULL;
+# if defined(FEAT_MOUSESHAPE) || defined(PROTO)
+    if (current_mouse_shape >= 0
+			      && current_mouse_shape < (int)MSHAPE_NAMES_COUNT)
+	rettv->vval.v_string = vim_strsave(
+				  (char_u *)mshape_names[current_mouse_shape]);
+# endif
+}
+#endif
+
+
 
 /*
- * Change directory to "new_dir".  If FEAT_SEARCHPATH is defined, search
- * 'cdpath' for relative directory names, otherwise just mch_chdir().
+ * Change directory to "new_dir".  Search 'cdpath' for relative directory
+ * names.
  */
     int
 vim_chdir(char_u *new_dir)
 {
-#ifndef FEAT_SEARCHPATH
-    return mch_chdir((char *)new_dir);
-#else
     char_u	*dir_name;
     int		r;
+    char_u	*file_to_find = NULL;
+    char	*search_ctx = NULL;
 
     dir_name = find_directory_in_path(new_dir, (int)STRLEN(new_dir),
-						FNAME_MESS, curbuf->b_ffname);
+		     FNAME_MESS, curbuf->b_ffname, &file_to_find, &search_ctx);
+    vim_free(file_to_find);
+    vim_findfile_cleanup(search_ctx);
     if (dir_name == NULL)
 	return -1;
     r = mch_chdir((char *)dir_name);
     vim_free(dir_name);
     return r;
-#endif
 }
 
 /*
@@ -2426,6 +2510,7 @@ get_user_name(char_u *buf, int len)
     return OK;
 }
 
+#if defined(EXITFREE) || defined(PROTO)
 /*
  * Free the memory allocated by get_user_name()
  */
@@ -2434,6 +2519,7 @@ free_username(void)
 {
     vim_free(username);
 }
+#endif
 
 #ifndef HAVE_QSORT
 /*
@@ -2753,21 +2839,21 @@ read_string(FILE *fd, int cnt)
 
     // allocate memory
     str = alloc(cnt + 1);
-    if (str != NULL)
+    if (str == NULL)
+	return NULL;
+
+    // Read the string.  Quit when running into the EOF.
+    for (i = 0; i < cnt; ++i)
     {
-	// Read the string.  Quit when running into the EOF.
-	for (i = 0; i < cnt; ++i)
+	c = getc(fd);
+	if (c == EOF)
 	{
-	    c = getc(fd);
-	    if (c == EOF)
-	    {
-		vim_free(str);
-		return NULL;
-	    }
-	    str[i] = c;
+	    vim_free(str);
+	    return NULL;
 	}
-	str[i] = NUL;
+	str[i] = c;
     }
+    str[i] = NUL;
     return str;
 }
 
@@ -2901,7 +2987,6 @@ mch_parse_cmd(char_u *cmd, int use_shcf, char ***argv, int *argc)
     return OK;
 }
 
-# if defined(FEAT_JOB_CHANNEL) || defined(PROTO)
 /*
  * Build "argv[argc]" from the string "cmd".
  * "argv[argc]" is set to NULL;
@@ -2928,6 +3013,7 @@ build_argv_from_string(char_u *cmd, char ***argv, int *argc)
     return OK;
 }
 
+# if defined(FEAT_JOB_CHANNEL) || defined(PROTO)
 /*
  * Build "argv[argc]" from the list "l".
  * "argv[argc]" is set to NULL;
@@ -2983,3 +3069,48 @@ get_special_pty_type(void)
     return 0;
 #endif
 }
+
+// compare two keyvalue_T structs by case sensitive value
+    int
+cmp_keyvalue_value(const void *a, const void *b)
+{
+    keyvalue_T *kv1 = (keyvalue_T *)a;
+    keyvalue_T *kv2 = (keyvalue_T *)b;
+
+    return STRCMP(kv1->value.string, kv2->value.string);
+}
+
+// compare two keyvalue_T structs by value with length
+    int
+cmp_keyvalue_value_n(const void *a, const void *b)
+{
+    keyvalue_T *kv1 = (keyvalue_T *)a;
+    keyvalue_T *kv2 = (keyvalue_T *)b;
+
+    return STRNCMP(kv1->value.string, kv2->value.string, MAX(kv1->value.length,
+		kv2->value.length));
+}
+
+// compare two keyvalue_T structs by case insensitive value
+    int
+cmp_keyvalue_value_i(const void *a, const void *b)
+{
+    keyvalue_T *kv1 = (keyvalue_T *)a;
+    keyvalue_T *kv2 = (keyvalue_T *)b;
+
+    return STRICMP(kv1->value.string, kv2->value.string);
+}
+
+// compare two keyvalue_T structs by case insensitive ASCII value
+// with value.length
+    int
+cmp_keyvalue_value_ni(const void *a, const void *b)
+{
+    keyvalue_T *kv1 = (keyvalue_T *)a;
+    keyvalue_T *kv2 = (keyvalue_T *)b;
+
+    return vim_strnicmp_asc((char *)kv1->value.string,
+	    (char *)kv2->value.string, MAX(kv1->value.length,
+		    kv2->value.length));
+}
+

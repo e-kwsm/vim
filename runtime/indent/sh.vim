@@ -7,6 +7,8 @@
 " License:             Vim (see :h license)
 " Repository:          https://github.com/chrisbra/vim-sh-indent
 " Changelog:
+"          20241411  - Detect dash character in function keyword for
+"                      bash mode (issue #16049)
 "          20190726  - Correctly skip if keywords in syntax comments
 "                      (issue #17)
 "          20190603  - Do not indent in zsh filetypes with an `if` in comments
@@ -109,7 +111,7 @@ function! GetShIndent()
       let ind += s:indent_value('continuation-line')
     endif
   elseif s:end_block(line) && !s:start_block(line)
-    let ind -= s:indent_value('default')
+    let ind = indent(lnum)
   elseif pnum != 0 &&
         \ s:is_continuation_line(pline) &&
         \ !s:end_block(curline) &&
@@ -195,7 +197,9 @@ endfunction
 function! s:is_function_definition(line)
   return a:line =~ '^\s*\<\k\+\>\s*()\s*{' ||
        \ a:line =~ '^\s*{' ||
-       \ a:line =~ '^\s*function\s*\k\+\s*\%(()\)\?\s*{'
+       \ a:line =~ '^\s*function\s*\k\+\s*\%(()\)\?\s*{' ||
+       \ ((&ft is# 'zsh' || s:is_bash()) &&
+       \  a:line =~ '^\s*function\s*\S\+\s*\%(()\)\?\s*{' )
 endfunction
 
 function! s:is_array(line)

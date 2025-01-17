@@ -416,7 +416,7 @@ bf_key_init(
     keylen = (int)STRLEN(key) / 2;
     if (keylen == 0)
     {
-	iemsg(_("E831: bf_key_init() called with empty password"));
+	iemsg(e_bf_key_init_called_with_empty_password);
 	return;
     }
     for (i = 0; i < keylen; i++)
@@ -517,9 +517,10 @@ bf_self_test(void)
 
     // We can't simply use sizeof(UINT32_T), it would generate a compiler
     // warning.
-    if (ui != 0xffffffffUL || ui + 1 != 0) {
+    if (ui != 0xffffffffUL || ui + 1 != 0)
+    {
 	err++;
-	emsg(_("E820: sizeof(uint32_t) != 4"));
+	emsg(_(e_sizeof_uint32_isnot_four));
     }
 
     if (!bf_check_tables(pax_init, sbx_init, 0x6ffa520a))
@@ -540,7 +541,7 @@ bf_self_test(void)
 	if (memcmp(bk.uc, bf_test_data[i].cryptxt, 8) != 0)
 	{
 	    if (err == 0 && memcmp(bk.uc, bf_test_data[i].badcryptxt, 8) == 0)
-		emsg(_("E817: Blowfish big/little endian use wrong"));
+		emsg(_(e_blowfish_big_little_endian_use_wrong));
 	    err++;
 	}
     }
@@ -573,13 +574,15 @@ bf_cfb_init(
     }
 }
 
-#define BF_CFB_UPDATE(bfs, c) { \
+#define BF_CFB_UPDATE(bfs, c) \
+{ \
     bfs->cfb_buffer[bfs->update_offset] ^= (char_u)c; \
     if (++bfs->update_offset == bfs->cfb_len) \
 	bfs->update_offset = 0; \
 }
 
-#define BF_RANBYTE(bfs, t) { \
+#define BF_RANBYTE(bfs, t) \
+{ \
     if ((bfs->randbyte_offset & BF_BLOCK_MASK) == 0) \
 	bf_e_cblock(bfs, &(bfs->cfb_buffer[bfs->randbyte_offset])); \
     t = bfs->cfb_buffer[bfs->randbyte_offset]; \
@@ -638,11 +641,8 @@ crypt_blowfish_decode(
     int
 crypt_blowfish_init(
     cryptstate_T	*state,
-    char_u*		key,
-    char_u*		salt,
-    int			salt_len,
-    char_u*		seed,
-    int			seed_len)
+    char_u		*key,
+    crypt_arg_T		*arg)
 {
     bf_state_T	*bfs = ALLOC_CLEAR_ONE(bf_state_T);
 
@@ -651,14 +651,14 @@ crypt_blowfish_init(
     state->method_state = bfs;
 
     // "blowfish" uses a 64 byte buffer, causing it to repeat 8 byte groups 8
-    // times.  "blowfish2" uses a 8 byte buffer to avoid repeating.
+    // times.  "blowfish2" uses an 8 byte buffer to avoid repeating.
     bfs->cfb_len = state->method_nr == CRYPT_M_BF ? BF_MAX_CFB_LEN : BF_BLOCK;
 
     if (blowfish_self_test() == FAIL)
 	return FAIL;
 
-    bf_key_init(bfs, key, salt, salt_len);
-    bf_cfb_init(bfs, seed, seed_len);
+    bf_key_init(bfs, key, arg->cat_salt, arg->cat_salt_len);
+    bf_cfb_init(bfs, arg->cat_seed, arg->cat_seed_len);
 
     return OK;
 }
@@ -672,12 +672,12 @@ blowfish_self_test(void)
 {
     if (sha256_self_test() == FAIL)
     {
-	emsg(_("E818: sha256 test failed"));
+	emsg(_(e_sha256_test_failed));
 	return FAIL;
     }
     if (bf_self_test() == FAIL)
     {
-	emsg(_("E819: Blowfish test failed"));
+	emsg(_(e_blowfish_test_failed));
 	return FAIL;
     }
     return OK;

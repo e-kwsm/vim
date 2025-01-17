@@ -24,6 +24,7 @@ func StopShellInTerminal(buf)
   call term_sendkeys(a:buf, "exit\r")
   let job = term_getjob(a:buf)
   call WaitForAssert({-> assert_equal("dead", job_status(job))})
+  call TermWait(a:buf)
 endfunc
 
 " Wrapper around term_wait() to allow more time for re-runs of flaky tests
@@ -54,6 +55,8 @@ endfunc
 " "cols" - width of the terminal window (max. 78)
 " "statusoff" - number of lines the status is offset from default
 " "wait_for_ruler" - if zero then don't wait for ruler to show
+" "no_clean" - if non-zero then remove "--clean" from the command
+" "cmd"  - run any other command, e.g. "xxd" (used in xxd test)
 func RunVimInTerminal(arguments, options)
   " If Vim doesn't exit a swap file remains, causing other tests to fail.
   " Remove it here.
@@ -88,7 +91,15 @@ func RunVimInTerminal(arguments, options)
     let reset_u7 = ' --cmd "set t_u7=" '
   endif
 
-  let cmd = GetVimCommandCleanTerm() .. reset_u7 .. a:arguments
+  if empty(get(a:options, 'cmd', ''))
+    let cmd = GetVimCommandCleanTerm() .. reset_u7 .. a:arguments
+  else
+    let cmd = get(a:options, 'cmd')
+  endif
+
+  if get(a:options, 'no_clean', 0)
+    let cmd = substitute(cmd, '--clean', '', '')
+  endif
 
   let options = #{curwin: 1}
   if &termwinsize == ''
@@ -114,7 +125,7 @@ func RunVimInTerminal(arguments, options)
 
   call TermWait(buf)
 
-  if get(a:options, 'wait_for_ruler', 1)
+  if get(a:options, 'wait_for_ruler', 1) && empty(get(a:options, 'cmd', ''))
     " Wait for "All" or "Top" of the ruler to be shown in the last line or in
     " the status line of the last window. This can be quite slow (e.g. when
     " using valgrind).
@@ -140,6 +151,9 @@ func StopVimInTerminal(buf, kill = 1)
 
   call assert_equal("running", term_getstatus(a:buf))
 
+  " Wait for all the pending updates to terminal to complete
+  call TermWait(a:buf)
+
   " CTRL-O : works both in Normal mode and Insert mode to start a command line.
   " In Command-line it's inserted, the CTRL-U removes it again.
   call term_sendkeys(a:buf, "\<C-O>:\<C-U>qa!\<cr>")
@@ -160,7 +174,7 @@ endfunc
 " number.
 func Run_shell_in_terminal(options)
   if has('win32')
-    let buf = term_start([&shell, '/k'], a:options)
+    let buf = term_start([&shell, '/D', '/k'], a:options)
   else
     let buf = term_start(&shell, a:options)
   endif
@@ -176,6 +190,10 @@ func Run_shell_in_terminal(options)
   let string = string({'job': buf->term_getjob()})
   call assert_match("{'job': 'process \\d\\+ run'}", string)
 
+  " On slower systems it may take a bit of time before the shell is ready to
+  " accept keys.  This mainly matters when using term_sendkeys() next.
+  call TermWait(buf)
+
   return buf
 endfunc
 
@@ -183,5 +201,6 @@ endfunc
 func Term_getlines(buf, lines)
   return join(map(a:lines, 'term_getline(a:buf, v:val)'), '')
 endfunc
+
 
 " vim: shiftwidth=2 sts=2 expandtab

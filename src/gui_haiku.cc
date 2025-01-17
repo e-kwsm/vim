@@ -75,8 +75,6 @@ extern "C" {
 #include <syslog.h>
 
 #include "vim.h"
-#include "globals.h"
-#include "proto.h"
 #include "version.h"
 
 }   // extern "C"
@@ -656,7 +654,7 @@ drop_callback(void *cookie)
     // TODO here we could handle going to a specific position in the dropped
     // file (see src/gui_mac.c, deleted in 8.2.1422)
     // Update the screen display
-    update_screen(NOT_VALID);
+    update_screen(UPD_NOT_VALID);
 }
 
     // Really handle dropped files and folders.
@@ -787,8 +785,8 @@ VimApp::ReadyToRun()
      * Apparently signals are inherited by the created thread -
      * disable the most annoying ones.
      */
-    signal(SIGINT, SIG_IGN);
-    signal(SIGQUIT, SIG_IGN);
+    mch_signal(SIGINT, SIG_IGN);
+    mch_signal(SIGQUIT, SIG_IGN);
 }
 
     void
@@ -1069,8 +1067,8 @@ VimFormView::AllAttached()
      * Apparently signals are inherited by the created thread -
      * disable the most annoying ones.
      */
-    signal(SIGINT, SIG_IGN);
-    signal(SIGQUIT, SIG_IGN);
+    mch_signal(SIGINT, SIG_IGN);
+    mch_signal(SIGQUIT, SIG_IGN);
 
     if (menuBar && textArea) {
 	/*
@@ -3847,7 +3845,7 @@ gui_mch_get_font(
 
     if (name == 0 && be_fixed_font == 0) {
 	if (giveErrorIfMissing)
-			semsg(_(e_font), name);
+	    semsg(_(e_unknown_font_str), name);
 	return NOFONT;
     }
 
@@ -3914,7 +3912,7 @@ gui_mch_get_font(
 
     if (count_font_styles(family) <= 0) {
 	if (giveErrorIfMissing)
-			semsg(_(e_font), font->name);
+	    semsg(_(e_unknown_font_str), font->name);
 	delete font;
 	return NOFONT;
     }
@@ -4031,17 +4029,6 @@ gui_mch_mousehide(int hide)
 {
     fprintf(stderr, "gui_mch_getmouse");
     //	TODO
-}
-
-    static int
-hex_digit(int c)
-{
-    if (isdigit(c))
-	return c - '0';
-    c = TOLOWER_ASC(c);
-    if (c >= 'a' && c <= 'f')
-	return c - 'a' + 10;
-    return -1000;
 }
 
 /*
@@ -4518,7 +4505,7 @@ gui_mch_add_menu(
 	    //	when we add a BMenu to another Menu, it creates the interconnecting BMenuItem
 	    tmp->AddItem(bmenu);
 
-	    //	Now its safe to query the menu for the associated MenuItem....
+	    //	Now it's safe to query the menu for the associated MenuItem...
 	    menu->id = tmp->FindItem((const char *) menu->dname);
 
 	}

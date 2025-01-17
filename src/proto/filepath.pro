@@ -1,10 +1,12 @@
 /* filepath.c */
-int modify_fname(char_u *src, int tilde_file, int *usedlen, char_u **fnamep, char_u **bufp, int *fnamelen);
+int modify_fname(char_u *src, int tilde_file, size_t *usedlen, char_u **fnamep, char_u **bufp, size_t *fnamelen);
 void shorten_dir(char_u *str);
+int file_is_readable(char_u *fname);
 void f_chdir(typval_T *argvars, typval_T *rettv);
 void f_delete(typval_T *argvars, typval_T *rettv);
 void f_executable(typval_T *argvars, typval_T *rettv);
 void f_exepath(typval_T *argvars, typval_T *rettv);
+void f_filecopy(typval_T *argvars, typval_T *rettv);
 void f_filereadable(typval_T *argvars, typval_T *rettv);
 void f_filewritable(typval_T *argvars, typval_T *rettv);
 void f_finddir(typval_T *argvars, typval_T *rettv);
@@ -21,6 +23,7 @@ void f_glob(typval_T *argvars, typval_T *rettv);
 void f_glob2regpat(typval_T *argvars, typval_T *rettv);
 void f_globpath(typval_T *argvars, typval_T *rettv);
 void f_isdirectory(typval_T *argvars, typval_T *rettv);
+void f_isabsolutepath(typval_T *argvars, typval_T *rettv);
 void f_mkdir(typval_T *argvars, typval_T *rettv);
 void f_pathshorten(typval_T *argvars, typval_T *rettv);
 void f_readdir(typval_T *argvars, typval_T *rettv);

@@ -148,11 +148,8 @@ ses_do_win(win_T *wp)
 	    && term_should_restore(wp->w_buffer);
 #endif
     if (wp->w_buffer->b_fname == NULL
-#ifdef FEAT_QUICKFIX
 	    // When 'buftype' is "nofile" can't restore the window contents.
-	    || bt_nofilename(wp->w_buffer)
-#endif
-       )
+	    || bt_nofilename(wp->w_buffer))
 	return (ssop_flags & SSOP_BLANK);
     if (bt_help(wp->w_buffer))
 	return (ssop_flags & SSOP_HELP);
@@ -203,41 +200,42 @@ ses_win_rec(FILE *fd, frame_T *fr)
     frame_T	*frc;
     int		count = 0;
 
-    if (fr->fr_layout != FR_LEAF)
-    {
-	// Find first frame that's not skipped and then create a window for
-	// each following one (first frame is already there).
-	frc = ses_skipframe(fr->fr_child);
-	if (frc != NULL)
-	    while ((frc = ses_skipframe(frc->fr_next)) != NULL)
-	    {
-		// Make window as big as possible so that we have lots of room
-		// to split.
-		if (put_line(fd, "wincmd _ | wincmd |") == FAIL
-			|| put_line(fd, fr->fr_layout == FR_COL
-						? "split" : "vsplit") == FAIL)
-		    return FAIL;
-		++count;
-	    }
+    if (fr->fr_layout == FR_LEAF)
+	return OK;
 
-	// Go back to the first window.
-	if (count > 0 && (fprintf(fd, fr->fr_layout == FR_COL
-			? "%dwincmd k" : "%dwincmd h", count) < 0
-						      || put_eol(fd) == FAIL))
-	    return FAIL;
-
-	// Recursively create frames/windows in each window of this column or
-	// row.
-	frc = ses_skipframe(fr->fr_child);
-	while (frc != NULL)
+    // Find first frame that's not skipped and then create a window for
+    // each following one (first frame is already there).
+    frc = ses_skipframe(fr->fr_child);
+    if (frc != NULL)
+	while ((frc = ses_skipframe(frc->fr_next)) != NULL)
 	{
-	    ses_win_rec(fd, frc);
-	    frc = ses_skipframe(frc->fr_next);
-	    // Go to next window.
-	    if (frc != NULL && put_line(fd, "wincmd w") == FAIL)
+	    // Make window as big as possible so that we have lots of room
+	    // to split.
+	    if (put_line(fd, "wincmd _ | wincmd |") == FAIL
+		    || put_line(fd, fr->fr_layout == FR_COL
+			? "split" : "vsplit") == FAIL)
 		return FAIL;
+	    ++count;
 	}
+
+    // Go back to the first window.
+    if (count > 0 && (fprintf(fd, fr->fr_layout == FR_COL
+		    ? "%dwincmd k" : "%dwincmd h", count) < 0
+		|| put_eol(fd) == FAIL))
+	return FAIL;
+
+    // Recursively create frames/windows in each window of this column or
+    // row.
+    frc = ses_skipframe(fr->fr_child);
+    while (frc != NULL)
+    {
+	ses_win_rec(fd, frc);
+	frc = ses_skipframe(frc->fr_next);
+	// Go to next window.
+	if (frc != NULL && put_line(fd, "wincmd w") == FAIL)
+	    return FAIL;
     }
+
     return OK;
 }
 
@@ -348,20 +346,33 @@ put_view(
     // Edit the file.  Skip this when ":next" already did it.
     if (add_edit && (!did_next || wp->w_arg_idx_invalid))
     {
+	if (bt_help(wp->w_buffer))
+	{
+	    char *curtag = "";
+
+	    // A help buffer needs some options to be set.
+	    // First, create a new empty buffer with "buftype=help".
+	    // Then ":help" will re-use both the buffer and the window and set
+	    // the options, even when "options" is not in 'sessionoptions'.
+	    if (0 < wp->w_tagstackidx
+		    && wp->w_tagstackidx <= wp->w_tagstacklen)
+		curtag = (char *)wp->w_tagstack[wp->w_tagstackidx - 1].tagname;
+
+	    if (put_line(fd, "enew | setl bt=help") == FAIL
+		    || fprintf(fd, "help %s", curtag) < 0
+		    || put_eol(fd) == FAIL)
+		return FAIL;
+	}
 # ifdef FEAT_TERMINAL
-	if (bt_terminal(wp->w_buffer))
+	else if (bt_terminal(wp->w_buffer))
 	{
 	    if (term_write_session(fd, wp, terminal_bufs) == FAIL)
 		return FAIL;
 	}
-	else
 # endif
 	// Load the file.
-	if (wp->w_buffer->b_ffname != NULL
-# ifdef FEAT_QUICKFIX
-		&& !bt_nofilename(wp->w_buffer)
-# endif
-		)
+	else if (wp->w_buffer->b_ffname != NULL
+		&& !bt_nofilename(wp->w_buffer))
 	{
 	    // Editing a file in this buffer: use ":edit file".
 	    // This may have side effects! (e.g., compressed or network file).
@@ -369,9 +380,9 @@ put_view(
 	    // Note, if a buffer for that file already exists, use :badd to
 	    // edit that buffer, to not lose folding information (:edit resets
 	    // folds in other buffers)
-	    if (fputs("if bufexists(\"", fd) < 0
+	    if (fputs("if bufexists(fnamemodify(\"", fd) < 0
 		    || ses_fname(fd, wp->w_buffer, flagp, FALSE) == FAIL
-		    || fputs("\") | buffer ", fd) < 0
+		    || fputs("\", \":p\")) | buffer ", fd) < 0
 		    || ses_fname(fd, wp->w_buffer, flagp, FALSE) == FAIL
 		    || fputs(" | else | edit ", fd) < 0
 		    || ses_fname(fd, wp->w_buffer, flagp, FALSE) == FAIL
@@ -532,7 +543,7 @@ store_session_globals(FILE *fd)
     char_u	*p, *t;
 
     todo = (int)gvht->ht_used;
-    for (hi = gvht->ht_array; todo > 0; ++hi)
+    FOR_ALL_HASHTAB_ITEMS(gvht, hi, todo)
     {
 	if (!HASHITEM_EMPTY(hi))
 	{
@@ -567,7 +578,6 @@ store_session_globals(FILE *fd)
 		}
 		vim_free(p);
 	    }
-#ifdef FEAT_FLOAT
 	    else if (this_var->di_tv.v_type == VAR_FLOAT
 		    && var_flavour(this_var->di_key) == VAR_FLAVOUR_SESSION)
 	    {
@@ -584,7 +594,6 @@ store_session_globals(FILE *fd)
 			|| put_eol(fd) == FAIL)
 		    return FAIL;
 	    }
-#endif
 	}
     }
     return OK;
@@ -604,16 +613,17 @@ makeopens(
     int		only_save_windows = TRUE;
     int		nr;
     int		restore_size = TRUE;
+    int		restore_height_width = FALSE;
     win_T	*wp;
     char_u	*sname;
     win_T	*edited_win = NULL;
-    int		tabnr;
     int		restore_stal = FALSE;
     win_T	*tab_firstwin;
     frame_T	*tab_topframe;
     int		cur_arg_idx = 0;
     int		next_arg_idx = 0;
     int		ret = FAIL;
+    tabpage_T	*tp;
 #ifdef FEAT_TERMINAL
     hashtab_T	terminal_bufs;
 
@@ -670,9 +680,39 @@ makeopens(
     if (put_line(fd, "endif") == FAIL)
 	goto fail;
 
-    // Now save the current files, current buffer first.
-    if (put_line(fd, "set shortmess=aoO") == FAIL)
+    // save 'shortmess' if not storing options
+    if ((ssop_flags & SSOP_OPTIONS) == 0
+	    && put_line(fd, "let s:shortmess_save = &shortmess") == FAIL)
 	goto fail;
+
+    // set 'shortmess' for the following.  Add the 'A' flag if it was there
+    if (put_line(fd, "if &shortmess =~ 'A'") == FAIL
+	    || put_line(fd, "  set shortmess=aoOA") == FAIL
+	    || put_line(fd, "else") == FAIL
+	    || put_line(fd, "  set shortmess=aoO") == FAIL
+	    || put_line(fd, "endif") == FAIL)
+	goto fail;
+
+    // Now save the current files, current buffer first.
+    // Put all buffers into the buffer list.
+    // Do it very early to preserve buffer order after loading session (which
+    // can be disrupted by prior `edit` or `tabedit` calls).
+    FOR_ALL_BUFFERS(buf)
+    {
+	if (!(only_save_windows && buf->b_nwindows == 0)
+		&& !(buf->b_help && !(ssop_flags & SSOP_HELP))
+		// Skip terminal buffers: finished ones are not useful, others
+		// will be resurrected and result in a new buffer.
+		&& !bt_terminal(buf)
+		&& buf->b_fname != NULL
+		&& buf->b_p_bl)
+	{
+	    if (fprintf(fd, "badd +%ld ", buf->b_wininfo == NULL ? 1L
+					   : buf->b_wininfo->wi_fpos.lnum) < 0
+		    || ses_fname(fd, buf, &ssop_flags, TRUE) == FAIL)
+		goto fail;
+	}
+    }
 
     // the global argument list
     if (ses_arglist(fd, "argglobal", &global_alist.al_ga,
@@ -712,36 +752,35 @@ makeopens(
 	restore_stal = TRUE;
     }
 
-    // May repeat putting Windows for each tab, when "tabpages" is in
-    // 'sessionoptions'.
-    // Don't use goto_tabpage(), it may change directory and trigger
-    // autocommands.
-    tab_firstwin = firstwin;	// first window in tab page "tabnr"
-    tab_topframe = topframe;
     if ((ssop_flags & SSOP_TABPAGES))
     {
-	tabpage_T *tp;
-
-	// Similar to ses_win_rec() below, populate the tab pages first so
-	// later local options won't be copied to the new tabs.
+	// "tabpages" is in 'sessionoptions': Similar to ses_win_rec() below,
+	// populate the tab pages first so later local options won't be copied
+	// to the new tabs.
 	FOR_ALL_TABPAGES(tp)
-	    if (tp->tp_next != NULL && put_line(fd, "tabnew") == FAIL)
+	    // Use `bufhidden=wipe` to remove empty "placeholder" buffers once
+	    // they are not needed. This prevents creating extra buffers (see
+	    // cause of patch 8.1.0829)
+	    if (tp->tp_next != NULL
+		  && put_line(fd, "tabnew +setlocal\\ bufhidden=wipe") == FAIL)
 		goto fail;
 	if (first_tabpage->tp_next != NULL && put_line(fd, "tabrewind") == FAIL)
 	    goto fail;
     }
-    for (tabnr = 1; ; ++tabnr)
+
+    // Assume "tabpages" is in 'sessionoptions'.  If not then we only do
+    // "curtab" and bail out of the loop.
+    FOR_ALL_TABPAGES(tp)
     {
-	tabpage_T *tp = NULL;
 	int	need_tabnext = FALSE;
 	int	cnr = 1;
 
+	// May repeat putting Windows for each tab, when "tabpages" is in
+	// 'sessionoptions'.
+	// Don't use goto_tabpage(), it may change directory and trigger
+	// autocommands.
 	if ((ssop_flags & SSOP_TABPAGES))
 	{
-	    tp = find_tabpage(tabnr);
-
-	    if (tp == NULL)
-		break;		// done all tab pages
 	    if (tp == curtab)
 	    {
 		tab_firstwin = firstwin;
@@ -752,8 +791,14 @@ makeopens(
 		tab_firstwin = tp->tp_firstwin;
 		tab_topframe = tp->tp_topframe;
 	    }
-	    if (tabnr > 1)
+	    if (tp != first_tabpage)
 		need_tabnext = TRUE;
+	}
+	else
+	{
+	    tp = curtab;
+	    tab_firstwin = firstwin;
+	    tab_topframe = topframe;
 	}
 
 	// Before creating the window layout, try loading one file.  If this
@@ -764,10 +809,7 @@ makeopens(
 	    if (ses_do_win(wp)
 		    && wp->w_buffer->b_ffname != NULL
 		    && !bt_help(wp->w_buffer)
-#ifdef FEAT_QUICKFIX
-		    && !bt_nofilename(wp->w_buffer)
-#endif
-		    )
+		    && !bt_nofilename(wp->w_buffer))
 	    {
 		if (need_tabnext && put_line(fd, "tabnext") == FAIL)
 		    goto fail;
@@ -839,6 +881,7 @@ makeopens(
 		    || put_line(fd, "set winminwidth=0") == FAIL
 		    || put_line(fd, "set winwidth=1") == FAIL)
 		goto fail;
+	    restore_height_width = TRUE;
 	}
 	if (nr > 1 && ses_winsizes(fd, restore_size, tab_firstwin) == FAIL)
 	    goto fail;
@@ -846,11 +889,11 @@ makeopens(
 	// Restore the tab-local working directory if specified
 	// Do this before the windows, so that the window-local directory can
 	// override the tab-local directory.
-	if (tp != NULL && tp->tp_localdir != NULL && ssop_flags & SSOP_CURDIR)
+	if ((ssop_flags & SSOP_CURDIR) && tp->tp_localdir != NULL)
 	{
 	    if (fputs("tcd ", fd) < 0
-		    || ses_put_fname(fd, tp->tp_localdir, &ssop_flags) == FAIL
-		    || put_eol(fd) == FAIL)
+		     || ses_put_fname(fd, tp->tp_localdir, &ssop_flags) == FAIL
+		     || put_eol(fd) == FAIL)
 		goto fail;
 	    did_lcd = TRUE;
 	}
@@ -903,29 +946,6 @@ makeopens(
     if (restore_stal && put_line(fd, "set stal=1") == FAIL)
 	goto fail;
 
-    // Now put the remaining buffers into the buffer list.
-    // This is near the end, so that when 'hidden' is set we don't create extra
-    // buffers.  If the buffer was already created with another command the
-    // ":badd" will have no effect.
-    FOR_ALL_BUFFERS(buf)
-    {
-	if (!(only_save_windows && buf->b_nwindows == 0)
-		&& !(buf->b_help && !(ssop_flags & SSOP_HELP))
-#ifdef FEAT_TERMINAL
-		// Skip terminal buffers: finished ones are not useful, others
-		// will be resurrected and result in a new buffer.
-		&& !bt_terminal(buf)
-#endif
-		&& buf->b_fname != NULL
-		&& buf->b_p_bl)
-	{
-	    if (fprintf(fd, "badd +%ld ", buf->b_wininfo == NULL ? 1L
-					   : buf->b_wininfo->wi_fpos.lnum) < 0
-		    || ses_fname(fd, buf, &ssop_flags, TRUE) == FAIL)
-		goto fail;
-	}
-    }
-
     // Wipe out an empty unnamed buffer we started in.
     if (put_line(fd, "if exists('s:wipebuf') && len(win_findbuf(s:wipebuf)) == 0")
 								       == FAIL)
@@ -937,11 +957,24 @@ makeopens(
     if (put_line(fd, "unlet! s:wipebuf") == FAIL)
 	goto fail;
 
-    // Re-apply 'winheight', 'winwidth' and 'shortmess'.
-    if (fprintf(fd, "set winheight=%ld winwidth=%ld shortmess=%s",
-			       p_wh, p_wiw, p_shm) < 0 || put_eol(fd) == FAIL)
+    // Re-apply 'winheight' and 'winwidth'.
+    if (fprintf(fd, "set winheight=%ld winwidth=%ld",
+			       p_wh, p_wiw) < 0 || put_eol(fd) == FAIL)
 	goto fail;
-    if (tab_firstwin->w_next != NULL)
+
+    // Restore 'shortmess'.
+    if (ssop_flags & SSOP_OPTIONS)
+    {
+	if (fprintf(fd, "set shortmess=%s", p_shm) < 0 || put_eol(fd) == FAIL)
+	    goto fail;
+    }
+    else
+    {
+	if (put_line(fd, "let &shortmess = s:shortmess_save") == FAIL)
+	    goto fail;
+    }
+
+    if (restore_height_width)
     {
 	// Restore 'winminheight' and 'winminwidth'.
 	if (put_line(fd, "let &winminheight = s:save_winminheight") == FAIL
@@ -1036,11 +1069,11 @@ ex_loadview(exarg_T *eap)
     char_u	*fname;
 
     fname = get_view_file(*eap->arg);
-    if (fname != NULL)
-    {
-	do_source(fname, FALSE, DOSO_NONE, NULL);
-	vim_free(fname);
-    }
+    if (fname == NULL)
+	return;
+
+    do_source(fname, FALSE, DOSO_NONE, NULL);
+    vim_free(fname);
 }
 
 # if defined(FEAT_GUI_GNOME) \
@@ -1298,7 +1331,7 @@ ex_mkrc(exarg_T	*eap)
 			|| ((ssop_flags & SSOP_CURDIR) && globaldir != NULL)))
 		    {
 			if (mch_chdir((char *)dirnow) != 0)
-			    emsg(_(e_prev_dir));
+			    emsg(_(e_cannot_go_back_to_previous_directory));
 			shorten_fnames(TRUE);
 		    }
 		    vim_free(dirnow);
@@ -1331,7 +1364,7 @@ ex_mkrc(exarg_T	*eap)
 	failed |= fclose(fd);
 
 	if (failed)
-	    emsg(_(e_write));
+	    emsg(_(e_error_while_writing));
 #if defined(FEAT_SESSION)
 	else if (eap->cmdidx == CMD_mksession)
 	{
@@ -1359,6 +1392,8 @@ theend:
 #ifdef FEAT_SESSION
     vim_free(viewFile);
 #endif
+
+    apply_autocmds(EVENT_SESSIONWRITEPOST, NULL, NULL, FALSE, curbuf);
 }
 
 #if (defined(FEAT_VIMINFO) || defined(FEAT_SESSION)) || defined(PROTO)
