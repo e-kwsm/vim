@@ -9,7 +9,7 @@
 " Ankit Jain      22.03.2019     Changes & fixes:
 "                                1. Include inline comments
 "                                2. Use comment highlight for bad lines
-"                                3. Change certain 'keywords' to 'matches' 
+"                                3. Change certain 'keywords' to 'matches'
 "                                for additional highlighting
 "                                4. Different highlighting for COPY, GO TO &
 "                                CALL lines
@@ -207,7 +207,7 @@ endif
 if exists("cobol_legacy_code")
     syn match   cobolBadLine      "\%73c.*" containedin=ALLBUT,cobolComment
 else
-    " #C22032019: Use comment highlighting for bad lines 
+    " #C22032019: Use comment highlighting for bad lines
     " syn match   cobolBadLine      \"\%73c.*" containedin=ALL
     syn match   cobolBadLine      "\%73c.*" containedin=ALL,cobolInlineComment,cobolComment
 endif
@@ -226,7 +226,7 @@ endif
 hi def link cobolCALLs          Function
 hi def link cobolCALLProg       Special
 hi def link cobolComment        Comment
-hi def link cobolInlineComment  Comment  
+hi def link cobolInlineComment  Comment
 hi def link cobolKeys           Comment
 hi def link cobolAreaB          Special
 hi def link cobolCompiler       PreProc

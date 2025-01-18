@@ -42,7 +42,7 @@ syn keyword dartLabel       case default
 syn keyword dartNull        null
 syn keyword dartOperator    is new
 syn keyword dartRepeat      for do in while
-syn keyword dartStatement   return with 
+syn keyword dartStatement   return with
 syn keyword dartType        bool double enum int String StringBuffer void
 syn keyword dartTodo        contained TODO FIXME XXX
 

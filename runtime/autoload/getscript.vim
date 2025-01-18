@@ -482,7 +482,7 @@ fun! s:GetOneScript(...)
     silent! e %
    endif
    setlocal bh=wipe
-  
+
    " find the latest source-id in the plugin's webpage
    silent! 1
    let findpkg= search('Click on the package to download','W')
@@ -590,7 +590,7 @@ fun! s:GetOneScript(...)
       let tgtdir= "plugin"
      endif
 "     call Decho("tgtdir<".tgtdir.">  pname<".pname.">")
-     
+
      " decompress
      if sname =~ '\.bz2$'
 "      call Decho("decompress: attempt to bunzip2 ".sname)
@@ -610,7 +610,7 @@ fun! s:GetOneScript(...)
      else
 "      call Decho("no decompression needed")
      endif
-     
+
      " distribute archive(.zip, .tar, .vba, .vmb, ...) contents
      if sname =~ '\.zip$'
 "      call Decho("dearchive: attempt to unzip ".sname)
@@ -648,7 +648,7 @@ fun! s:GetOneScript(...)
      else
 "      call Decho("no dearchiving needed")
      endif
-     
+
      " ---------------------------------------------
      " move plugin to plugin/ or AsNeeded/ directory
      " ---------------------------------------------
@@ -663,7 +663,7 @@ fun! s:GetOneScript(...)
 "      call Decho("exe silent !".g:GetLatestVimScripts_mv." ".shellescape("plugin/".pname)." ".tgtdir)
       exe "silent !".g:GetLatestVimScripts_mv." ".shellescape("plugin/".pname)." ".tgtdir
      endif
-     
+
      " helptags step
      let docdir= substitute(&rtp,',.*','','e')."/doc"
 "     call Decho("helptags: docdir<".docdir.">")

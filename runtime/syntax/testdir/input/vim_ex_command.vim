@@ -45,7 +45,7 @@ enddef
 "       \ -range
 "       \ -register
 "       \ -keepscript
-"       \ Foo 
+"       \ Foo
 "       \ echo "FOO"
 
 " errors
