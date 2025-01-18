@@ -32,9 +32,9 @@ enddef
 
 # start/end patterns
 
-{             
+{
   var foo = 42
-}             
+}
 
 { # comment
   var foo = 42

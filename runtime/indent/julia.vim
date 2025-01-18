@@ -314,7 +314,7 @@ function JumpToMatch(lnum, last_closed_bracket)
   " otherwise resorts to vim's default, which is buggy but better than
   " nothing)
   call cursor(a:lnum, a:last_closed_bracket)
-  let percmap = maparg("%", "n") 
+  let percmap = maparg("%", "n")
   if exists("g:loaded_matchit") && percmap =~# 'Match\%(it\|_wrapper\)'
     normal %
   else

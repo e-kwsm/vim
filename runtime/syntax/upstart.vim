@@ -48,7 +48,7 @@ syn keyword upstartStatement on start stop
 " flag, no parameter
 syn keyword upstartStatement respawn service instance manual debug task
 
-" prefix for exec or script 
+" prefix for exec or script
 syn keyword upstartOption pre-start post-start pre-stop post-stop
 
 " option for kill

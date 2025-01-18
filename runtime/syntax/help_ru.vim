@@ -2,7 +2,7 @@
 " Language:     Russian Vim program help files *.rux
 " Maintainer:   Restorer, <restorer@mail2k.ru>
 " Last Change:  2025 Jul 07
-" 
+"
 
 " Проверяем язык локали и установки опции 'helplang'
 " Если не русский, то выходим из скрипта.
