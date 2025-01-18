@@ -66,12 +66,12 @@ syn keyword formStatement       polyadd_ polydiv_ polygcd_ polyintfac_
 syn keyword formStatement       polymul_ polynorm_ polyrem_ polysub_
 syn keyword formStatement       replace_ reverse_ root_ setfun_ sig_
 syn keyword formStatement       sign_ sum_ sump_ table_ tbl_ term_
-syn keyword formStatement       termsin_ termsinbracket_ theta_ thetap_ 
+syn keyword formStatement       termsin_ termsinbracket_ theta_ thetap_
 syn keyword formStatement	5_ 6_ 7_
 
 syn keyword formReserved        sqrt_ ln_ sin_ cos_ tan_ asin_ acos_
 syn keyword formReserved        atan_ atan2_ sinh_ cosh_ tanh_ asinh_
-syn keyword formReserved        acosh_ atanh_ li2_ lin_ 
+syn keyword formReserved        acosh_ atanh_ li2_ lin_
 
 syn keyword formTodo            contained TODO FIXME XXX
 

@@ -89,7 +89,7 @@ set path=/usr/$INCLUDE,$HOME/include,.
 set path=abc,def,ghi
       "\ def is the 'define' option
       \ def=abc,def,ghi
- 
+
 set path=abc,
       "\ def is a 'path' directory value
       \def,ghi

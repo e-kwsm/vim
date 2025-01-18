@@ -2,7 +2,7 @@
 
 map!
 map! lhs rhs
-map 
+map
 map lhs rhs
 
 map <buffer><expr><nowait><script><silent><special><unique> lhs rhs
@@ -46,13 +46,13 @@ map lhs :search('foo\\|bar')<CR>:echo "rhs"<CR>
 
 " multiline RHS
 
-map <Leader>baz 
+map <Leader>baz
   \ :echo (<Bar>
   \
   \'bar')<CR>
   "\ comment
 
-map lhs 
+map lhs
   "\ comment
   \ echo "foo"
 
@@ -60,7 +60,7 @@ map lhs
   "\ comment
   \ echo "foo"
 
-map lhs 
+map lhs
   "\ comment
   \ echo "foo"
 
@@ -68,7 +68,7 @@ map l hs
   "\ comment
   \ echo "foo"
 
-map l hs 
+map l hs
   "\ comment
   \ echo "foo"
 

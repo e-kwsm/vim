@@ -187,14 +187,14 @@ endif
 if !exists("mojo_no_builtin_highlight")
   " Built-in functions
   syn keyword mojoBuiltin	slice constrained debug_assert put_new_line print
-  syn keyword mojoBuiltin	print_no_newline len range rebind element_type 
+  syn keyword mojoBuiltin	print_no_newline len range rebind element_type
   syn keyword mojoBuiltin	ord chr atol isdigit index address string
   " Built-in types
   syn keyword mojoType		Byte ListLiteral CoroutineContext Coroutine DType
-  syn keyword mojoType		dtype type invalid bool int8 si8 unit8 ui8 int16 
-  syn keyword mojoType		si16 unit16 ui16 int32 si32 uint32 ui32 int64 
+  syn keyword mojoType		dtype type invalid bool int8 si8 unit8 ui8 int16
+  syn keyword mojoType		si16 unit16 ui16 int32 si32 uint32 ui32 int64
   syn keyword mojoType		si64 uint64 ui64 bfloat16 bf16 float16 f16 float32
-  syn keyword mojoType		f32 float64 f64 Error FloatLiteral Int Attr SIMD 
+  syn keyword mojoType		f32 float64 f64 Error FloatLiteral Int Attr SIMD
   syn keyword mojoType		Int8 UInt8 Int16 UInt16 Int32 UInt32 Int64 UInt64
   syn keyword mojoType		Float16 Float32 Float64 element_type _65x13_type
   syn keyword mojoType		String StringLiteral StringRef Tuple AnyType
