@@ -17,7 +17,7 @@ highlight link tfsError Error
 syntax keyword tfsSpecialComment TODO XXX FIXME contained
 highlight link tfsSpecialComment Todo
 syntax match tfsComment ~\s*#.*~ contains=tfsSpecialComment
-highlight link tfsComment Comment 
+highlight link tfsComment Comment
 
 " Operators & Delimiters
 highlight link tfsSpecialChar Operator
@@ -31,7 +31,7 @@ highlight link tfsRuleDevice Label
 highlight link tfsDeviceContainer PreProc
 
 " Trustees Rules - Part 2 of 3 - The Path
-syntax match tfsRulePath ~/[-_a-zA-Z0-9/]*~ nextgroup=tfsRuleACL contained contains=tfsDelimiter 
+syntax match tfsRulePath ~/[-_a-zA-Z0-9/]*~ nextgroup=tfsRuleACL contained contains=tfsDelimiter
 highlight link tfsRulePath String
 
 " Trustees Rules - Part 3 of 3 - The ACLs

@@ -89,27 +89,27 @@ syntax keyword mushFunction contained zmwho zone zwho
 syntax match mushFunctionBrackets  "\i*(" contains=mushFunction
 "
 " regular mush commands
-syntax keyword mushAtCommandList contained @ALLHALT @ALLQUOTA @ASSERT @ATRCHOWN @ATRLOCK @ATTRIBUTE @BOOT 
-syntax keyword mushAtCommandList contained @BREAK @CEMIT @CHANNEL @CHAT @CHOWN @CHOWNALL @CHZONE @CHZONEALL 
+syntax keyword mushAtCommandList contained @ALLHALT @ALLQUOTA @ASSERT @ATRCHOWN @ATRLOCK @ATTRIBUTE @BOOT
+syntax keyword mushAtCommandList contained @BREAK @CEMIT @CHANNEL @CHAT @CHOWN @CHOWNALL @CHZONE @CHZONEALL
 syntax keyword mushAtCommandList contained @CLOCK @CLONE @COBJ @COMMAND @CONFIG @CPATTR @CREATE @CRPLOG @DBCK
-syntax keyword mushAtCommandList contained @DECOMPILE @DESTROY @DIG @DISABLE @DIVISION @DOING @DOLIST @DRAIN 
-syntax keyword mushAtCommandList contained @DUMP @EDIT @ELOCK @EMIT @EMPOWER @ENABLE @ENTRANCES @EUNLOCK @FIND 
-syntax keyword mushAtCommandList contained @FIRSTEXIT @FLAG @FORCE @FUNCTION @EDIT @GREP @HALT @HIDE @HOOK @KICK 
-syntax keyword mushAtCommandList contained @LEMIT @LEVEL @LINK @LIST @LISTMOTD @LOCK @LOG @LOGWIPE @LSET @MAIL @MALIAS 
-syntax keyword mushAtCommandList contained @MAP @MOTD @MVATTR @NAME @NEWPASSWORD @NOTIFY @NSCEMIT @NSEMIT @NSLEMIT 
+syntax keyword mushAtCommandList contained @DECOMPILE @DESTROY @DIG @DISABLE @DIVISION @DOING @DOLIST @DRAIN
+syntax keyword mushAtCommandList contained @DUMP @EDIT @ELOCK @EMIT @EMPOWER @ENABLE @ENTRANCES @EUNLOCK @FIND
+syntax keyword mushAtCommandList contained @FIRSTEXIT @FLAG @FORCE @FUNCTION @EDIT @GREP @HALT @HIDE @HOOK @KICK
+syntax keyword mushAtCommandList contained @LEMIT @LEVEL @LINK @LIST @LISTMOTD @LOCK @LOG @LOGWIPE @LSET @MAIL @MALIAS
+syntax keyword mushAtCommandList contained @MAP @MOTD @MVATTR @NAME @NEWPASSWORD @NOTIFY @NSCEMIT @NSEMIT @NSLEMIT
 syntax keyword mushAtCommandList contained @NSOEMIT @NSPEMIT @NSPEMIT @NSREMIT @NSZEMIT @NUKE @OEMIT @OPEN @PARENT @PASSWORD
-syntax keyword mushAtCommandList contained @PCREATE @PEMIT @POLL @POOR @POWERLEVEL @PROGRAM @PROMPT @PS @PURGE @QUOTA 
-syntax keyword mushAtCommandList contained @READCACHE @RECYCLE @REJECTMOTD @REMIT @RESTART @SCAN @SEARCH @SELECT @SET 
-syntax keyword mushAtCommandList contained @SHUTDOWN @SITELOCK @SNOOP @SQL @SQUOTA @STATS @SWITCH @SWEEP @SWITCH @TELEPORT 
-syntax keyword mushAtCommandList contained @TRIGGER @ULOCK @UNDESTROY @UNLINK @UNLOCK @UNRECYCLE @UPTIME @UUNLOCK @VERB 
+syntax keyword mushAtCommandList contained @PCREATE @PEMIT @POLL @POOR @POWERLEVEL @PROGRAM @PROMPT @PS @PURGE @QUOTA
+syntax keyword mushAtCommandList contained @READCACHE @RECYCLE @REJECTMOTD @REMIT @RESTART @SCAN @SEARCH @SELECT @SET
+syntax keyword mushAtCommandList contained @SHUTDOWN @SITELOCK @SNOOP @SQL @SQUOTA @STATS @SWITCH @SWEEP @SWITCH @TELEPORT
+syntax keyword mushAtCommandList contained @TRIGGER @ULOCK @UNDESTROY @UNLINK @UNLOCK @UNRECYCLE @UPTIME @UUNLOCK @VERB
 syntax keyword mushAtCommandList contained @VERSION @WAIT @WALL @WARNINGS @WCHECK @WHEREIS @WIPE @ZCLONE @ZEMIT
 syntax match mushCommand  "@\i\I*" contains=mushAtCommandList
 
 
 syntax keyword mushCommand AHELP ANEWS ATTRIB_SET BRIEF BRIEF BUY CHANGES DESERT
-syntax keyword mushCommand DISMISS DROP EMPTY ENTER EXAMINE FOLLOW GET GIVE GOTO 
+syntax keyword mushCommand DISMISS DROP EMPTY ENTER EXAMINE FOLLOW GET GIVE GOTO
 syntax keyword mushCommand HELP HUH_COMMAND INVENTORY INVENTORY LOOK LEAVE LOOK
-syntax keyword mushCommand GOTO NEWS PAGE PAGE POSE RULES SAY SCORE SEMIPOSE 
+syntax keyword mushCommand GOTO NEWS PAGE PAGE POSE RULES SAY SCORE SEMIPOSE
 syntax keyword mushCommand SPECIALNEWS TAKE TEACH THINK UNFOLLOW USE WHISPER WHISPER
 syntax keyword mushCommand WARN_ON_MISSING WHISPER WITH
 
@@ -196,7 +196,7 @@ hi def link mushFlag       Special
 hi def link mushIdentifier Identifier
 hi def link mushDefine     Macro
 hi def link mushPreProc    PreProc
-hi def link mushPreProcGroup PreProc 
+hi def link mushPreProcGroup PreProc
 hi def link mushPreCondit PreCondit
 hi def link mushIncluded cString
 hi def link mushInclude Include

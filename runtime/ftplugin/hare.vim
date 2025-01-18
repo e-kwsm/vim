@@ -18,7 +18,7 @@ b:undo_ftplugin = 'compiler make'
 # Formatting settings.
 setlocal comments=://
 setlocal commentstring=//\ %s
-setlocal formatlistpat=^\\s*-\ 
+setlocal formatlistpat=^\\s*-\
 setlocal formatoptions+=croqnlj/ formatoptions-=t
 b:undo_ftplugin ..= ' | setl cms< com< flp< fo<'
 

@@ -85,7 +85,7 @@ echo @A @B @C @D @E @F @G @H @I @J @K @L @M @N @O @P @Q @R @S @T @U @V @W @X @Y 
 echo @- @: @. @% @# @= @* @+ @~ @_ @/
 
 # read-only @:, @., @%, @~
-@" = "foo" 
+@" = "foo"
 @0 = "foo"
 @1 = "foo"
 @9 = "foo"
