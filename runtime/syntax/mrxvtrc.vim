@@ -225,7 +225,7 @@ syn keyword	mrxvtrcMacro	contained skipwhite
 syn region	mrxvtrcTitle	contained oneline skipwhite
 				\ nextgroup=mrxvtrcShell,mrxvtrcCmd
 				\ start='"' end='"'
-syn match	mrxvtrcShell	contained nextgroup=mrxvtrcCmd '!' 
+syn match	mrxvtrcShell	contained nextgroup=mrxvtrcCmd '!'
 syn match	mrxvtrcCmd	contained '\v[^!" \t].*'
 
 " ToggleSubwin macro

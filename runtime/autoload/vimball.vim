@@ -105,14 +105,14 @@ fun! vimball#MkVimball(line1,line2,writelevel,...) range
 
   while linenr <= a:line2
    let svfile  = getline(linenr)
- 
+
    if !filereadable(svfile)
     call vimball#ShowMesg(s:ERROR,"unable to read file<".svfile.">")
     call s:ChgDir(curdir)
     call vimball#RestoreSettings()
     return
    endif
- 
+
    " create/switch to mkvimball tab
    if !exists("vbtabnr")
     tabnew
@@ -121,7 +121,7 @@ fun! vimball#MkVimball(line1,line2,writelevel,...) range
    else
     exe "tabn ".vbtabnr
    endif
- 
+
    let lastline= line("$") + 1
    if lastline == 2 && getline("$") == ""
     call setline(1,'" Vimball Archiver by Charles E. Campbell')
@@ -165,7 +165,7 @@ endfun
 
 " ---------------------------------------------------------------------
 " vimball#Vimball: extract and distribute contents from a vimball {{{2
-"                  (invoked the the UseVimball command embedded in 
+"                  (invoked the the UseVimball command embedded in
 "                  vimballs' prologue)
 fun! vimball#Vimball(really,...)
 
@@ -215,7 +215,7 @@ fun! vimball#Vimball(really,...)
   " give title to listing of (extracted) files from Vimball Archive
   if a:really
    echohl Title     | echomsg "Vimball Archive"         | echohl None
-  else             
+  else
    echohl Title     | echomsg "Vimball Archive Listing" | echohl None
    echohl Statement | echomsg "files would be placed under: ".home | echohl None
   endif
@@ -368,7 +368,7 @@ fun! vimball#RmVimball(...)
 
   call s:ChgDir(home)
   if filereadable(".VimballRecord")
-   keepalt keepjumps 1split 
+   keepalt keepjumps 1split
    sil! keepalt keepjumps e .VimballRecord
    let keepsrch= @/
    if search('^\M'.curfile."\m: ".'cw')
@@ -556,7 +556,7 @@ fun! s:RecordInFile(home)
   if exists("s:recordfile") || exists("s:recorddir")
    let curdir= getcwd()
    call s:ChgDir(a:home)
-   keepalt keepjumps 1split 
+   keepalt keepjumps 1split
 
    let cmd= expand("%:tr").": "
 

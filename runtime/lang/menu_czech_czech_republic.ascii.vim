@@ -126,7 +126,7 @@ if has("spell")
    let g:menutrans_set_lang_to = "Nastavit jazyk na"
 endif
 
-if has("Folding")   
+if has("Folding")
    menutrans &Folding			&Skladani
    menutrans &Enable/Disable\ folds<Tab>zi &Ano/Ne<Tab>zi
    menutrans &View\ Cursor\ Line<Tab>zv	Zobrazit\ radek\ &kurzoru<Tab>zv
@@ -299,7 +299,7 @@ let g:menutrans_path_dialog = "Zadejte cesty pro vyhledavani souboru. Jednotlive
 let g:menutrans_tags_dialog = "Zadejte jmena souboru s tagy. Jmena oddelte carkami."
 let g:menutrans_textwidth_dialog = "Zadejte delku radku (0 pro zakazani formatovani):"
 let g:menutrans_fileformat_dialog = "Vyberte typ konce radku"
-" }}}" 
+" }}}"
 
 let &cpo = s:keepcpo
 unlet s:keepcpo

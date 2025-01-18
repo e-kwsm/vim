@@ -32,7 +32,7 @@
 "		    \end{code}, added some clarification to the attributions
 " 2008 July 1:      Removed % from guess list, as it totally breaks plain
 "                   text markup guessing
-" 2009 April 29:    Fixed highlighting breakage in TeX mode, 
+" 2009 April 29:    Fixed highlighting breakage in TeX mode,
 "                   thanks to Kalman Noel
 "
 

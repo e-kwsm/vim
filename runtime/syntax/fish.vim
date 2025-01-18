@@ -202,7 +202,7 @@ hi def link fishQuote                   fish_color_quote
 hi def link fishRedirection             fish_color_redirection
 
 
-" Default highlight groups 
+" Default highlight groups
 
 hi def link fish_color_param        Normal
 hi def link fish_color_normal       Normal
