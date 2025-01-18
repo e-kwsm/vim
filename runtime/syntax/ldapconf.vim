@@ -23,7 +23,7 @@ syn match   ldapconfBegin         display '^'
 
 syn case    ignore
 
-syn keyword ldapconfOption        contained URI 
+syn keyword ldapconfOption        contained URI
       \                           nextgroup=ldapconfURI
       \                           skipwhite
 
@@ -33,7 +33,7 @@ syn keyword ldapconfOption        contained
       \                           nextgroup=ldapconfDNAttrType
       \                           skipwhite
 
-syn keyword ldapconfDeprOption    contained 
+syn keyword ldapconfDeprOption    contained
       \                           HOST
       \                           nextgroup=ldapconfHost
       \                           skipwhite

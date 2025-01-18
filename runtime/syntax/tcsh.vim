@@ -68,7 +68,7 @@ syn region  tcshAliEnd	contained transparent matchgroup=tcshBuiltin start='' ski
 " if statements
 syn keyword tcshIf	nextgroup=tcshIfEnd skipwhite if
 syn region  tcshIfEnd	contained start='\S' skip='\\$' matchgroup=tcshBuiltin end='\v<then>|$' contains=@tcshConditions,tcshSpecial,@tcshStatementEnds
-syn region  tcshIfEnd	contained matchgroup=tcshBuiltin contains=@tcshConditions,tcshSpecial start='(' end='\v\)%(\s+then>)?' skipwhite nextgroup=@tcshStatementEnds 
+syn region  tcshIfEnd	contained matchgroup=tcshBuiltin contains=@tcshConditions,tcshSpecial start='(' end='\v\)%(\s+then>)?' skipwhite nextgroup=@tcshStatementEnds
 syn region  tcshIfEnd	contained matchgroup=tcshBuiltin contains=tcshCommands,tcshSpecial start='\v\{\s+' end='\v\s+\}%(\s+then>)?' skipwhite nextgroup=@tcshStatementEnds keepend
 
 " else statements
