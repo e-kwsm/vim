@@ -155,10 +155,10 @@ endif
 " Functions: {{{1
 " EnableEmbedsforCodeblocksWithLang {{{2
 function! EnableEmbedsforCodeblocksWithLang(entry)
-    " prevent embedded language syntaxes from changing 'foldmethod' 
+    " prevent embedded language syntaxes from changing 'foldmethod'
     if has('folding')
         let s:foldmethod = &l:foldmethod
-        let s:foldtext = &l:foldtext     
+        let s:foldtext = &l:foldtext
     endif
 
     try
@@ -228,7 +228,7 @@ syntax spell toplevel
 
 " Embeds: {{{2
 
-" prevent embedded language syntaxes from changing 'foldmethod' 
+" prevent embedded language syntaxes from changing 'foldmethod'
 if has('folding')
     let s:foldmethod = &l:foldmethod
 endif

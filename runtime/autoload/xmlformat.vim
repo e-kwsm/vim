@@ -40,7 +40,7 @@ func! xmlformat#Format() abort
       continue
     elseif line !~# '<[/]\?[^>]*>'
       let nextmatch = match(list, '<[/]\?[^>]*>', current)
-      if nextmatch > -1 
+      if nextmatch > -1
         let line .= ' '. join(list[(current + 1):(nextmatch-1)], " ")
         call remove(list, current+1, nextmatch-1)
       endif
@@ -167,7 +167,7 @@ func! s:FormatContent(list) abort
   let add_indent = 0
   let cnt = 0
   for item in a:list
-    for word in split(item, '\s\+\S\+\zs') 
+    for word in split(item, '\s\+\S\+\zs')
       if match(word, '^\s\+$') > -1
         " skip empty words
         continue

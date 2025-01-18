@@ -48,7 +48,7 @@ syn keyword awkStatement	@include @load @namespace
 " Numeric Functions
 syn keyword awkFunction	atan2 cos exp int log rand sin sqrt srand
 " String Manipulation Functions
-syn keyword awkFunction	asort asorti gensub gsub index length match 
+syn keyword awkFunction	asort asorti gensub gsub index length match
 syn keyword awkFunction	patsplit split sprintf strtonum sub substr
 syn keyword awkFunction	tolower toupper
 " Input Output Functions
@@ -76,7 +76,7 @@ syn keyword awkVariables	IGNORECASE LINT OFMT OFS ORS PREC
 syn keyword awkVariables	ROUNDMODE RS SUBSEP TEXTDOMAIN
 " Built-in Variables That Convey Information
 syn keyword awkVariables	ARGC ARGV ARGIND ENVIRON ERRNO FILENAME
-syn keyword awkVariables	FNR NF FUNCTAB NR PROCINFO RLENGTH RSTART 
+syn keyword awkVariables	FNR NF FUNCTAB NR PROCINFO RLENGTH RSTART
 syn keyword awkVariables	RT SYMTAB
 
 " Arithmetic operators: +, and - take care of ++, and --

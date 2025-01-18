@@ -57,7 +57,7 @@ syn region  unisonDocDirective     contained matchgroup=unisonDocDirective start
 
 syn match unisonDebug "\<\(todo\|bug\|Debug.trace\|Debug.evalToText\)\>"
 
-" things like 
+" things like
 "    > my_func 1 3
 "    test> Function.tap.tests.t1 = check let
 "      use Nat == +
