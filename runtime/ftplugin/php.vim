@@ -51,7 +51,7 @@ setlocal formatoptions+=l formatoptions-=t
 if get(g:, "php_autocomment", 1)
   setlocal formatoptions+=croq
   " NOTE: set g:PHP_autoformatcomment = 0 to prevent the indent plugin from
-  "       overriding this 'comments' value 
+  "       overriding this 'comments' value
   setlocal comments-=:#
   " space after # comments to exclude attributes
   setlocal comments+=b:#

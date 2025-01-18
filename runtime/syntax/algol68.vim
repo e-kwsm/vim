@@ -22,7 +22,7 @@ syn keyword algol68Conditional	IF THEN ELSE ELIF FI
 syn keyword algol68Conditional	CASE IN OUT OUSE ESAC
 syn keyword algol68Constant	NIL SKIP EMPTY
 syn keyword algol68Statement	MODE OP PRIO PROC
-syn keyword algol68Label	GOTO 
+syn keyword algol68Label	GOTO
 syn match   algol68Label	"\<GO TO\>"
 syn keyword algol68Operator	ABS REPR ROUND ENTIER ARG BIN LENG SHORTEN ODD
 syn keyword algol68Operator	SHL SHR ROL ROR UP DOWN LEVEL LWB UPB I RE IM
@@ -43,7 +43,7 @@ syn keyword algol68PreProc	VECTOR
 syn keyword algol68Type		FLEX HEAP LOC LONG REF SHORT
 syn keyword algol68Type		VOID BOOL INT REAL COMPL CHAR STRING COMPLEX
 syn keyword algol68Type		BITS BYTES FILE CHANNEL PIPE SEMA SOUND
-syn keyword algol68Type		FORMAT STRUCT UNION 
+syn keyword algol68Type		FORMAT STRUCT UNION
 " Genie extensions in addition to ROUND and ENTIER
 syn keyword algol68Operator	FLOOR CEIL NINT TRUNC FRAC FIX
 

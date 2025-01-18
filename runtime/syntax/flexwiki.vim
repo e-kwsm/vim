@@ -28,7 +28,7 @@ syntax match  flexwikiWord          /\[[[:alnum:]\s]\+\]/
 " TODO: check URL syntax against RFC
 syntax match flexwikiLink           `\("[^"(]\+\((\([^)]\+\))\)\?":\)\?\(https\?\|ftp\|gopher\|telnet\|file\|notes\|ms-help\):\(\(\(//\)\|\(\\\\\)\)\+[A-Za-z0-9:#@%/;$~_?+-=.&\-\\\\]*\)`
 
-" text: *strong* 
+" text: *strong*
 syntax match flexwikiBold           /\(^\|\W\)\zs\*\([^ ].\{-}\)\*/
 " '''bold'''
 syntax match flexwikiBold           /'''\([^'].\{-}\)'''/
@@ -41,22 +41,22 @@ syntax match flexwikiItalic         /''\([^'].\{-}\)''/
 " ``deemphasis``
 syntax match flexwikiDeEmphasis     /``\([^`].\{-}\)``/
 
-" text: @code@ 
+" text: @code@
 syntax match flexwikiCode           /\(^\|\s\|(\|\[\)\zs@\([^@]\+\)@/
 
-"   text: -deleted text- 
+"   text: -deleted text-
 syntax match flexwikiDelText        /\(^\|\s\+\)\zs-\([^ <a ]\|[^ <img ]\|[^ -].*\)-/
 
-"   text: +inserted text+ 
+"   text: +inserted text+
 syntax match flexwikiInsText        /\(^\|\W\)\zs+\([^ ].\{-}\)+/
 
-"   text: ^superscript^ 
+"   text: ^superscript^
 syntax match flexwikiSuperScript    /\(^\|\W\)\zs^\([^ ].\{-}\)^/
 
-"   text: ~subscript~ 
+"   text: ~subscript~
 syntax match flexwikiSubScript      /\(^\|\W\)\zs\~\([^ ].\{-}\)\~/
 
-"   text: ??citation?? 
+"   text: ??citation??
 syntax match flexwikiCitation       /\(^\|\W\)\zs??\([^ ].\{-}\)??/
 
 " Emoticons: must come after the Textilisms, as later rules take precedence
@@ -106,7 +106,7 @@ hi def link flexwikiH4                    flexwikiH3
 hi def link flexwikiH5                    flexwikiH4
 hi def link flexwikiH6                    flexwikiH5
 hi def link flexwikiHR                    flexwikiH6
-    
+
 hi def flexwikiBold                       term=bold cterm=bold gui=bold
 hi def flexwikiItalic                     term=italic cterm=italic gui=italic
 

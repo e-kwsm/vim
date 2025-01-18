@@ -63,7 +63,7 @@ syn match dtraceOption contained "bufresize=\%(auto\|manual\)\s*$"
 "   scalar: cpu jstackframes jstackstrsize nspec stackframes stackindent ustackframes
 syn match dtraceOption contained "\%(cpu\|jstackframes\|jstackstrsize\|nspec\|stackframes\|stackindent\|ustackframes\)=\d\+\s*$"
 
-"   size: aggsize bufsize dynvarsize specsize strsize 
+"   size: aggsize bufsize dynvarsize specsize strsize
 "   size defaults to something if no unit is given (ie., having no unit is ok)
 syn match dtraceOption contained "\%(aggsize\|bufsize\|dynvarsize\|specsize\|strsize\)=\d\+\%(k\|m\|g\|t\|K\|M\|G\|T\)\=\s*$"
 
@@ -85,7 +85,7 @@ syn keyword dtraceOperator   sizeof offsetof stringof xlate
 syn keyword dtraceStatement  self inline xlate this translator
 
 " Builtin variables
-syn keyword dtraceIdentifier arg0 arg1 arg2 arg3 arg4 arg5 arg6 arg7 arg8 arg9 
+syn keyword dtraceIdentifier arg0 arg1 arg2 arg3 arg4 arg5 arg6 arg7 arg8 arg9
 syn keyword dtraceIdentifier args caller chip cpu curcpu curlwpsinfo curpsinfo
 syn keyword dtraceIdentifier curthread cwd epid errno execname gid id ipl lgrp
 syn keyword dtraceIdentifier pid ppid probefunc probemod probename probeprov

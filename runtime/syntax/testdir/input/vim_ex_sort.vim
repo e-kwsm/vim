@@ -2,7 +2,7 @@
 " VIM_TEST_SETUP hi link vimCmdSep Operator
 
 
-sort 
+sort
 sort!
 
 sort  ilu

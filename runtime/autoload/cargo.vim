@@ -23,11 +23,11 @@ endfunction
 function! s:nearest_cargo(...) abort
     " If the second argument is not specified, the first argument determines
     " whether we will start from the current directory or the directory of the
-    " current buffer, otherwise, we start with the provided path on the 
+    " current buffer, otherwise, we start with the provided path on the
     " second argument.
 
     let l:is_getcwd = get(a:, 1, 0)
-    if l:is_getcwd 
+    if l:is_getcwd
         let l:starting_path = get(a:, 2, getcwd())
     else
         let l:starting_path = get(a:, 2, expand('%:p:h'))

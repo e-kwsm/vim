@@ -30,7 +30,7 @@
 
 if version < 700
    finish
-endif 
+endif
 let s:keepcpo= &cpo
 set cpo&vim
 
@@ -438,7 +438,7 @@ endfunction ada#Create_Tags
 " Section: ada#Switch_Session {{{1
 "
 function ada#Switch_Session (New_Session)
-   " 
+   "
    " you should not save to much date into the seession since they will
    " be sourced
    "
@@ -466,7 +466,7 @@ function ada#Switch_Session (New_Session)
 	    autocmd!
 	    autocmd VimLeavePre * execute 'mksession! ' . v:this_session
 	 augroup END
-	 
+
 	 "if exists ("g:Tlist_Auto_Open") && g:Tlist_Auto_Open
 	    "TlistOpen
 	 "endif
@@ -477,7 +477,7 @@ function ada#Switch_Session (New_Session)
    endtry
 
    return
-endfunction ada#Switch_Session	
+endfunction ada#Switch_Session
 
 " Section: GNAT Pretty Printer folding {{{1
 "

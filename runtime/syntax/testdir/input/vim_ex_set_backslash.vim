@@ -12,7 +12,7 @@ set titlestring=\afoo\abar\a
 echo &titlestring
 set titlestring=\ foo\ bar\  " comment
 echo &titlestring
-set titlestring=\ foo\ bar\ 
+set titlestring=\ foo\ bar\
 echo &titlestring
 set titlestring=\|foo\|bar\| " comment
 echo &titlestring
@@ -30,7 +30,7 @@ set titlestring=\\afoo\\abar\\a
 echo &titlestring
 set titlestring=\\ foo\\ bar\\  " comment
 echo &titlestring
-set titlestring=\\ foo\\ bar\\ 
+set titlestring=\\ foo\\ bar\\
 echo &titlestring
 set titlestring=\\|foo\\|bar\\| " comment
 echo &titlestring
@@ -48,7 +48,7 @@ set titlestring=\\\afoo\\\abar\\\a
 echo &titlestring
 set titlestring=\\\ foo\\\ bar\\\  " comment
 echo &titlestring
-set titlestring=\\\ foo\\\ bar\\\ 
+set titlestring=\\\ foo\\\ bar\\\
 echo &titlestring
 set titlestring=\\\|foo\\\|bar\\\| " comment
 echo &titlestring
@@ -66,7 +66,7 @@ set titlestring=\\\\afoo\\\\abar\\\\a
 echo &titlestring
 set titlestring=\\\\ foo\\\\ bar\\\\  " comment
 echo &titlestring
-set titlestring=\\\\ foo\\\\ bar\\\\ 
+set titlestring=\\\\ foo\\\\ bar\\\\
 echo &titlestring
 set titlestring=\\\\|foo\\\\|bar\\\\| " comment
 echo &titlestring

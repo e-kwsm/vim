@@ -7,7 +7,7 @@
 "              Added the metrix suffixes to the number matcher.
 " Version 1.2  Prasanna Tamhankar <pratam@gmail.com>
 "              Minor reserved keyword updates.
-" Last Update: Thursday September 15 15:36:03 CST 2005 
+" Last Update: Thursday September 15 15:36:03 CST 2005
 
 " quit when a syntax file was already loaded
 if exists("b:current_syntax")
@@ -58,7 +58,7 @@ syn match   verilogamsConstant  ":inf"lc=1
 syn match   verilogamsConstant  "-inf"lc=1
 " Annex B.2 Discipline/nature
 syn keyword verilogamsStatement abstol access continuous ddt_nature discrete
-syn keyword verilogamsStatement domain idt_nature units 
+syn keyword verilogamsStatement domain idt_nature units
 " Annex B.3 Connect Rules
 syn keyword verilogamsStatement connect merged resolveto split
 

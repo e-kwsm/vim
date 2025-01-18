@@ -96,8 +96,8 @@ else
 	    \ }
   else
     let s:cterm_color = {
-	    \   0: "#000000", 1: "#c00000", 2: "#008000", 3: "#804000", 
-	    \   4: "#0000c0", 5: "#c000c0", 6: "#008080", 7: "#c0c0c0", 
+	    \   0: "#000000", 1: "#c00000", 2: "#008000", 3: "#804000",
+	    \   4: "#0000c0", 5: "#c000c0", 6: "#008080", 7: "#c0c0c0",
 	    \   8: "#808080", 9: "#ff6060", 10: "#00ff00", 11: "#ffff00",
 	    \   12: "#8080ff", 13: "#ff40ff", 14: "#00ffff", 15: "#ffffff"
 	    \ }
@@ -292,7 +292,7 @@ if s:settings.use_css
   call add(s:wrapperfunc_lines, [])
   let s:wrapperfunc_lines[-1] =<< trim ENDLET
 	function! s:BuildStyleWrapper(style_id, diff_style_id, extra_attrs, text, make_unselectable, unformatted)
-	
+
 	  let l:style_name = synIDattr(a:style_id, "name", s:whatterm)
   ENDLET
   if &diff
@@ -1143,7 +1143,7 @@ if !s:settings.no_progress
 	  \'counter' : { 'color' : 'Statusline' } }
     let pgb.last_value = 0
     let pgb.needs_redraw = 0
-    " Note that you must use len(split) instead of len() if you want to use 
+    " Note that you must use len(split) instead of len() if you want to use
     " unicode in title.
     "
     " Subtract 3 for spacing around the title.
@@ -1274,7 +1274,7 @@ if s:settings.number_lines
 	  let l:new = s:HtmlFormat_n(repeat(' ', s:margin), s:LINENR_ID, 0, 0) .. l:new
   ENDLET
 endif
-if s:settings.dynamic_folds && !s:settings.no_foldcolumn 
+if s:settings.dynamic_folds && !s:settings.no_foldcolumn
   call add(s:build_fun_lines, [])
   let s:build_fun_lines[-1] =<< trim ENDLET
 	  if s:foldcolumn > 0

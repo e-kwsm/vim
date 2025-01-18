@@ -65,7 +65,7 @@ if g:r_syntax_hl_roxygen
 
   syn match rOCommentKey "^\s*#\{1,2}'" contained
   syn region rOExamples start="^\s*#\{1,2}' @examples.*"rs=e+1,hs=e+1 end="^\(#\{1,2}' @.*\)\@=" end="^\(#\{1,2}'\)\@!" contained contains=rOTag fold
-  
+
   " R6 classes may contain roxygen lines independent of roxygen blocks
   syn region rOR6Class start=/R6Class(/ end=/)/ transparent contains=ALLBUT,rError,rBraceError,rCurlyError fold
   syn match rOR6Block "#\{1,2}'.*" contains=rOTag,rOExamples,@Spell containedin=rOR6Class contained

@@ -261,7 +261,7 @@ syn keyword autoitFunction _GuiCtrlStatusBarCreate
 	\ _GuiCtrlStatusBarSetMinHeight _GUICtrlStatusBarSetParts
 	\ _GuiCtrlStatusBarSetSimple _GuiCtrlStatusBarSetText
 	\ _GuiCtrlStatusBarSetTip _GuiCtrlStatusBarSetUnicode
-	\ _GUICtrlStatusBarShowHide 
+	\ _GUICtrlStatusBarShowHide
 " guitab
 syn keyword autoitFunction _GUICtrlTabDeleteAllItems _GUICtrlTabDeleteItem
 	\ _GUICtrlTabDeselectAll _GUICtrlTabGetCurFocus _GUICtrlTabGetCurSel

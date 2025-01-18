@@ -21,15 +21,15 @@ imenu ShellMenu.Statements.if	if   <CR>then<CR><CR>fi<esc>ki	<esc>kk0elli
 imenu ShellMenu.Statements.if-else	if   <CR>then<CR><CR>else<CR><CR>fi<esc>ki	<esc>kki	<esc>kk0elli
 imenu ShellMenu.Statements.elif	elif   <CR>then<CR><CR><esc>ki	<esc>kk0elli
 imenu ShellMenu.Statements.while	while   do<CR><CR>done<esc>ki	<esc>kk0elli
-imenu ShellMenu.Statements.break	break 
-imenu ShellMenu.Statements.continue	continue 
+imenu ShellMenu.Statements.break	break
+imenu ShellMenu.Statements.continue	continue
 imenu ShellMenu.Statements.function	() {<CR><CR>}<esc>ki	<esc>k0i
-imenu ShellMenu.Statements.return	return 
+imenu ShellMenu.Statements.return	return
 imenu ShellMenu.Statements.return-true	return 0
 imenu ShellMenu.Statements.return-false	return 1
-imenu ShellMenu.Statements.exit	exit 
-imenu ShellMenu.Statements.shift	shift 
-imenu ShellMenu.Statements.trap	trap 
+imenu ShellMenu.Statements.exit	exit
+imenu ShellMenu.Statements.shift	shift
+imenu ShellMenu.Statements.trap	trap
 imenu ShellMenu.Test.Existence	[ -e  ]<esc>hi
 imenu ShellMenu.Test.Existence\ -\ file		[ -f  ]<esc>hi
 imenu ShellMenu.Test.Existence\ -\ file\ (not\ empty)	[ -s  ]<esc>hi

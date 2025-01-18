@@ -15,7 +15,7 @@ syn keyword conarySFunction	addCvsSnapshot addGitSnapshot addBzrSnapshot
 
 syn keyword conaryGFunction	add addAll addNewGroup addReference createGroup
 syn keyword conaryGFunction	addNewGroup startGroup remove removeComponents
-syn keyword conaryGFunction	replace setByDefault setDefaultGroup 
+syn keyword conaryGFunction	replace setByDefault setDefaultGroup
 syn keyword conaryGFunction	setLabelPath addCopy setSearchPath AddAllFlags
 syn keyword conaryGFunction	GroupRecipe GroupReference TroveCacheWrapper
 syn keyword conaryGFunction	TroveCache buildGroups findTrovesForGroups
@@ -35,7 +35,7 @@ syn keyword conaryGFunction	setCompatibilityClass getLabelPath
 syn keyword conaryGFunction	getResolveTroveSpecs getSearchFlavor
 syn keyword conaryGFunction	getChildGroups getGroupMap
 
-syn keyword conaryBFunction 	Run Automake Configure ManualConfigure 
+syn keyword conaryBFunction 	Run Automake Configure ManualConfigure
 syn keyword conaryBFunction 	Make MakeParallelSubdir MakeInstall
 syn keyword conaryBFunction 	MakePathsInstall CompilePython
 syn keyword conaryBFunction 	Ldconfig Desktopfile Environment SetModes
@@ -46,9 +46,9 @@ syn keyword conaryBFunction 	XInetdService XMLCatalogEntry TestSuite
 syn keyword conaryBFunction	PythonSetup CMake Ant JavaCompile ClassPath
 syn keyword conaryBFunction	JavaDoc IncludeLicense MakeFIFO
 
-syn keyword conaryPFunction 	NonBinariesInBindirs FilesInMandir 
+syn keyword conaryPFunction 	NonBinariesInBindirs FilesInMandir
 syn keyword conaryPFunction 	ImproperlyShared CheckSonames CheckDestDir
-syn keyword conaryPFunction 	ComponentSpec PackageSpec 
+syn keyword conaryPFunction 	ComponentSpec PackageSpec
 syn keyword conaryPFunction 	Config InitScript GconfSchema SharedLibrary
 syn keyword conaryPFunction 	ParseManifest MakeDevices DanglingSymlinks
 syn keyword conaryPFunction 	AddModes WarnWriteable IgnoredSetuid
@@ -94,14 +94,14 @@ syn keyword conaryArches	contained sparc sparc64
 syn keyword conarySubArches	contained sse2 3dnow 3dnowext cmov i486 i586
 syn keyword conarySubArches	contained i686 mmx mmxext nx sse sse2
 syn keyword conaryBad		RPM_BUILD_ROOT EtcConfig InstallBucket subDir
-syn keyword conaryBad		RPM_OPT_FLAGS subdir 
+syn keyword conaryBad		RPM_OPT_FLAGS subdir
 syn cluster conaryArchFlags 	contains=conaryArches,conarySubArches
 syn match   conaryArch		"Arch\.[a-z0-9A-Z]\+" contains=conaryArches,conarySubArches
 syn match   conaryArch		"Arch\.[a-z0-9A-Z]\+" contains=conaryArches,conarySubArches
 syn keyword conaryKeywords	name buildRequires version clearBuildReqs
-syn keyword conaryUseFlag	contained pcre tcpwrappers gcj gnat selinux pam 
-syn keyword conaryUseFlag	contained bootstrap python perl 
-syn keyword conaryUseFlag	contained readline gdbm emacs krb builddocs 
+syn keyword conaryUseFlag	contained pcre tcpwrappers gcj gnat selinux pam
+syn keyword conaryUseFlag	contained bootstrap python perl
+syn keyword conaryUseFlag	contained readline gdbm emacs krb builddocs
 syn keyword conaryUseFlag	contained alternatives tcl tk X gtk gnome qt
 syn keyword conaryUseFlag	contained xfce gd ldap sasl pie desktop ssl kde
 syn keyword conaryUseFlag	contained slang netpbm nptl ipv6 buildtests

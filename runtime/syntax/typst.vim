@@ -295,8 +295,8 @@ for s:name in get(g:, 'typst_embedded_languages', [])
     let s:rule = ['syn region'
                 \,s:name
                 \,'matchgroup=Macro'
-                \,'start=/```'..s:name..'\>/ end=/```/' 
-                \,'contains=@typstEmbedded_'..s:name 
+                \,'start=/```'..s:name..'\>/ end=/```/'
+                \,'contains=@typstEmbedded_'..s:name
                 \,'keepend'
                 \,'concealends']
     execute 'silent! ' .. join(s:include, ' ')

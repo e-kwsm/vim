@@ -23,7 +23,7 @@ syn keyword modula3Keyword ANY ARRAY AS BITS BRANDED BY CASE CONST
 syn keyword modula3Keyword DEFINITION EVAL EXIT EXCEPT EXCEPTION EXIT
 syn keyword modula3Keyword EXPORTS FINALLY FROM GENERIC IMPORT LOCK METHOD
 syn keyword modula3Keyword OF RAISE RAISES READONLY RECORD REF
-syn keyword modula3Keyword RETURN SET TRY TYPE TYPECASE UNSAFE 
+syn keyword modula3Keyword RETURN SET TRY TYPE TYPECASE UNSAFE
 syn keyword modula3Keyword VALUE VAR WITH
 
 syn match modula3keyword "\<UNTRACED\>"

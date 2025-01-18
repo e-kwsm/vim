@@ -33,7 +33,7 @@ syn match wsmlVariable		"?[0-9A-Za-z]\+"
 
 " ASM-specific code
 syn keyword wsmlBehavioral	choreography orchestration transitionRules
-syn keyword wsmlChoreographyPri	stateSignature in out shared static controlled 
+syn keyword wsmlChoreographyPri	stateSignature in out shared static controlled
 syn keyword wsmlChoreographySec with do withGrounding forall endForall choose if then endIf
 syn match wsmlChoreographyTer   "\(\s\|\_^\)\(add\|delete\|update\)\s*(.*)" contains=wsmlKeywordsInsideLEs,wsmlIdentifier,wsmlSqName,wsmlString,wsmlNumber,wsmlDataTypes,wsmlVariable
 
@@ -84,13 +84,13 @@ hi def link wsmlAxiom			TypeDef
 hi def link wsmlService			TypeDef
 hi def link wsmlNFP			TypeDef
 hi def link wsmlTopLevel			TypeDef
-hi def link wsmlMediation			TypeDef 
+hi def link wsmlMediation			TypeDef
 hi def link wsmlBehavioral		TypeDef
 hi def link wsmlChoreographyPri		TypeDef
 hi def link wsmlChoreographySec		Operator
 hi def link wsmlChoreographyTer		Special
 hi def link wsmlString			String
-hi def link wsmlIdentifier		Normal 
+hi def link wsmlIdentifier		Normal
 hi def link wsmlSqName                     Normal
 hi def link wsmlVariable			Define
 hi def link wsmlKeywordsInsideLEs		Operator
