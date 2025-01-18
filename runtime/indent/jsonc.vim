@@ -136,7 +136,7 @@ function GetJSONCIndent()
     let pairend = escape(bs[1], ']')
     let pairline = searchpair(pairstart, '', pairend, 'bW')
 
-    if pairline > 0 
+    if pairline > 0
       let ind = indent(pairline)
     else
       let ind = virtcol('.') - 1

@@ -1,7 +1,7 @@
 " Vim syntax file
 " Language:    SystemVerilog
 " Maintainer:  kocha <kocha.lsifrontend@gmail.com>
-" Last Change: 12-Aug-2013. 
+" Last Change: 12-Aug-2013.
 
 " quit when a syntax file was already loaded
 if exists("b:current_syntax")
@@ -19,14 +19,14 @@ syn keyword systemverilogStatement   virtual local const protected
 syn keyword systemverilogStatement   package endpackage
 syn keyword systemverilogStatement   rand randc constraint randomize
 syn keyword systemverilogStatement   with inside dist
-syn keyword systemverilogStatement   sequence endsequence randsequence 
+syn keyword systemverilogStatement   sequence endsequence randsequence
 syn keyword systemverilogStatement   srandom
 syn keyword systemverilogStatement   logic bit byte
 syn keyword systemverilogStatement   int longint shortint
 syn keyword systemverilogStatement   struct packed
 syn keyword systemverilogStatement   final
 syn keyword systemverilogStatement   import export
-syn keyword systemverilogStatement   context pure 
+syn keyword systemverilogStatement   context pure
 syn keyword systemverilogStatement   void shortreal chandle string
 syn keyword systemverilogStatement   clocking endclocking iff
 syn keyword systemverilogStatement   interface endinterface modport
@@ -38,7 +38,7 @@ syn keyword systemverilogStatement   alias matches solve static assert
 syn keyword systemverilogStatement   assume super before expect bind
 syn keyword systemverilogStatement   extends null tagged extern this
 syn keyword systemverilogStatement   first_match throughout timeprecision
-syn keyword systemverilogStatement   timeunit type union 
+syn keyword systemverilogStatement   timeunit type union
 syn keyword systemverilogStatement   uwire var cross ref wait_order intersect
 syn keyword systemverilogStatement   wildcard within
 
