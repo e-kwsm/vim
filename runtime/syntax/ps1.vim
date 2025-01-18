@@ -41,7 +41,7 @@ syn match ps1Keyword /\<where\>/ nextgroup=ps1Block skipwhite
 
 syn keyword ps1Exception begin process end exit inlinescript parallel sequence
 syn keyword ps1Keyword try catch finally throw
-syn keyword ps1Keyword return filter in trap param data dynamicparam 
+syn keyword ps1Keyword return filter in trap param data dynamicparam
 syn keyword ps1Constant $true $false $null
 syn match ps1Constant +\$?+
 syn match ps1Constant +\$_+

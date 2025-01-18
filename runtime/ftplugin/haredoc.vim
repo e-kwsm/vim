@@ -16,9 +16,9 @@ compiler hare
 b:undo_ftplugin = 'compiler make'
 
 # Formatting settings.
-setlocal comments=:\	
+setlocal comments=:\
 setlocal commentstring=\	%s
-setlocal formatlistpat=^-\ 
+setlocal formatlistpat=^-\
 setlocal formatoptions+=tnlj formatoptions-=c formatoptions-=q
 b:undo_ftplugin ..= ' | setl cms< com< flp< fo<'
 

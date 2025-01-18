@@ -1,5 +1,5 @@
 " Vim Keymap file for Croatian characters, classical variant, cp1250 encoding
-" 
+"
 " Maintainer:   Paul B. Mahol <onemda@gmail.com>
 " Last Changed: 2007 Oct 15
 

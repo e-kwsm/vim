@@ -5,7 +5,7 @@
 " Last Change:	Apr 22, 2022
 "   2024 Feb 19 by Vim Project: announce adoption
 "   2025 Jan 18 by Vim Project: add texEmphStyle to texMatchGroup, #16228
-"   2025 Feb 08 by Vim Project: improve macro option, \providecommand, 
+"   2025 Feb 08 by Vim Project: improve macro option, \providecommand,
 "                               \newcommand and \newenvironment #16543
 " Version:	121
 " Former URL:	http://www.drchip.org/astronaut/vim/index.html#SYNTAX_TEX
