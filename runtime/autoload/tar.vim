@@ -441,7 +441,7 @@ fun! tar#Write(fname)
 "  call Dfunc("tar#Write(fname<".a:fname.">) b:tarfile<".b:tarfile."> tblfile_".winnr()."<".s:tblfile_{winnr()}.">")
   let repkeep= &report
   set report=10
-  
+
   " temporary buffer variable workaround because too fucking tired. but it works now
   let curdir= b:curdir
   let tmpdir= b:tmpdir

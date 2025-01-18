@@ -99,22 +99,22 @@ END
 
 " assert_equal(foo, ["END "])
 let foo =<< END
-END 
+END
 END
 
 " assert_equal(foo, [" END "])
 let foo =<< END
- END 
+ END
 END
 
 " assert_equal(foo, ["END "])
 let foo =<< trim END
-  END 
+  END
 END
 
 " assert_equal(foo, ["END "])
   let foo =<< trim END
-    END 
+    END
   END
 
 
@@ -132,7 +132,7 @@ END
 
 " assert_equal(foo, ["END "])
 let foo =<< trim END
-END 
+END
 END
 
   " assert_equal(foo, ["END"])
@@ -142,7 +142,7 @@ END
 
   " assert_equal(foo, ["END "])
   let foo =<< trim END
-    END 
+    END
   END
 
   " assert_equal(foo, ["END"])
@@ -152,12 +152,12 @@ END
 
   " assert_equal(foo, ["END "])
   let foo =<< trim END
-     END 
+     END
   END
 
   " assert_equal(foo, ["END "])
   let foo =<< trim END
-END 
+END
 END
 
   " assert_equal(foo, ["END"])

@@ -83,6 +83,6 @@ hi def link        asteriskHostname        Identifier
 hi def link        asteriskSetting         Statement
 hi def link        asteriskError           Error
 
-let b:current_syntax = "asterisk" 
+let b:current_syntax = "asterisk"
 " vim: ts=8 sw=2
 

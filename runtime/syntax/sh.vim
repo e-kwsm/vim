@@ -24,7 +24,7 @@ elseif getline(1) =~ '\<bash\>'
 elseif getline(1) =~ '\<dash\>'
  let b:is_dash      = 1
 elseif !exists("g:is_kornshell") && !exists("g:is_bash") && !exists("g:is_posix") && !exists("g:is_sh") && !exists("g:is_dash")
- " user did not specify which shell to use, and 
+ " user did not specify which shell to use, and
  " the script itself does not specify which shell to use. FYI: /bin/sh is ambiguous.
  " Assuming /bin/sh is executable, and if its a link, find out what it links to.
  let s:shell = ""
@@ -352,7 +352,7 @@ if exists("b:is_bash")
  ShFoldIfDoFor syn region	shCase	contained skipwhite skipnl matchgroup=shSnglCase start="\%(\\.\|[^#$()'" \t]\)\{-}\zs)"  end=";;" end=";&" end=";;&" end="esac"me=s-1	contains=@shCaseList	nextgroup=shCaseStart,shCase,shComment
 elseif exists("b:is_kornshell")
  ShFoldIfDoFor syn region	shCase	contained skipwhite skipnl matchgroup=shSnglCase start="\%(\\.\|[^#$()'" \t]\)\{-}\zs)"  end=";;" end=";&" end="esac"me=s-1	contains=@shCaseList	nextgroup=shCaseStart,shCase,shComment
-else                                                                                                                     
+else
  ShFoldIfDoFor syn region	shCase	contained skipwhite skipnl matchgroup=shSnglCase start="\%(\\.\|[^#$()'" \t]\)\{-}\zs)"  end=";;" end="esac"me=s-1		contains=@shCaseList	nextgroup=shCaseStart,shCase,shComment
 endif
 ShFoldIfDoFor syn region	shCaseEsac	matchgroup=shConditional start="\<case\>" end="\<esac\>"	contains=@shCaseEsacList

@@ -2,7 +2,7 @@
 
 map!
 map! lhs rhs
-map 
+map
 map lhs rhs
 
 mapclear  <buffer>
@@ -32,13 +32,13 @@ map lhs :search('foo\\|bar')<CR>:echo "rhs"<CR>
 
 " multiline RHS
 
-map <leader>baz 
+map <leader>baz
   \ :echo (<bar>
   \
   \'bar')<cr>
   "\ comment
 
-map lhs 
+map lhs
   "\ comment
   \ echo "foo"
 
@@ -46,7 +46,7 @@ map lhs
   "\ comment
   \ echo "foo"
 
-map lhs 
+map lhs
   "\ comment
   \ echo "foo"
 
@@ -54,7 +54,7 @@ map l hs
   "\ comment
   \ echo "foo"
 
-map l hs 
+map l hs
   "\ comment
   \ echo "foo"
 
