@@ -477,7 +477,7 @@ if get(g:, 'perl_fold', 0)
     else
       " EXPLANATION:
       " same, as above, but first non-space character after "sub" keyword must
-      " be [A-Za-z_] 
+      " be [A-Za-z_]
       syn region perlSubFold start="\<sub\>\s*\h\_[^;{]*\%(([\\$@%&*\[\];]*)\)\=\_[^;]*{" end="}" transparent fold keepend extend
     endif
 

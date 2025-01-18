@@ -190,7 +190,7 @@ func s:Highlight_Matching_Pair()
   endif
 
   " If a match is found setup match highlighting.
-  if m_lnum > 0 && m_lnum >= stoplinetop && m_lnum <= stoplinebottom 
+  if m_lnum > 0 && m_lnum >= stoplinetop && m_lnum <= stoplinebottom
     if s:has_matchaddpos
       call add(w:matchparen_ids, matchaddpos('MatchParen', [[c_lnum, c_col - before], [m_lnum, m_col]], 10))
     else

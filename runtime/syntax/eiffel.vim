@@ -3,7 +3,7 @@
 " Maintainer: Jocelyn Fiat <jfiat@eiffel.com>
 " Previous maintainer:	Reimer Behrends <behrends@cse.msu.edu>
 " Contributions from: Thilo Six
-" 
+"
 " URL: https://github.com/eiffelhub/vim-eiffel
 " quit when a syntax file was already loaded
 if exists("b:current_syntax")

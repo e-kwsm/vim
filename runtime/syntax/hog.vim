@@ -126,7 +126,7 @@ syn match       HogURLChars     "\%(\.\|?\|=\)\+" contained
 
 " Hog File Type Rules
 syn match       HogFileType   /^\s*file.*$/ transparent contains=HogFileTypeOpt,HogFileFROP
-syn keyword     HogFileTypeOpt  skipwhite contained nextgroup=HogRuleFROP file type ver category id rev content offset msg group 
+syn keyword     HogFileTypeOpt  skipwhite contained nextgroup=HogRuleFROP file type ver category id rev content offset msg group
 syn region      HogFileFROP  start=':' end=";" transparent keepend contained contains=NotASemicoln
 syn match       NotASemiColn   ".*$" contained
 
@@ -199,7 +199,7 @@ hi link HogRuleAction         Statement
 hi link HogRuleProto          Identifier
 hi link HogRuleDir            Operator
 hi link HogRuleOption         Keyword
-hi link HogRuleChars           String 
+hi link HogRuleChars           String
 
 hi link HogFileType    HogRuleAction
 hi link HogFileTypeOpt HogRuleOption

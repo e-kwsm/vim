@@ -13,9 +13,9 @@ let s:save_cpo = &cpo
 set cpo&vim
 
 if has('patch-7.4.191')
-  CompilerSet makeprg=zig\ test\ \%:S\ \$* 
+  CompilerSet makeprg=zig\ test\ \%:S\ \$*
 else
-  CompilerSet makeprg=zig\ test\ \"%\"\ \$* 
+  CompilerSet makeprg=zig\ test\ \"%\"\ \$*
 endif
 
 let &cpo = s:save_cpo
