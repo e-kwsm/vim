@@ -79,7 +79,7 @@ function GetDTDIndent()
   if v:lnum == 1
     return 0
   endif
-  
+
   " Begin by searching back for a <! that isn’t inside a comment.
   " From here, depending on what follows immediately after, parse to
   " where we’re at to determine what to do.

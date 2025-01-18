@@ -14,13 +14,13 @@ import v:true
       \ : "bar.vim"
 
 import v:true ?
-      "\ comment 
+      "\ comment
       \ "foo.vim" :
-      "\ comment 
+      "\ comment
       \ "bar.vim"
 
 import v:true
-      "\ comment 
+      "\ comment
       \ ? "foo.vim"
       "\ comment
       \ : "bar.vim"
@@ -39,15 +39,15 @@ import v:true
       \ as baz
 
 import v:true ?
-      "\ comment 
+      "\ comment
       \ "foo.vim" :
-      "\ comment 
+      "\ comment
       \ "bar.vim"
       "\ comment
       \ as baz
 
 import v:true
-      "\ comment 
+      "\ comment
       \ ? "foo.vim"
       "\ comment
       \ : "bar.vim"
@@ -71,13 +71,13 @@ import autoload v:true
       \ : "bar.vim"
 
 import autoload v:true ?
-      "\ comment 
+      "\ comment
       \"foo.vim" :
       "\ comment
       \ "bar.vim"
 
 import autoload v:true
-      "\ comment 
+      "\ comment
       \ ? "foo.vim"
       "\ comment
       \ : "bar.vim"
@@ -96,15 +96,15 @@ import autoload v:true
       \ as baz
 
 import autoload v:true ?
-      "\ comment 
+      "\ comment
       \ "foo.vim" :
-      "\ comment 
+      "\ comment
       \ "bar.vim"
       "\ comment
       \ as baz
 
 import autoload v:true
-      "\ comment 
+      "\ comment
       \ ? "foo.vim"
       "\ comment
       \ : "bar.vim"

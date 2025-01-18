@@ -58,7 +58,7 @@ menutrans &Select\ all<Tab>ggVG  Izaberi\ sv&e<Tab>ggVG
 menutrans &Find\.\.\.		 &Nadji\.\.\.
 menutrans Find\ and\ Rep&lace\.\.\. Nadji\ i\ &zameni\.\.\.
 menutrans Settings\ &Window	 P&rozor\ podesavanja
-menutrans Startup\ &Settings	 Po&desavanja\ pri\ pokretanju		
+menutrans Startup\ &Settings	 Po&desavanja\ pri\ pokretanju
 menutrans &Global\ Settings	 Op&sta\ podesavanja
 menutrans F&ile\ Settings	 Podesavanja\ za\ faj&love
 menutrans &Shiftwidth		 &Korak\ uvlacenja
@@ -144,7 +144,7 @@ menutrans Set\ Language\ to\ "en_ca" 	Postavi\ jezik\ na\ "en_ca"
 menutrans Set\ Language\ to\ "en_gb" 	Postavi\ jezik\ na\ "en_gb"
 menutrans Set\ Language\ to\ "en_nz" 	Postavi\ jezik\ na\ "en_nz"
 menutrans Set\ Language\ to\ "en_us" 	Postavi\ jezik\ na\ "en_us"
-menutrans &Find\ More\ Languages	Pronadji\ jos\ jezika 
+menutrans &Find\ More\ Languages	Pronadji\ jos\ jezika
 
 " Tools/Folding
 menutrans &Enable/Disable\ folds<Tab>zi   &Omoguci/prekini\ svijanje<Tab>zi
@@ -266,7 +266,7 @@ endif
 " Syntax menu
 menutrans &Syntax &Sintaksa
 menutrans &Show\ File\ Types\ in\ Menu  Prikazi\ tipove\ fajlova\ u\ &meniju
-menutrans Set\ '&syntax'\ only   Pode&si\ samo\ 'syntax' 
+menutrans Set\ '&syntax'\ only   Pode&si\ samo\ 'syntax'
 menutrans Set\ '&filetype'\ too  Podesi\ &takodje\ i\ 'filetype'
 menutrans &Off       &Iskljuceno
 menutrans &Manual    &Rucno

@@ -136,7 +136,7 @@ menutrans &Older\ List<Tab>:cold		Daha\ &Eski\ Hatalar<Tab>:cold
 menutrans N&ewer\ List<Tab>:cnew		Daha\ &Yeni\ Hatalar<Tab>:cnew
 menutrans Error\ &Window			Hatalar\ &Penceresi
 menutrans Se&t\ Compiler			De&rleyici\ Seç
-menutrans Show\ Compiler\ Se&ttings\ in\ Menu	Derleyici\ Ayarlarýný\ Menüde\ &Göster 
+menutrans Show\ Compiler\ Se&ttings\ in\ Menu	Derleyici\ Ayarlarýný\ Menüde\ &Göster
 "-------------------
 menutrans &Convert\ to\ HEX<Tab>:%!xxd	    	HEX'e\ Dö&nüþtür<Tab>:%!xxd
 menutrans Conve&rt\ Back<Tab>:%!xxd\ -r	HEX'&ten\ Dönüþtür<Tab>:%!xxd\ -r

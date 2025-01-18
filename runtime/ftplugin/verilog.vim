@@ -35,7 +35,7 @@ setlocal comments=sO:*\ -,mO:*\ \ ,exO:*/,s1:/*,mb:*,ex:*/,://
 setlocal commentstring=//\ %s
 
 " Format comments to be up to 78 characters long
-if &textwidth == 0 
+if &textwidth == 0
   setlocal tw=78
 endif
 

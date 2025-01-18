@@ -123,7 +123,7 @@ let g:tar_leading_pat='\m^\%([.]\{,2\}/\)\+'
 fun! s:Msg(func, severity, msg)
   redraw!
   if a:severity =~? 'error'
-    echohl Error 
+    echohl Error
   else
     echohl WarningMsg
   endif

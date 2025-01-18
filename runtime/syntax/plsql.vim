@@ -4,14 +4,14 @@
 " Previous Maintainer: Jeff Lanzarotta (jefflanzarotta at yahoo dot com)
 " Previous Maintainer: C. Laurence Gonsalves (clgonsal@kami.com)
 " URL: https://github.com/lee-lindley/vim_plsql_syntax
-" Last Change: Mar 09, 2025   
+" Last Change: Mar 09, 2025
 " History  Carsten Czarski (carsten dot czarski at oracle com)
 "               add handling for typical SQL*Plus commands (rem, start, host, set, etc)
 "               add error highlight for non-breaking space
 "          Lee Lindley (lee dot lindley at gmail dot com)
 "               use get with default 0 instead of exists per Bram suggestion
 "               make procedure folding optional
-"               updated to 19c keywords. refined quoting. 
+"               updated to 19c keywords. refined quoting.
 "               separated reserved, non-reserved keywords and functions
 "               revised folding
 "          Eugene Lysyonok (lysyonok at inbox ru)
@@ -90,8 +90,8 @@ syn match plsqlPseudo "$[$a-z][a-z0-9$_#]*"
 
 syn match plsqlReserved "\<\(CREATE\|THEN\|UPDATE\|INSERT\|SET\)\>"
 syn match plsqlKeyword "\<\(REPLACE\|PACKAGE\|FUNCTION\|PROCEDURE\|TYPE|BODY\|WHEN\|MATCHED\)\>"
-syn region plsqlUpdate 
-    \ matchgroup=plsqlReserved 
+syn region plsqlUpdate
+    \ matchgroup=plsqlReserved
     \ start="\<UPDATE\>"
     \ end="\<SET\>"
     \ contains=@plsqlIdentifiers
@@ -216,7 +216,7 @@ syn keyword plsqlKeyword JSON_EQUAL2 JSON_EXISTS JSON_EXISTS2 JSON_HASH JSON_LEN
 syn keyword plsqlKeyword JSON_MKMVI JSON_OBJECT JSON_OBJECTAGG JSON_PATCH JSON_QUERY JSON_SCALAR JSON_SERIALIZE
 syn keyword plsqlKeyword JSON_TABLE JSON_TEXTCONTAINS JSON_TEXTCONTAINS2 JSON_TRANSFORM JSON_VALUE
 syn keyword plsqlKeyword KEEP KEEP_DUPLICATES KERBEROS KEY KEYS KEYSIZE KEYSTORE KEY_LENGTH KILL
-syn keyword plsqlKeyword KURTOSIS_POP KURTOSIS_SAMP LABEL LAG LAG_DIFF LAG_DIFF_PERCENT LANGUAGE 
+syn keyword plsqlKeyword KURTOSIS_POP KURTOSIS_SAMP LABEL LAG LAG_DIFF LAG_DIFF_PERCENT LANGUAGE
 syn match plsqlKeyword "\<LAST\>"
 syn keyword plsqlKeyword LAST_DAY LAST_VALUE LATERAL LAX LAYER LDAP_REGISTRATION LDAP_REGISTRATION_ENABLED
 syn keyword plsqlKeyword LDAP_REG_SYNC_INTERVAL LEAD LEADING LEAD_CDB LEAD_CDB_URI LEAD_DIFF LEAD_DIFF_PERCENT
@@ -349,7 +349,7 @@ syn keyword plsqlKeyword SELF SEMIJOIN SEMIJOIN_DRIVER SEMI_TO_INNER SENSITIVE S
 syn keyword plsqlKeyword SERIAL SERIALIZABLE SERVERERROR SERVICE SERVICES SERVICE_NAME_CONVERT SESSION
 syn keyword plsqlKeyword SESSIONS_PER_USER SESSIONTIMEZONE SESSIONTZNAME SESSION_CACHED_CURSORS SETS
 syn keyword plsqlKeyword SETTINGS SET_GBY_PUSHDOWN SET_TO_JOIN SEVERE SHARD SHARDED SHARDS SHARDSPACE
-syn keyword plsqlKeyword SHARD_CHUNK_ID SHARED SHARED_POOL SHARE_OF SHARING SHD$COL$MAP SHELFLIFE 
+syn keyword plsqlKeyword SHARD_CHUNK_ID SHARED SHARED_POOL SHARE_OF SHARING SHD$COL$MAP SHELFLIFE
 syn keyword plsqlKeyword SHRINK SHUTDOWN SIBLING SIBLINGS SID SIGN SIGNAL_COMPONENT SIGNAL_FUNCTION
 syn keyword plsqlKeyword SIGNATURE SIMPLE SIN SINGLE SINGLETASK SINH SITE SKEWNESS_POP SKEWNESS_SAMP
 syn keyword plsqlKeyword SKIP SKIP_EXT_OPTIMIZER SKIP_PROXY SKIP_UNQ_UNUSABLE_IDX SKIP_UNUSABLE_INDEXES
@@ -475,8 +475,8 @@ syn keyword plsqlReserved MINUS MODE NOCOMPRESS NOWAIT NUMBER_BASE OCICOLL OCIDA
 syn keyword plsqlReserved OCIDURATION OCIINTERVAL OCILOBLOCATOR OCINUMBER OCIRAW OCIREF OCIREFCURSOR
 syn keyword plsqlReserved OCIROWID OCISTRING OCITYPE OF ON OPTION ORACLE ORADATA ORDER ORLANY ORLVARY
 syn keyword plsqlReserved OUT OVERRIDING PARALLEL_ENABLE PARAMETER PASCAL PCTFREE PIPE PIPELINED POLYMORPHIC
-syn keyword plsqlReserved PRAGMA PRIOR PUBLIC RAISE RECORD RELIES_ON RENAME RESOURCE RESULT REVOKE ROWID 
-syn keyword plsqlReserved SB1 SB2 
+syn keyword plsqlReserved PRAGMA PRIOR PUBLIC RAISE RECORD RELIES_ON RENAME RESOURCE RESULT REVOKE ROWID
+syn keyword plsqlReserved SB1 SB2
 syn match plsqlReserved "\<SELECT\>"
 syn keyword plsqlReserved SEPARATE SHARE SHORT SIZE SIZE_T SPARSE SQLCODE SQLDATA
 syn keyword plsqlReserved SQLNAME SQLSTATE STANDARD START STORED STRUCT STYLE SYNONYM TABLE TDO
@@ -549,7 +549,7 @@ if get(g:,"plsql_legacy_sql_keywords",0) == 1
     syn keyword plsqlSQLKeyword ON ONLINE OPERATOR OPTION ORDER ORGANIZATION
     syn keyword plsqlSQLKeyword PCTFREE PRIMARY PRIOR PRIVATE PRIVILEGES PUBLIC
     syn keyword plsqlSQLKeyword QUOTA RELEASE RENAME REPLACE RESOURCE REVOKE ROLLBACK
-    syn keyword plsqlSQLKeyword ROW ROWLABEL ROWS SCHEMA 
+    syn keyword plsqlSQLKeyword ROW ROWLABEL ROWS SCHEMA
     syn match plsqlSQLKeyword "\<SELECT\>"
     syn keyword plsqlSQLKeyword SEPARATE SESSION SET
     syn keyword plsqlSQLKeyword SHARE SIZE SPACE START STORE SUCCESSFUL SYNONYM
@@ -644,7 +644,7 @@ else
     syn region plsqlStringLiteral	matchgroup=plsqlOperator start=+n\?q'\[+  end=+]'+ contains=plsqlSqlplusDefine
 endif
 
-syn keyword plsqlBooleanLiteral TRUE FALSE 
+syn keyword plsqlBooleanLiteral TRUE FALSE
 
 " A type-attribute is really a type.
 syn match plsqlTypeAttribute  "%\(TYPE\|ROWTYPE\)\>"
@@ -703,7 +703,7 @@ if get(g:,"plsql_fold",0) == 1
         \ start="\(\<update\>\_s\+\(\<set\>\)\@![a-z][a-z0-9$_#]*\_s\+\(\(\<set\>\)\@![a-z][a-z0-9$_#]*\_s\+\)\?\)\|\(\<when\>\_s\+\<matched\>\_s\+\<then\>\_s\+\<update\>\_s\+\)\<set\>"
         \ end="\(\_s*\(;\|\<from\>\|\<where\>\|\<when\>\)\)\@="
         \ fold
-        \ keepend 
+        \ keepend
         \ extend
         \ transparent
         \ contains=ALLBUT,@plsqlOnlyGroup,plsqlSelect
@@ -712,7 +712,7 @@ if get(g:,"plsql_fold",0) == 1
         \ start="\<select\>"
         \ end="\(\_s*\<from\>\)\@="
         \ fold
-        \ keepend 
+        \ keepend
         \ extend
         \ transparent
         \ contains=ALLBUT,@plsqlOnlyGroup,plsqlUpdateSet
@@ -737,7 +737,7 @@ if get(g:,"plsql_fold",0) == 1
             \ start="\<\(procedure\|function\)\>\_s\+\(\z([a-z][a-z0-9$_#]*\)\)\([^;]\|\n\)\{-}\<\(is\|as\)\>\_.\{-}\(\<end\>\_s\+\2\_s*;\)\@="
             \ end="\<end\>\_s\+\z1\_s*;"
             \ fold
-            \ keepend 
+            \ keepend
             \ extend
             \ transparent
             \ contains=ALLBUT,plsqlBlock
@@ -747,7 +747,7 @@ if get(g:,"plsql_fold",0) == 1
         \ start="\<cursor\>\_s\+[a-z][a-z0-9$_#]*\(\_s*([^)]\+)\)\?\(\_s\+return\_s\+\S\+\)\?\_s\+is"
         \ end=";"
         \ fold
-        \ keepend 
+        \ keepend
         \ extend
         \ transparent
         \ contains=ALLBUT,@plsqlOnlyGroup
@@ -759,7 +759,7 @@ if get(g:,"plsql_fold",0) == 1
         \ fold
         \ transparent
         \ contains=ALLBUT,@plsqlProcedureGroup,plsqlPackage,plsqlErrInBracket,PlsqlProcedureJava
-        \ keepend 
+        \ keepend
         \ extend
 
     syn region plsqlCaseBlock
@@ -768,7 +768,7 @@ if get(g:,"plsql_fold",0) == 1
         \ end="\<end\>\(\_s\+case\_s*;\)\?"
         \ fold
         \ contains=ALLBUT,@plsqlProcedureGroup,plsqlPackage,plsqlErrInBracket,PlsqlProcedureJava
-        \ keepend 
+        \ keepend
         \ extend
         "\ contained
 
@@ -780,7 +780,7 @@ if get(g:,"plsql_fold",0) == 1
         \ keepend extend
         \ contained
         \ contains=ALLBUT,@plsqlProcedureGroup,plsqlPackage,plsqlErrInBracket,PlsqlProcedureJava
-    
+
     syn region plsqlConditionalBlock
         \ transparent
         \ start="\<if\>\(\_s*;\)\@!"
@@ -789,7 +789,7 @@ if get(g:,"plsql_fold",0) == 1
         \ keepend extend
         \ contained
         \ contains=ALLBUT,@plsqlProcedureGroup,plsqlPackage,plsqlErrInBracket,PlsqlProcedureJava
-    
+
 else
     " Syntax Synchronizing
     syn sync minlines=1000 maxlines=2000

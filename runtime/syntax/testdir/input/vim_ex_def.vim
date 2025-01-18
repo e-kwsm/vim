@@ -24,7 +24,7 @@ def Foo(): number
 enddef
 
 " trailing whitespace
-def Foo(): number  
+def Foo(): number
   return 42
 enddef
 
@@ -79,7 +79,7 @@ enddef
 
 def Foo()
   # trailing whitespace
-enddef  
+enddef
 
 def Foo()
 enddef | echo "Foo"

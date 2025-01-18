@@ -53,7 +53,7 @@ if exists("baan_fold") && baan_fold && exists("baan_fold_block") && baan_fold_bl
   syn region  baanDLLUsage matchgroup=baan3gl         start="^\z(\s*\)dllusage\>"       end="^\z1enddllusage\>" fold contains=baanNumber,baanConstant,baanType
   syn region  baanFunUsage matchgroup=baan3gl         start="^\z(\s*\)functionusage\>"  end="^\z1endfunctionusage\>" fold  contains=baanNumber,baanConstant,baanType
   syn region  baanCondFold matchgroup=baanConditional start="^\z(\s*\)\(case\>\|default\>\)\>" end="^\z1endcase\>" end="^\z1\(case\>\|default\>\)"me=s-1 transparent fold keepend extend
-  syn keyword baanConditional then else endif while endwhile endfor case endcase 
+  syn keyword baanConditional then else endif while endwhile endfor case endcase
   syn match   baanConditional "\<on case\>"
 else
   syn match   baanConditional "\<for\>" contains=baansql
@@ -64,8 +64,8 @@ else
 endif
 
 "************************************* SQL ************************************"
-syn keyword baansql from selectbind 
-syn keyword baansql where wherebind whereused exsists  
+syn keyword baansql from selectbind
+syn keyword baansql where wherebind whereused exsists
 syn keyword baansql between inrange having
 syn keyword baansql hint ordered asc desc
 syn match   baansql "\<as set with \d\+ rows\>"
@@ -78,7 +78,7 @@ syn match   baansql "\<order by\>"
 syn match   baansql "\<group by\>"
 syn match   baansql "\<union all\>"
 " references
-syn keyword path reference 
+syn keyword path reference
 syn match   baansql "\<refers to\>"
 syn match   baansql "\<unref clear\>"
 syn match   baansql "\<unref setunref\>"
@@ -136,7 +136,7 @@ endif
 
 " Constants
 syn keyword baanConstant __function__
-syn keyword baanConstant __object__ 
+syn keyword baanConstant __object__
 syn keyword baanConstant __file__
 syn keyword baanConstant __line__
 
@@ -976,7 +976,7 @@ syn match baan4gl "after\.skip\.delete:"
 syn match baan4gl "read\.view:"
 
 "**************************** Dal Hooks ********************************
-syn keyword baanDalHook after.abort.transaction after.commit.transaction after.destroy.object 
+syn keyword baanDalHook after.abort.transaction after.commit.transaction after.destroy.object
 syn keyword baanDalHook after.change.object after.get.object after.new.object after.save.object before.change.object
 syn keyword baanDalHook before.destroy.object before.get.object before.new.object before.open.object.set before.save.object
 syn keyword baanDalHook method.is.allowed set.object.defaults
@@ -1030,7 +1030,7 @@ syn match  BaanError	"^\s*const.*\s[olse]\..*$"		" const variable defined with o
 syn match  BaanError	"^\s*static.*\s\(i\|g\|l\|o\|io\)\..*$"	" static defined without s."
 syn match  BaanError	"^\s*\(domain\s\|long\s\|string\s\).*\so\.\k*[,)]"	" ref variable without ref"
 syn match  BaanError	"^\s*\(domain\s\|long\s\|string\s\).*\se\.\k*[,)]"	" 'e.' variable without extern"
-syn match  BaanError	"^\s*i\..*,\s*|\s*ref.*$"	" 
+syn match  BaanError	"^\s*i\..*,\s*|\s*ref.*$"	"
 endif
 
 "**************************** bshell functions ********************************

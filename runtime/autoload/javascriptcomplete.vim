@@ -92,7 +92,7 @@ function! javascriptcomplete#CompleteJS(findstart, base)
 		let maths = mathprop + mathmeth
 
 		" Number
-		let numbprop = ['MAX_VALUE', 'MIN_VALUE', 'NaN', 'NEGATIVE_INFINITY', 'POSITIVE_INFINITY', 
+		let numbprop = ['MAX_VALUE', 'MIN_VALUE', 'NaN', 'NEGATIVE_INFINITY', 'POSITIVE_INFINITY',
 					\ 'constructor', 'prototype']
 		let numbmeth = ['toExponential', 'toFixed', 'toPrecision', 'toSource', 'toString', 'valueOf',
 					\ 'watch', 'unwatch']
@@ -171,7 +171,7 @@ function! javascriptcomplete#CompleteJS(findstart, base)
 					\ 'createEvent', 'createExpression', 'createNSResolver',
 					\ 'createNodeIterator', 'createProcessingInstruction', 'createRange',
 					\ 'createTextNode', 'createTouchList', 'createTreeWalker',
-					\ 'enableStyleSheetsForSet', 'evaluate', 'focus', 
+					\ 'enableStyleSheetsForSet', 'evaluate', 'focus',
 					\ 'getElementById', 'getElementsByClassName', 'getElementsByName',
 					\ 'getElementsByTagName', 'getElementsByTagNameNS',
 					\ 'hasStorageAccess', 'importNode', 'onClick', 'onDblClick',
@@ -228,50 +228,50 @@ function! javascriptcomplete#CompleteJS(findstart, base)
 		call map(buttmeth, 'v:val."("')
 		let butts = buttprop + buttmeth
 		" Checkbox - accessible only by other properties
-		let checprop = ['accept', 'accessKey', 'align', 'alt', 'checked', 'defaultChecked', 
-					\ 'disabled', 'form', 'id', 'name', 'tabIndex', 'type', 'value'] 
+		let checprop = ['accept', 'accessKey', 'align', 'alt', 'checked', 'defaultChecked',
+					\ 'disabled', 'form', 'id', 'name', 'tabIndex', 'type', 'value']
 		let checmeth = ['blur', 'click', 'focus', 'onBlur', 'onClick', 'onFocus', 'onMouseDown', 'onMouseUp']
 		call map(checmeth, 'v:val."("')
 		let checs = checprop + checmeth
 		" File upload - accessible only by other properties
-		let fileprop = ['accept', 'accessKey', 'align', 'alt', 'defaultValue', 
-					\ 'disabled', 'form', 'id', 'name', 'tabIndex', 'type', 'value'] 
+		let fileprop = ['accept', 'accessKey', 'align', 'alt', 'defaultValue',
+					\ 'disabled', 'form', 'id', 'name', 'tabIndex', 'type', 'value']
 		let filemeth = ['blur', 'focus', 'onBlur', 'onClick', 'onFocus', 'onMouseDown', 'onMouseUp']
 		call map(filemeth, 'v:val."("')
 		let files = fileprop + filemeth
 		" Hidden - accessible only by other properties
-		let hiddprop = ['defaultValue', 'form', 'id', 'name', 'type', 'value'] 
+		let hiddprop = ['defaultValue', 'form', 'id', 'name', 'type', 'value']
 		let hidds = hiddprop
 		" Password - accessible only by other properties
-		let passprop = ['accept', 'accessKey', 'defaultValue', 
-					\ 'disabled', 'form', 'id', 'maxLength', 'name', 'readOnly', 'size', 'tabIndex', 
-					\ 'type', 'value'] 
-		let passmeth = ['blur', 'click', 'focus', 'select', 'onBlur', 'onFocus', 'onKeyDown', 
+		let passprop = ['accept', 'accessKey', 'defaultValue',
+					\ 'disabled', 'form', 'id', 'maxLength', 'name', 'readOnly', 'size', 'tabIndex',
+					\ 'type', 'value']
+		let passmeth = ['blur', 'click', 'focus', 'select', 'onBlur', 'onFocus', 'onKeyDown',
 					\ 'onKeyPress', 'onKeyUp']
 		call map(passmeth, 'v:val."("')
 		let passs = passprop + passmeth
 		" Radio - accessible only by other properties
-		let radiprop = ['accept', 'accessKey', 'align', 'alt', 'checked', 'defaultChecked', 
-					\ 'disabled', 'form', 'id', 'name', 'tabIndex', 'type', 'value'] 
+		let radiprop = ['accept', 'accessKey', 'align', 'alt', 'checked', 'defaultChecked',
+					\ 'disabled', 'form', 'id', 'name', 'tabIndex', 'type', 'value']
 		let radimeth = ['blur', 'click', 'focus', 'select', 'onBlur', 'onFocus']
 		call map(radimeth, 'v:val."("')
 		let radis = radiprop + radimeth
 		" Reset - accessible only by other properties
-		let reseprop = ['accept', 'accessKey', 'align', 'alt', 'defaultValue', 
-					\ 'disabled', 'form', 'id', 'name', 'size', 'tabIndex', 'type', 'value'] 
+		let reseprop = ['accept', 'accessKey', 'align', 'alt', 'defaultValue',
+					\ 'disabled', 'form', 'id', 'name', 'size', 'tabIndex', 'type', 'value']
 		let resemeth = ['blur', 'click', 'focus', 'select', 'onBlur', 'onFocus']
 		call map(resemeth, 'v:val."("')
 		let reses = reseprop + resemeth
 		" Submit - accessible only by other properties
-		let submprop = ['accept', 'accessKey', 'align', 'alt', 'defaultValue', 
-					\ 'disabled', 'form', 'id', 'name', 'size', 'tabIndex', 'type', 'value'] 
+		let submprop = ['accept', 'accessKey', 'align', 'alt', 'defaultValue',
+					\ 'disabled', 'form', 'id', 'name', 'size', 'tabIndex', 'type', 'value']
 		let submmeth = ['blur', 'click', 'focus', 'select', 'onClick', 'onSelectStart']
 		call map(submmeth, 'v:val."("')
 		let subms = submprop + submmeth
 		" Text - accessible only by other properties
-		let textprop = ['accept', 'accessKey', 'align', 'alt', 'defaultValue', 
-					\ 'disabled', 'form', 'id', 'maxLength', 'name', 'readOnly', 
-					\ 'size', 'tabIndex', 'type', 'value'] 
+		let textprop = ['accept', 'accessKey', 'align', 'alt', 'defaultValue',
+					\ 'disabled', 'form', 'id', 'maxLength', 'name', 'readOnly',
+					\ 'size', 'tabIndex', 'type', 'value']
 		let textmeth = ['blur', 'focus', 'select', 'onBlur', 'onChange', 'onFocus', 'onKeyDown',
 					\ 'onKeyPress', 'onKeyUp', 'onSelect']
 		call map(textmeth, 'v:val."("')
@@ -303,15 +303,15 @@ function! javascriptcomplete#CompleteJS(findstart, base)
 					\ 'type', 'useMap', 'vspace', 'width']
 		let objes = objeprop
 		" Option - accessible only by other properties
-		let optiprop = ['defaultSelected', 
+		let optiprop = ['defaultSelected',
 					\ 'disabled', 'form', 'id', 'index', 'label', 'selected', 'text', 'value']
 		let optis = optiprop
 		" Screen - screen.
 		let screprop = ['availHeight', 'availWidth', 'colorDepth', 'height', 'width']
 		let scres = screprop
 		" Select - accessible only by other properties
-		let seleprop = ['options', 'disabled', 'form', 'id', 'length', 'multiple', 'name', 
-					\ 'selectedIndex', 'size', 'tabIndex', 'type', 'value'] 
+		let seleprop = ['options', 'disabled', 'form', 'id', 'length', 'multiple', 'name',
+					\ 'selectedIndex', 'size', 'tabIndex', 'type', 'value']
 		let selemeth = ['blur', 'focus', 'remove', 'onBlur', 'onChange', 'onFocus']
 		call map(selemeth, 'v:val."("')
 		let seles = seleprop + selemeth
@@ -358,9 +358,9 @@ function! javascriptcomplete#CompleteJS(findstart, base)
 		call map(trowmeth, 'v:val."("')
 		let trows = trowprop + trowmeth
 		" Textarea - accessible only by other properties
-		let tareprop = ['accessKey', 'cols', 'defaultValue', 
-					\ 'disabled', 'form', 'id', 'name', 'readOnly', 'rows', 
-					\ 'tabIndex', 'type', 'value', 'selectionStart', 'selectionEnd'] 
+		let tareprop = ['accessKey', 'cols', 'defaultValue',
+					\ 'disabled', 'form', 'id', 'name', 'readOnly', 'rows',
+					\ 'tabIndex', 'type', 'value', 'selectionStart', 'selectionEnd']
 		let taremeth = ['blur', 'focus', 'select', 'onBlur', 'onChange', 'onFocus']
 		call map(taremeth, 'v:val."("')
 		let tares = tareprop + taremeth
@@ -385,7 +385,7 @@ function! javascriptcomplete#CompleteJS(findstart, base)
 		" Attributes - element.attributes[x].
 		let xdomattrprop = ['name', 'specified', 'value']
 		" Element - anyelement.
-		let xdomelemprop = ['attributes', 'childNodes', 'firstChild', 'lastChild', 
+		let xdomelemprop = ['attributes', 'childNodes', 'firstChild', 'lastChild',
 					\ 'namespaceURI', 'nextSibling', 'nodeName', 'nodeType', 'nodeValue',
 					\ 'ownerDocument', 'parentNode', 'prefix', 'previousSibling', 'tagName']
 		let xdomelemmeth = ['appendChild', 'addEventListener', 'cloneNode',
@@ -397,14 +397,14 @@ function! javascriptcomplete#CompleteJS(findstart, base)
 		call map(xdomelemmeth, 'v:val."("')
 		let xdomelems = xdomelemprop + xdomelemmeth
 		" Node - anynode.
-		let xdomnodeprop = ['attributes', 'childNodes', 'firstChild', 'lastChild', 
+		let xdomnodeprop = ['attributes', 'childNodes', 'firstChild', 'lastChild',
 					\ 'namespaceURI', 'nextSibling', 'nodeName', 'nodeType', 'nodeValue',
 					\ 'ownerDocument', 'parentNode', 'prefix', 'previousSibling']
 		let xdomnodemeth = ['appendChild', 'cloneNode',
 					\ 'hasChildNodes', 'insertBefore', 'removeChild', 'replaceChild']
 		call map(xdomnodemeth, 'v:val."("')
 		let xdomnodes = xdomnodeprop + xdomnodemeth
-		" NodeList 
+		" NodeList
 		let xdomnliss = ['length', 'item(']
 		" Error - parseError.
 		let xdomerror = ['errorCode', 'reason', 'line', 'linepos', 'srcText', 'url', 'filepos']

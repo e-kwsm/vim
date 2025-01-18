@@ -6,7 +6,7 @@
 "   Maintainer:	Martin Krischik <krischik@users.sourceforge.net>
 "      $Author: krischik $
 "        $Date: 2008-07-08 16:29:01 +0200 (Di, 08 Jul 2008) $
-"      Version: 4.6      
+"      Version: 4.6
 "    $Revision: 887 $
 "     $HeadURL: https://gnuada.svn.sourceforge.net/svnroot/gnuada/trunk/tools/vim/autoload/decada.vim $
 "      History: 21.07.2006 MK New Dec Ada
@@ -61,7 +61,7 @@ function decada#New ()						     " }}}1
       \ 'Error_Format'  : '%+A%%ADAC-%t-%m,%C  %#%m,%Zat line number %l in file %f,' .
 			\ '%+I%%ada-I-%m,%C  %#%m,%Zat line number %l in file %f'}
 
-   return Retval 
+   return Retval
 endfunction decada#New						     " }}}1
 
 finish " 1}}}

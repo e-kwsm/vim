@@ -17,7 +17,7 @@
 "   - Robert Clipsham
 "   - Petar Kirov
 "
-" Please submit bugs/comments/suggestions to the github repo: 
+" Please submit bugs/comments/suggestions to the github repo:
 " https://github.com/JesseKPhillips/d.vim
 "
 " Options:
@@ -59,18 +59,18 @@ syn keyword dOperator              new delete typeof typeid cast align is
 syn keyword dOperator              this super
 if exists("d_hl_operator_overload")
   syn keyword dOpOverload          opNeg opCom opPostInc opPostDec opCast opAdd
-  syn keyword dOpOverload          opSub opSub_r opMul opDiv opDiv_r opMod 
+  syn keyword dOpOverload          opSub opSub_r opMul opDiv opDiv_r opMod
   syn keyword dOpOverload          opMod_r opAnd opOr opXor opShl opShl_r opShr
   syn keyword dOpOverload          opShr_r opUShr opUShr_r opCat
   syn keyword dOpOverload          opCat_r opEquals opCmp
   syn keyword dOpOverload          opAssign opAddAssign opSubAssign opMulAssign
-  syn keyword dOpOverload          opDivAssign opModAssign opAndAssign 
-  syn keyword dOpOverload          opOrAssign opXorAssign opShlAssign 
+  syn keyword dOpOverload          opDivAssign opModAssign opAndAssign
+  syn keyword dOpOverload          opOrAssign opXorAssign opShlAssign
   syn keyword dOpOverload          opShrAssign opUShrAssign opCatAssign
   syn keyword dOpOverload          opIndex opIndexAssign opIndexOpAssign
-  syn keyword dOpOverload          opCall opSlice opSliceAssign opSliceOpAssign 
+  syn keyword dOpOverload          opCall opSlice opSliceAssign opSliceOpAssign
   syn keyword dOpOverload          opPos opAdd_r opMul_r opAnd_r opOr_r opXor_r
-  syn keyword dOpOverload          opIn opIn_r opPow opDispatch opStar opDot 
+  syn keyword dOpOverload          opIn opIn_r opPow opDispatch opStar opDot
   syn keyword dOpOverload          opApply opApplyReverse opDollar
   syn keyword dOpOverload          opUnary opIndexUnary opSliceUnary
   syn keyword dOpOverload          opBinary opBinaryRight
@@ -96,7 +96,7 @@ if exists("d_hl_object_types")
 endif
 syn keyword dDebug                 deprecated unittest invariant
 syn keyword dExceptions            throw try catch finally
-syn keyword dScopeDecl             public protected private export package 
+syn keyword dScopeDecl             public protected private export package
 syn keyword dStatement             debug return with
 syn keyword dStatement             function delegate __ctfe mixin macro __simd
 syn keyword dStatement             in out body

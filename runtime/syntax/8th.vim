@@ -15,7 +15,7 @@ let s:cpo_save = &cpo
 set cpo&vim
 syn clear
 
-syn sync ccomment 
+syn sync ccomment
 syn sync maxlines=200
 
 syn case match
@@ -431,7 +431,7 @@ Builtin  sendmsg[] zmq:sendmsg[]
 
 
 " numbers
-syn keyword eighthMath decimal hex base@ base! 
+syn keyword eighthMath decimal hex base@ base!
 syn match eighthInteger '\<-\=[0-9.]*[0-9.]\+\>'
 
 " recognize hex and binary numbers, the '$' and '%' notation is for eighth
@@ -449,10 +449,10 @@ syn region eightSQL matchgroup=Define start=/\<SQL!\s/ end=/\<!\>/ contains=@SQL
 syn region eighthString start=+\.\?\"+ skip=+"+ end=+$+
 syn keyword jsonNull null
 syn keyword jsonBool /\(true\|false\)/
-syn region eighthString start=/\<"/ end=/"\>/ 
+syn region eighthString start=/\<"/ end=/"\>/
 syn match jsonObjEntry /"\"[^"]\+\"\ze\s*:/
 
-syn region eighthNeeds start=+needs\[+ end=+]+ matchgroup=eighthNeeds2 transparent 
+syn region eighthNeeds start=+needs\[+ end=+]+ matchgroup=eighthNeeds2 transparent
 syn match eighthNeeds2 /\<needs\[/
 syn match eighthNeeds2 /]\>/
 
@@ -507,4 +507,4 @@ let b:current_syntax = "8th"
 let &cpo = s:cpo_save
 unlet s:cpo_save
 
-" vim: ft=vim ts=4 sw=4 nocin:si 
+" vim: ft=vim ts=4 sw=4 nocin:si

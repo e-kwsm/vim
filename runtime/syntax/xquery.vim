@@ -40,7 +40,7 @@ syn keyword xqXPath some every in in satisfies if then else to div idiv mod unio
 syn	match xqExist "&="
 
 " XQdoc
-syn	match	XQdoc contained "@\(param\|return\|author\)\>" 
+syn	match	XQdoc contained "@\(param\|return\|author\)\>"
 
 " floating point number, with dot, optional exponent
 syn match xqFloat   "\d\+\.\d*\(e[-+]\=\d\+\)\=[fl]\="

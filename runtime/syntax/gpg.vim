@@ -3,7 +3,7 @@
 " Maintainer: This runtime file is looking for a maintainer.
 " Previous Maintainer:	Nikolai Weibull <now@bitwi.se>
 " Latest Revision:	2024-02-11
-" Updated:		
+" Updated:
 "     2023-01-23 @ObserverOfTime: added a couple of keywords
 "			2023-03-21 Todd Zullinger <tmz@pobox.com>: sync with gnupg-2.4.0
 "			2024-02-10 Daniel Kahn Gillmor <dkg@fifthhorseman.net>:

@@ -16,8 +16,8 @@ syn sync minlines=100
 
 " Flat profile
 syn match gprofFlatProfileTitle
-  \ "^Flat profile:$" 
-syn region gprofFlatProfileHeader 
+  \ "^Flat profile:$"
+syn region gprofFlatProfileHeader
   \ start="^Each sample counts as.*"
   \ end="^ time.*name\s*$"
 syn region gprofFlatProfileTrailer

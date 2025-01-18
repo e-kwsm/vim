@@ -76,7 +76,7 @@ let g:xmldata_xsd = {
 	\ 'maxInclusive' : [
 		\ ['annotation'],
 		\ {'value' : [], 'id' : [], 'fixed' : []}],
-	\ 'totalDigits' : [		
+	\ 'totalDigits' : [
 	    \ ['annotation'],
 		\ {'value' : [], 'id' : [], 'fixed' : []}],
 	\ 'fractionDigits' : [

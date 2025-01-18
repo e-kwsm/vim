@@ -3,11 +3,11 @@
 " Maintainer:   Rafal Sulejman <rms@poczta.onet.pl>
 " Site: http://rms.republika.pl/vim/syntax/snobol4.vim
 " Last change:  : Thu, 25 Jan 2018 14:21:24 +0100
-" Changes: 
+" Changes:
 " - system variables updated for SNOBOL4 2.0+
 " - strict snobol4 mode (set snobol4_strict_mode to activate)
 " - incorrect HL of dots in strings corrected
-" - incorrect HL of dot-variables in parens corrected 
+" - incorrect HL of dot-variables in parens corrected
 " - one character labels weren't displayed correctly.
 " - nonexistent Snobol4 keywords displayed as errors.
 
@@ -58,7 +58,7 @@ syn match       snobol4BogusStatement    "^-[^ ][^ ]*"
 syn match       snobol4Statement    "^-\(include\|copy\|module\|line\|plusopts\|case\|error\|noerrors\|list\|unlist\|execute\|noexecute\|copy\)"
 syn match       snobol4Constant     /"[^a-z"']\.[a-z][a-z0-9\-]*"/hs=s+1
 syn region      snobol4Goto         start=":[sf]\{0,1}(" end=")\|$\|;" contains=ALLBUT,snobol4ParenError
-syn match       snobol4Number       "\<\d*\(\.\d\d*\)*\>" 
+syn match       snobol4Number       "\<\d*\(\.\d\d*\)*\>"
 syn match       snobol4BogusSysVar  "&\w\{1,}"
 syn match       snobol4SysVar       "&\<\(abort\|alphabet\|anchor\|arb\|bal\|case\|code\|digits\|dump\|errlimit\|errtext\|errtype\|fail\|fence\|fnclevel\|ftrace\|fullscan\|input\|lastno\|lcase\|maxlngth\|output\|parm\|rem\|rtntype\|stcount\|stfcount\|stlimit\|stno\|succeed\|trace\|trim\|ucase\)\>"
 syn match       snobol4ExtSysVar    "&\(gtrace\|line\|file\|lastline\|lastfile\)"

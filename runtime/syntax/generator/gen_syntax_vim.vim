@@ -163,7 +163,7 @@ function s:parse_vim_command(cmd)
 				let item.type = s:get_vim_command_type(item.name)
 				if omit_idx + 1 < strlen(item.name)
 					let item.omit_idx = omit_idx
-					let item.syn_str = item.name[:omit_idx] . '[' . 
+					let item.syn_str = item.name[:omit_idx] . '[' .
 					\		item.name[omit_idx+1:] . ']'
 				else
 					let item.omit_idx = -1

@@ -1,8 +1,8 @@
 " Vim syntax file
 " Language:	Euphoria 4.0.5 (http://www.openeuphoria.org/)
-" Maintainer:	Shian Lee  
+" Maintainer:	Shian Lee
 " Last Change:	2014 Feb 26 (for Vim 7.4)
-" Remark:       Euphoria has two syntax files, euphoria3.vim and euphoria4.vim; 
+" Remark:       Euphoria has two syntax files, euphoria3.vim and euphoria4.vim;
 "               For details see :help ft-euphoria-syntax
 
 " quit when a syntax file was already loaded
@@ -10,7 +10,7 @@ if exists("b:current_syntax")
   finish
 endif
 
-" Reset compatible-options to Vim default value, just in case: 
+" Reset compatible-options to Vim default value, just in case:
 let s:save_cpo = &cpo
 set cpo&vim
 
@@ -18,17 +18,17 @@ set cpo&vim
 syn sync lines=40
 
 " Euphoria is a case-sensitive language (with only 4 builtin types):
-syntax case match 
+syntax case match
 
 " Some keywords/Builtins for Debug - from $EUDIR/include/euphoria/keywords.e:
-syn keyword euphoria4Debug	with without trace profile batch check indirect 
+syn keyword euphoria4Debug	with without trace profile batch check indirect
 syn keyword euphoria4Debug	includes inline warning define
 
 " Keywords for conditional compilation - from $EUDIR/include/euphoria/keywords.e:
-syn keyword euphoria4PreProc	elsedef elsifdef ifdef 
+syn keyword euphoria4PreProc	elsedef elsifdef ifdef
 
 " Keywords (Statements) - from $EUDIR/include/euphoria/keywords.e:
-syn keyword euphoria4Keyword	and as break by case constant continue do else     
+syn keyword euphoria4Keyword	and as break by case constant continue do else
 syn keyword euphoria4Keyword	elsif end entry enum exit export
 syn keyword euphoria4Keyword	fallthru for function global goto if include
 syn keyword euphoria4Keyword	label loop namespace not or override procedure
@@ -36,23 +36,23 @@ syn keyword euphoria4Keyword	public retry return routine switch then to type
 syn keyword euphoria4Keyword	until while xor
 
 " Builtins (Identifiers) - from $EUDIR/include/euphoria/keywords.e:
-syn keyword euphoria4Builtin	abort and_bits append arctan atom c_func c_proc 
-syn keyword euphoria4Builtin	call call_func call_proc clear_screen close 
-syn keyword euphoria4Builtin	command_line compare cos date delete delete_routine 
-syn keyword euphoria4Builtin	equal find floor get_key getc getenv gets hash 
-syn keyword euphoria4Builtin	head include_paths insert integer length log 
-syn keyword euphoria4Builtin	machine_func machine_proc match mem_copy mem_set 
-syn keyword euphoria4Builtin	not_bits object open option_switches or_bits peek 
-syn keyword euphoria4Builtin	peek2s peek2u peek4s peek4u peek_string peeks pixel 
-syn keyword euphoria4Builtin	platform poke poke2 poke4 position power prepend 
-syn keyword euphoria4Builtin	print printf puts rand remainder remove repeat 
+syn keyword euphoria4Builtin	abort and_bits append arctan atom c_func c_proc
+syn keyword euphoria4Builtin	call call_func call_proc clear_screen close
+syn keyword euphoria4Builtin	command_line compare cos date delete delete_routine
+syn keyword euphoria4Builtin	equal find floor get_key getc getenv gets hash
+syn keyword euphoria4Builtin	head include_paths insert integer length log
+syn keyword euphoria4Builtin	machine_func machine_proc match mem_copy mem_set
+syn keyword euphoria4Builtin	not_bits object open option_switches or_bits peek
+syn keyword euphoria4Builtin	peek2s peek2u peek4s peek4u peek_string peeks pixel
+syn keyword euphoria4Builtin	platform poke poke2 poke4 position power prepend
+syn keyword euphoria4Builtin	print printf puts rand remainder remove repeat
 syn keyword euphoria4Builtin	replace routine_id sequence sin splice sprintf
 syn keyword euphoria4Builtin	sqrt system system_exec tail tan task_clock_start
 syn keyword euphoria4Builtin	task_clock_stop task_create task_list task_schedule
 syn keyword euphoria4Builtin	task_self task_status task_suspend task_yield time
 syn keyword euphoria4Builtin	xor_bits
 " Builtins (Identifiers) shortcuts for length() and print():
-syn match   euphoria4Builtin	"\$" 
+syn match   euphoria4Builtin	"\$"
 syn match   euphoria4Builtin	"?"
 
 " Library Identifiers (Function) - grep from $EUDIR/include/*:
@@ -172,9 +172,9 @@ syn keyword euphoria4Library 	writef writefln years_day
 
 " Library Identifiers (Type) - grep from $EUDIR/include/*:
 syn keyword euphoria4Type	ascii_string boolean bordered_address byte_range
-syn keyword euphoria4Type	case_flagset_type color cstring 
+syn keyword euphoria4Type	case_flagset_type color cstring
 syn keyword euphoria4Type	file_number file_position graphics_point
-syn keyword euphoria4Type	integer_array lcid lock_type machine_addr map 
+syn keyword euphoria4Type	integer_array lcid lock_type machine_addr map
 syn keyword euphoria4Type	mixture number_array option_spec
 syn keyword euphoria4Type	page_aligned_address positive_int process regex
 syn keyword euphoria4Type	sequence_array socket stack std_library_address
@@ -186,9 +186,9 @@ syn keyword euphoria4Type	valid_memory_protection_constant valid_wordsize
 
 " Linux shell comment (#!...):
 syn match   euphoria4Comment	"\%^#!.*$"
-" Single and multilines comments: 
-syn region  euphoria4Comment 	start=/--/ end=/$/ 
-syn region  euphoria4Comment 	start="/\*" end="\*/" 
+" Single and multilines comments:
+syn region  euphoria4Comment 	start=/--/ end=/$/
+syn region  euphoria4Comment 	start="/\*" end="\*/"
 
 " Delimiters and brackets:
 syn match   euphoria4Delimit	"[([\])]"
@@ -199,9 +199,9 @@ syn match   euphoria4Operator	"[{}]"
 " Character constant:
 syn region  euphoria4Char	start=/'/ skip=/\\'\|\\\\/ end=/'/ oneline
 
-" String constant (""" must be *after* "): 
-syn region  euphoria4String	start=/"/ skip=/\\"\|\\\\/ end=/"/ oneline 
-syn region  euphoria4String	start=/b"\|x"/ end=/"/ 
+" String constant (""" must be *after* "):
+syn region  euphoria4String	start=/"/ skip=/\\"\|\\\\/ end=/"/ oneline
+syn region  euphoria4String	start=/b"\|x"/ end=/"/
 syn region  euphoria4String	start=/`/ end=/`/
 syn region  euphoria4String	start=/"""/ end=/"""/
 
@@ -218,7 +218,7 @@ syn match   euphoria4Number	"\<\d\+\>"
 syn match   euphoria4Number	"\<\d\+\.\d*\>"
 " Floating point starting with a dot:
 syn match   euphoria4Number	"\.\d\+\>"
-" Boolean constants: 
+" Boolean constants:
 syn keyword euphoria4Boolean	true TRUE false FALSE
 
 " Define the default highlighting.
@@ -226,20 +226,20 @@ syn keyword euphoria4Boolean	true TRUE false FALSE
 hi def link euphoria4Comment	Comment
 hi def link euphoria4String	String
 hi def link euphoria4Char	Character
-hi def link euphoria4Number	Number	
-hi def link euphoria4Boolean	Boolean	
-hi def link euphoria4Builtin	Identifier	
-hi def link euphoria4Library 	Function	
-hi def link euphoria4Type 	Type	
-hi def link euphoria4Keyword	Statement	
-hi def link euphoria4Operator	Statement		
-hi def link euphoria4Debug	Debug	
-hi def link euphoria4Delimit	Delimiter	
-hi def link euphoria4PreProc	PreProc	
-	
+hi def link euphoria4Number	Number
+hi def link euphoria4Boolean	Boolean
+hi def link euphoria4Builtin	Identifier
+hi def link euphoria4Library 	Function
+hi def link euphoria4Type 	Type
+hi def link euphoria4Keyword	Statement
+hi def link euphoria4Operator	Statement
+hi def link euphoria4Debug	Debug
+hi def link euphoria4Delimit	Delimiter
+hi def link euphoria4PreProc	PreProc
+
 let b:current_syntax = "euphoria4"
 
-" Restore current compatible-options: 
+" Restore current compatible-options:
 let &cpo = s:save_cpo
 unlet s:save_cpo
 

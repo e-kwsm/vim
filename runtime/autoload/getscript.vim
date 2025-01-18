@@ -443,7 +443,7 @@ fun! s:GetOneScript(...)
     silent! e %
    endif
    setlocal bh=wipe
-  
+
    " find the latest source-id in the plugin's webpage
    silent! 1
    let findpkg= search('Click on the package to download','W')

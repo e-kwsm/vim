@@ -21,7 +21,7 @@ syn region  cocoProductionCode    start=/([.]/ end=/[.])/
 syn match   cocoPragma            /[$][[:alnum:]]*/
 
 hi def link cocoKeywords         Keyword
-hi def link cocoUnilineComment   Comment 
+hi def link cocoUnilineComment   Comment
 hi def link cocoMultilineComment Comment
 hi def link cocoIdentifier       Identifier
 hi def link cocoString           String

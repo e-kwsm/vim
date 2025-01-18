@@ -42,9 +42,9 @@
 " Version 12.0 (April 2013)
 "
 " NF: Added support for "BEGIN TRY ... END TRY ... BEGIN CATCH ... END CATCH
-" BF: This plugin is designed to be used with other plugins to enable the 
-"     SQL completion with Perl, Python, Java, ...  The loading mechanism 
-"     was not checking if the SQL objects were created, which can lead to 
+" BF: This plugin is designed to be used with other plugins to enable the
+"     SQL completion with Perl, Python, Java, ...  The loading mechanism
+"     was not checking if the SQL objects were created, which can lead to
 "     the plugin not loading the SQL support.
 "
 " Version 11.0 (May 2013)

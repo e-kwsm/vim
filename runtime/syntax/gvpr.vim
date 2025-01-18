@@ -34,7 +34,7 @@ syn keyword gvCons
 syn keyword gvType char double float int long unsigned void
                  \ string
                  \ edge_t graph_t node_t obj_t
-syn match   gvVar 
+syn match   gvVar
   \ "\$\(\(F\|G\|NG\|O\|T\|tgtname\|tvedge\|tvnext\|tvroot\|tvtype\)\>\)\?\(\<\)\@!"
 syn keyword gvWord break continue else for forr if return switch while
 

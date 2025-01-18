@@ -3,10 +3,10 @@
 " Maintainer:   Julian Mehnle <julian@mehnle.net>
 " URL:          http://www.mehnle.net/source/odds+ends/vim/syntax/
 " Last Change:  Thu 2011-07-16 20:42:00 UTC
-" 
+"
 " Based on an earlier version by Вячеслав Горбанев (Slava Gorbanev), with
 " heavy modifications.
-" 
+"
 " $Id: bindzone.vim 12 2011-07-16 21:09:57Z julian $
 
 " quit when a syntax file was already loaded

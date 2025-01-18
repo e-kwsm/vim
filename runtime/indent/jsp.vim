@@ -9,7 +9,7 @@ if exists("b:did_indent")
     finish
 endif
 
-" If there has been no specific JSP indent script created, 
+" If there has been no specific JSP indent script created,
 " use the default html indent script which will handle
 " html, javascript and most of the JSP constructs.
 runtime! indent/html.vim

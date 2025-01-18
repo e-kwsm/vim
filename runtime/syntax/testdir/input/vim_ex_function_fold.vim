@@ -42,7 +42,7 @@ function Foo()
 endfunction
 
 " trailing whitespace
-function Foo()  
+function Foo()
   return 42
 endfunction
 
@@ -167,7 +167,7 @@ endfunction
 function Foo()
   return 42
   " trailing whitespace
-endfunction  
+endfunction
 
 function Foo()
   return 42

@@ -59,7 +59,7 @@ exe "syn include @lexCcode ".s:Cpath
 " "//".*  { }
 " <COMMENT>{
 " "*/"    { BEGIN INITIAL; }
-" .|\n    
+" .|\n
 " }
 " <*><<EOF>> { // end of file
 "              printf("\nEND\n");
@@ -73,9 +73,9 @@ exe "syn include @lexCcode ".s:Cpath
 " }
 " /* main program */
 " int main()
-" { 
+" {
 "   scan();
-" }   
+" }
 
 " Definitions Section with initial code blocks, abbreviations, options, states
 if has("folding")

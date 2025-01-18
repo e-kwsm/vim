@@ -123,7 +123,7 @@ syn keyword autohotkeyCommand
 
 syn keyword autohotkeyFunction
       \ InStr RegExMatch RegExReplace StrLen SubStr Asc Chr Func
-      \ DllCall VarSetCapacity WinActive WinExist IsLabel OnMessage 
+      \ DllCall VarSetCapacity WinActive WinExist IsLabel OnMessage
       \ Abs Ceil Exp Floor Log Ln Mod Round Sqrt Sin Cos Tan ASin ACos ATan
       \ FileExist GetKeyState NumGet NumPut StrGet StrPut RegisterCallback
       \ IsFunc Trim LTrim RTrim IsObject Object Array FileOpen

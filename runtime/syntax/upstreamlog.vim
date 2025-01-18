@@ -37,8 +37,8 @@ syn match upstreamlog_Profile /Full of \zs\S\{1,8}\ze$/
 syn match upstreamlog_Profile /Incr. of \zs\S\{1,8}\ze$/
 syn match upstreamlog_Profile /Profile=\zs\S\{1,8}\ze,/
 " Target:
-syn region upstreamlog_Target start="Computer: \zs" end="\ze[\]\)]" 
-syn region upstreamlog_Target start="Computer name \zs\"" end="\"\ze" 
+syn region upstreamlog_Target start="Computer: \zs" end="\ze[\]\)]"
+syn region upstreamlog_Target start="Computer name \zs\"" end="\"\ze"
 syn region upstreamlog_Target start="request to registered name \zs" end=" "
 
 

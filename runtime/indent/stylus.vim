@@ -66,7 +66,7 @@ endfunction
 "   if line =~ '^\s*\*'
 "     return cindent(v:lnum)
 "   endif
-" 
+"
 "   let pnum = s:prevnonblanknoncomment(v:lnum - 1)
 "   if pnum == 0
 "     return 0

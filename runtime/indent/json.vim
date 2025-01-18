@@ -5,7 +5,7 @@
 "   https://github.com/jakar/vim-json/commit/20b650e22aa750c4ab6a66aa646bdd95d7cd548a#diff-e81fc111b2052e306d126bd9989f7b7c
 "                       2022 Sep 07: b:undo_indent added by Doug Kearns
 " Original Author:	Rogerz Zhang <rogerz.zhang at gmail.com> http://github.com/rogerz/vim-json
-" Acknowledgement:      Based off of vim-javascript maintained by Darrick Wiebe 
+" Acknowledgement:      Based off of vim-javascript maintained by Darrick Wiebe
 "                       http://www.vim.org/scripts/script.php?script_id=2765
 
 " 0. Initialization {{{1
@@ -117,7 +117,7 @@ function GetJSONIndent(...)
     let pairend = escape(bs[1], ']')
     let pairline = searchpair(pairstart, '', pairend, 'bW')
 
-    if pairline > 0 
+    if pairline > 0
       let ind = indent(pairline)
     else
       let ind = virtcol('.') - 1

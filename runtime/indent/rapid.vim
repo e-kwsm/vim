@@ -40,7 +40,7 @@ endif
 let b:undo_indent="setlocal lisp< si< ai< inde< indk<"
 
 if get(g:,'rapidSpaceIndent',1)
-  " Use spaces for indention, 2 is enough. 
+  " Use spaces for indention, 2 is enough.
   " More or even tabs wastes space on the teach pendant.
   setlocal softtabstop=2
   setlocal shiftwidth=2
@@ -174,7 +174,7 @@ function s:RapidLenTilStr(lnum, str, startIdx) abort
     " a:str is part of string or line comment
     let l:idx += 1 " continue search for a:str
   endwhile
-  
+
   " a:str not found or l:len <= a:startIdx
   return -1
 endfunction
@@ -198,7 +198,7 @@ function s:RapidLoneParen(lnum,lchar) abort
 
   let l:line = getline(a:lnum)
 
-  " look for the first ! which is not part of a string 
+  " look for the first ! which is not part of a string
   let l:len = s:RapidLenTilStr(a:lnum,"!",0)
   if l:len == 0
     return 0 " first char is !; ignored

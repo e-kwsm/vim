@@ -237,9 +237,9 @@ syn keyword testKeyword
       "\ nextgroup option
       \ nextgroup=
       "\ a comment
-      \ testNext0 , testNext1 , 
+      \ testNext0 , testNext1 ,
       "\ a comment
-      \ testNext[2-8].* , 
+      \ testNext[2-8].* ,
       "\ a comment
       \ testNext9 , @testCluster skipwhite
       "\ KEYWORDS LIST

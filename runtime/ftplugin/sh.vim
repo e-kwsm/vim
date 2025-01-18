@@ -32,7 +32,7 @@ if exists("loaded_matchit") && !exists("b:match_words")
 	\  s:sol .. '\%(for\|while\)\>:' .. s:sol .. 'done\>,' ..
 	\  s:sol .. 'case\>:' .. s:sol .. 'esac\>'
   unlet s:sol
-  let b:match_skip = "synIDattr(synID(line('.'),col('.'),0),'name') =~ 'shSnglCase'" 
+  let b:match_skip = "synIDattr(synID(line('.'),col('.'),0),'name') =~ 'shSnglCase'"
   let b:undo_ftplugin ..= " | unlet! b:match_ignorecase b:match_words b:match_skip"
 endif
 

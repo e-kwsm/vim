@@ -149,7 +149,7 @@ let s:prepended  = ''
 " This function is used for the 'omnifunc' option.
 function! syntaxcomplete#Complete(findstart, base)
 
-    " Allow user to override ignorecase per buffer 
+    " Allow user to override ignorecase per buffer
     let l:omni_syntax_ignorecase = g:omni_syntax_ignorecase
     if exists('b:omni_syntax_ignorecase')
         let l:omni_syntax_ignorecase = b:omni_syntax_ignorecase
@@ -233,16 +233,16 @@ endfunction
 
 " To retrieve all syntax items regardless of syntax group:
 "     echo OmniSyntaxList( [] )
-" 
+"
 " To retrieve only the syntax items for the sqlOperator syntax group:
 "     echo OmniSyntaxList( ['sqlOperator'] )
-" 
+"
 " To retrieve all syntax items for both the sqlOperator and sqlType groups:
 "     echo OmniSyntaxList( ['sqlOperator', 'sqlType'] )
-" 
+"
 " A regular expression can also be used:
 "     echo OmniSyntaxList( ['sql\w\+'] )
-" 
+"
 " From within a plugin, you would typically assign the output to a List: >
 "     let myKeywords = []
 "     let myKeywords = OmniSyntaxList( ['sqlKeyword'] )
@@ -267,7 +267,7 @@ function! OmniSyntaxList(...)
     let filetype = substitute(&filetype, '\.', '_', 'g')
 
     if empty(list_parms)
-        " Allow user to override per buffer 
+        " Allow user to override per buffer
         if exists('g:omni_syntax_group_include_'.filetype)
             let l:omni_syntax_group_include_{filetype} = g:omni_syntax_group_include_{filetype}
         endif
@@ -337,7 +337,7 @@ function! OmniSyntaxList(...)
         " Default the exclude group to nothing
         let syntax_group_exclude_{filetype} = ''
 
-        " Allow user to override per buffer 
+        " Allow user to override per buffer
         if exists('g:omni_syntax_group_exclude_'.filetype)
             let l:omni_syntax_group_exclude_{filetype} = g:omni_syntax_group_exclude_{filetype}
         endif
@@ -545,25 +545,25 @@ endfunction
 
 function! s:SyntaxCSyntaxGroupItems( group_name, syntax_full )
 
-    " Allow user to override iskeyword per buffer 
+    " Allow user to override iskeyword per buffer
     let l:omni_syntax_use_iskeyword = g:omni_syntax_use_iskeyword
     if exists('b:omni_syntax_use_iskeyword')
         let l:omni_syntax_use_iskeyword = b:omni_syntax_use_iskeyword
     endif
 
-    " Allow user to override iskeyword_numeric per buffer 
+    " Allow user to override iskeyword_numeric per buffer
     let l:omni_syntax_use_iskeyword_numeric = g:omni_syntax_use_iskeyword_numeric
     if exists('b:omni_syntax_use_iskeyword_numeric')
         let l:omni_syntax_use_iskeyword_numeric = b:omni_syntax_use_iskeyword_numeric
     endif
 
-    " Allow user to override iskeyword_numeric per buffer 
+    " Allow user to override iskeyword_numeric per buffer
     let l:omni_syntax_use_single_byte = g:omni_syntax_use_single_byte
     if exists('b:omni_syntax_use_single_byte')
         let l:omni_syntax_use_single_byte = b:omni_syntax_use_single_byte
     endif
 
-    " Allow user to override minimum_length per buffer 
+    " Allow user to override minimum_length per buffer
     let l:omni_syntax_minimum_length = g:omni_syntax_minimum_length
     if exists('b:omni_syntax_minimum_length')
         let l:omni_syntax_minimum_length = b:omni_syntax_minimum_length
@@ -687,7 +687,7 @@ function! s:SyntaxCSyntaxGroupItems( group_name, syntax_full )
                     \    syn_list, '\%(^\|\n\)\@<=\s*\(@\w\+\)'
                     \    , "", 'g'
                     \ )
- 
+
         if l:omni_syntax_use_iskeyword == 0
             " There are a number of items which have non-word characters in
             " them, *'T_F1'*.  vim.vim is one such file.

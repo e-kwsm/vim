@@ -403,7 +403,7 @@ endfunction
 "     Changes: strip all comments; delete error messages; add checking for
 "     namespace
 " Author: Steven Mueller <diffusor@ugcs.caltech.edu>
-" Last Modified: Tue May 24 13:29:48 PDT 2005 
+" Last Modified: Tue May 24 13:29:48 PDT 2005
 " Version: 0.9.1
 
 function! xmlcomplete#GetLastOpenTag(unaryTagsStack)
