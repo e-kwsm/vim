@@ -69,7 +69,7 @@ menutrans Find\ and\ Rep&lace<Tab>:%s	Buscar\ y\ R&eemplazar<Tab>:%s
 menutrans Find\ and\ Rep&lace		Buscar\ y\ R&eemplazar
 menutrans Find\ and\ Rep&lace<Tab>:s	Buscar\ y\ R&eemplazar<Tab>:s
 menutrans Settings\ &Window		&Ventana\ de\ opciones
-menutrans Startup\ &Settings		Opciones\ de\ arranque	 
+menutrans Startup\ &Settings		Opciones\ de\ arranque
 
 " Edit/Global Settings
 menutrans &Global\ Settings		Opciones\ &globales
@@ -179,7 +179,7 @@ menutrans &Spelling				Corrección\ ortográfica
 menutrans &Spell\ Check\ On			&Activar\ corrección\ ortográfica
 menutrans Spell\ Check\ &Off			&Desactivar\ corrección\ ortográfica
 menutrans To\ &Next\ error<Tab>]s		&Siguiente\ error<Tab>]s
-menutrans To\ &Previous\ error<Tab>[s  		Error\ &precedente<Tab>[s 
+menutrans To\ &Previous\ error<Tab>[s  		Error\ &precedente<Tab>[s
 menutrans Suggest\ &Corrections<Tab>z=		Sugerir\ &corrección<Tab>z=
 menutrans &Repeat\ correction<Tab>:spellrepall	&Repetir\ corrección<Tab>:spellrepall
 an 40.335.205 &Tools.&Spelling.Castellano\ (es)	:set spl=es spell<CR>

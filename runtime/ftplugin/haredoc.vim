@@ -13,8 +13,8 @@ let s:cpo_save = &cpo
 set cpo&vim
 
 " Formatting settings.
-setlocal comments=:\	
-setlocal formatlistpat=^\ \\?-\ 
+setlocal comments=:\
+setlocal formatlistpat=^\ \\?-\
 setlocal formatoptions+=tnlj formatoptions-=c formatoptions-=q
 
 " Search for Hare modules.

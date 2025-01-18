@@ -25,11 +25,11 @@ set cpo&vim
 " if colorscheme is tortus(less)? krlGroupName defaults to 1
 if get(g:, 'colors_name', " ") =~ '\<tortus'
       \&& !exists("g:krlGroupName")
-  let g:krlGroupName=1 
+  let g:krlGroupName=1
 endif
 " krlGroupName defaults to 0 if it's not initialized yet or 0
 if !get(g:, "krlGroupName", 0)
-  let g:krlGroupName = 0 
+  let g:krlGroupName = 0
 endif
 
 " krl does ignore case
@@ -40,7 +40,7 @@ syn iskeyword @,48-57,_,192-255,#,$,&
 syn spell notoplevel
 " }}} init
 
-" Comment and Folding {{{ 
+" Comment and Folding {{{
 
 " Special Comment
 
@@ -81,7 +81,7 @@ highlight default link krlComment Comment
 if has("conceal") && get(g:, 'krlConcealFoldTail', 1)
   syn match krlConcealFoldTail /\c\v(^\s*;\s*fold[^;]*)@250<=;%(--|\s*<fold>|\s*<endfold>)@!.*$/ transparent containedin=krlComment conceal cchar=*
 endif
-" }}} Comment and Folding 
+" }}} Comment and Folding
 
 " Header {{{
 syn match krlHeader /&\a\w*/
@@ -102,7 +102,7 @@ highlight default link krlCompOperator Operator
 " Geometric operator
 " Do not move the : operator
 " Must be present befor krlParamdef
-syn match krlGeomOperator /[:]/ 
+syn match krlGeomOperator /[:]/
 " syn match krlGeomOperator /[:]/ containedin=krlLabel,krlParamdef
 highlight default link krlGeomOperator Operator
 " }}} Operator
@@ -175,12 +175,12 @@ highlight default link krlEnumVal Constant
 " basisTech, gripperTech and spotTech
 "
 " Predefined data types found in krc1
-syn keyword krlStructure servopara keymove powermodul trace techangle tech techfct techcps techfctctrl axis_inc axis_cal date display_var pro_ip con bus 
-syn keyword krlEnum ident_state sig_state move_state async_state emt_mode boxmode msg_prm_typ msg_typ cmd_stat asys trace_state trace_mode direction techsys techgeoref techclass techmode hpu_key_val pro_state eax transsys mode_move cosys device rotsys emstop cause_t 
+syn keyword krlStructure servopara keymove powermodul trace techangle tech techfct techcps techfctctrl axis_inc axis_cal date display_var pro_ip con bus
+syn keyword krlEnum ident_state sig_state move_state async_state emt_mode boxmode msg_prm_typ msg_typ cmd_stat asys trace_state trace_mode direction techsys techgeoref techclass techmode hpu_key_val pro_state eax transsys mode_move cosys device rotsys emstop cause_t
 "
 " Predefined data types found in kss functions
-syn keyword krlEnum ediagstate rdc_fs_state ret_c_psync_e var_type cancel_psync_e sys_vars 
-syn keyword krlStructure siginf rw_rdc_file rw_mam_file diagpar_t error_t stopmess case_sense_t msgbuf_t e3pos e3axis diagopt_t 
+syn keyword krlEnum ediagstate rdc_fs_state ret_c_psync_e var_type cancel_psync_e sys_vars
+syn keyword krlStructure siginf rw_rdc_file rw_mam_file diagpar_t error_t stopmess case_sense_t msgbuf_t e3pos e3axis diagopt_t
 "
 " Predefined structures for movement
 syn keyword krlStructure frame e6pos pos e6axis axis
@@ -207,7 +207,7 @@ syn keyword krlStructure emstop_path boxstatesafein boxstatesafeout
 syn keyword krlEnum digincode
 "
 " Predefined structures and enums found in /steu/mada/$option.dat
-syn keyword krlStructure installed_motion_modes msg_t 
+syn keyword krlStructure installed_motion_modes msg_t
 syn keyword krlEnum step_enum
 " syn keyword krlEnum
 "
@@ -261,7 +261,7 @@ if g:krlGroupName
 else
   highlight default link krlContinue Statement
 endif
-" interrupt 
+" interrupt
 syn match krlStatement /\v\c%(<global>\s+)?<INTERRUPT>%(\s+<decl>)?/ contains=krlStorageClass
 " keywords
 syn keyword krlStatement wait on off enable disable stop trigger with when distance onstart delay do prio import is minimum maximum confirm on_error_proceed
@@ -323,51 +323,51 @@ highlight default link krlStructVal Delimiter
 " BuildInFunction {{{
 syn keyword krlBuildInFunction contained Pulse
 syn keyword krlBuildInFunction contained m_comment
-syn keyword krlBuildInFunction contained is_key_pressed 
-syn keyword krlBuildInFunction contained set_opt_filter 
-syn keyword krlBuildInFunction contained timer_limit 
-syn keyword krlBuildInFunction contained tool_adj 
-syn keyword krlBuildInFunction contained FRand 
-syn keyword krlBuildInFunction contained ExecFunc eb_test EB EK EO LK mbx_rec 
+syn keyword krlBuildInFunction contained is_key_pressed
+syn keyword krlBuildInFunction contained set_opt_filter
+syn keyword krlBuildInFunction contained timer_limit
+syn keyword krlBuildInFunction contained tool_adj
+syn keyword krlBuildInFunction contained FRand
+syn keyword krlBuildInFunction contained ExecFunc eb_test EB EK EO LK mbx_rec
 " safe robot
 syn keyword krlbuildinfunction contained get_AxesMask get_BrakeTest_Time
 " math
 syn keyword krlBuildInFunction contained Abs Sin Cos Acos Tan Atan Atan2 Sqrt
 syn keyword krlBuildInFunction contained Forward Inverse inv_pos
 " cFoo sFoo
-syn keyword krlBuildInFunction contained cClose cOpen cRead cWrite sRead sWrite 
+syn keyword krlBuildInFunction contained cClose cOpen cRead cWrite sRead sWrite
 " string
-syn keyword krlBuildInFunction contained StrToBool StrToInt StrToReal StrToString StrToFrame StrToPos StrToE3Pos StrToE6Pos StrToAxis StrToE3Axis StrToE6Axis 
+syn keyword krlBuildInFunction contained StrToBool StrToInt StrToReal StrToString StrToFrame StrToPos StrToE3Pos StrToE6Pos StrToAxis StrToE3Axis StrToE6Axis
 syn keyword krlBuildInFunction contained StrAdd StrClear StrCopy StrComp StrFind StrLen StrDeclLen StrToBool StrToInt StrToReal StrToString
 " diag
-syn keyword krlBuildInFunction contained diag_start diag_stop get_DiagState 
+syn keyword krlBuildInFunction contained diag_start diag_stop get_DiagState
 " rdc mam pid
-syn keyword krlBuildInFunction contained CheckPidOnRdc check_mam_on_rdc get_rdc_fs_state 
-syn keyword krlBuildInFunction contained set_mam_on_hd copy_mam_hd_to_rdc copy_mam_rdc_to_hd 
-syn keyword krlBuildInFunction contained PidToHd PidToRdc 
-syn keyword krlBuildInFunction contained cal_to_rdc rdc_file_to_hd 
-syn keyword krlBuildInFunction contained delete_pid_on_rdc delete_rdc_content 
-syn keyword krlBuildInFunction contained create_rdc_archive restore_rdc_archive 
+syn keyword krlBuildInFunction contained CheckPidOnRdc check_mam_on_rdc get_rdc_fs_state
+syn keyword krlBuildInFunction contained set_mam_on_hd copy_mam_hd_to_rdc copy_mam_rdc_to_hd
+syn keyword krlBuildInFunction contained PidToHd PidToRdc
+syn keyword krlBuildInFunction contained cal_to_rdc rdc_file_to_hd
+syn keyword krlBuildInFunction contained delete_pid_on_rdc delete_rdc_content
+syn keyword krlBuildInFunction contained create_rdc_archive restore_rdc_archive
 " ioctl
-syn keyword krlBuildInFunction contained IOCtl cIOCtl 
-syn keyword krlBuildInFunction contained WSpaceGive WSpaceTake 
+syn keyword krlBuildInFunction contained IOCtl cIOCtl
+syn keyword krlBuildInFunction contained WSpaceGive WSpaceTake
 " sync
-syn keyword krlBuildInFunction contained Sync SyncCmd CancelProgSync 
+syn keyword krlBuildInFunction contained Sync SyncCmd CancelProgSync
 " remote
-syn keyword krlBuildInFunction contained RemoteCmd RemoteRead 
+syn keyword krlBuildInFunction contained RemoteCmd RemoteRead
 " msg/dlg
-syn keyword krlBuildInFunction contained IsMessageSet clear_KrlMsg get_MsgBuffer exists_KrlDlg exists_KrlMsg set_KrlDlg set_KrlDlgAnswer set_KrlMsg 
+syn keyword krlBuildInFunction contained IsMessageSet clear_KrlMsg get_MsgBuffer exists_KrlDlg exists_KrlMsg set_KrlDlg set_KrlDlgAnswer set_KrlMsg
 " robvers
-syn keyword krlBuildInFunction contained maximize_UsedxRobvers set_UsedxRobvers 
+syn keyword krlBuildInFunction contained maximize_UsedxRobvers set_UsedxRobvers
 " md_foo
-syn keyword krlBuildInFunction contained md_Cmd md_GetState md_SetState md_Asgn 
+syn keyword krlBuildInFunction contained md_Cmd md_GetState md_SetState md_Asgn
 " emi
-syn keyword krlBuildInFunction contained emi_ActPos emi_EndPos emi_StartPos emi_RecState emi_RecName 
+syn keyword krlBuildInFunction contained emi_ActPos emi_EndPos emi_StartPos emi_RecState emi_RecName
 " var
 syn keyword krlBuildInFunction contained cast_from cast_to
-syn keyword krlBuildInFunction contained GetVarsize GetCycDef get_sig_inf get_decl_place VarType VarState 
+syn keyword krlBuildInFunction contained GetVarsize GetCycDef get_sig_inf get_decl_place VarType VarState
 " sys
-syn keyword krlBuildInFunction contained GetSysState get_system_data set_system_data set_system_data_delayed 
+syn keyword krlBuildInFunction contained GetSysState get_system_data set_system_data set_system_data_delayed
 " err
 syn keyword krlBuildInFunction contained err_clear err_raise
 " motion

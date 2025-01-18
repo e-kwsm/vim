@@ -4,7 +4,7 @@
 " Maintainer:	Jakub Jelen <jakuje at gmail dot com>
 " Previous Maintainer:	Dominik Fischer <d dot f dot fischer at web dot de>
 " Contributor:	Thilo Six
-" Contributor:  Leonard Ehrenfried <leonard.ehrenfried@web.de>	
+" Contributor:  Leonard Ehrenfried <leonard.ehrenfried@web.de>
 " Contributor:  Karsten Hopp <karsten@redhat.com>
 " Originally:	2009-07-09
 " Last Change:	2022 Nov 10
