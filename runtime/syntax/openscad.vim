@@ -73,8 +73,8 @@ syn keyword openscadPrimitive2D square circle polygon import_dxf text
 syn keyword openscadPrimitiveImport import child children
 
 syn match openscadNumbers "\<\d\|\.\d" contains=openscadNumber display transparent
-syn match openscadNumber "\d\+" display contained 
-syn match openscadNumber "\.\d\+" display contained 
+syn match openscadNumber "\d\+" display contained
+syn match openscadNumber "\.\d\+" display contained
 
 syn region openscadString start=/"/ skip=/\\"/ end=/"/
 

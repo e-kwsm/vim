@@ -137,7 +137,7 @@ q       ,       COMMA
 <<      «       LEFT-POINTING DOUBLE ANGLE QUOTATION MARK
 >>      »       RIGHT-POINTING DOUBLE ANGLE QUOTATION MARK
 **      •       BULLET
-,.      ·       MIDDLE DOT      
+,.      ·       MIDDLE DOT
 +-      ±       PLUS-MINUS SIGN
 ^o      °       DEGREE SIGN
 ~~      ¬       NOT SIGN

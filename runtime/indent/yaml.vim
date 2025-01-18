@@ -135,7 +135,7 @@ function GetYAMLIndent(lnum)
         let qidx = match(prevline, '\v\"%([^"\\]|\\.)*\\')
         return virtcol([prevlnum, qidx+1])
     elseif line =~# s:liststartregex
-        " List line should have indent equal to previous list line unless it was 
+        " List line should have indent equal to previous list line unless it was
         " caught by one of the previous rules
         return indent(s:FindPrevLEIndentedLineMatchingRegex(a:lnum,
                     \                                       s:liststartregex))

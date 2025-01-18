@@ -19,7 +19,7 @@ setlocal indentkeys=!^F,o,O,=~end,0=~else,0=~case,0=~until,0=~const,0=~type,0=~v
 let b:undo_indent = "setlocal lisp< cindent< smartindent< autoindent< indentexpr< indentkeys<"
 
 if get(g:,'karelSpaceIndent',1)
-  " Use spaces, not tabs, for indention, 2 is enough. 
+  " Use spaces, not tabs, for indention, 2 is enough.
   " More or even tabs would waste valuable space on the teach pendant.
   setlocal softtabstop=2
   setlocal shiftwidth=2
@@ -93,7 +93,7 @@ function GetKarelIndent() abort
   endif
 
   " First case after a select gets the indent of the select.
-  if currentLine =~? '\v^\s*case>'  
+  if currentLine =~? '\v^\s*case>'
         \&& preNoneBlankLine =~? '\v^\s*select>'
     let ind = ind + &sw
   endif

@@ -53,18 +53,18 @@ syn keyword  dotType _background area arrowhead arrowsize arrowtail bb bgcolor
       \ id image imagepath imagepos imagescale inputscale K label label_scheme
       \ labelangle labeldistance labelfloat labelfontcolor labelfontname
       \ labelfontsize labelhref labeljust labelloc labeltarget labeltooltip
-      \ labelURL landscape layer layerlistsep layers layerselect layersep 
+      \ labelURL landscape layer layerlistsep layers layerselect layersep
       \ layout len levels levelsgap lhead lheight lp ltail lwidth margin
-      \ maxiter mclimit mindist minlen mode model mosek newrank nodesep 
+      \ maxiter mclimit mindist minlen mode model mosek newrank nodesep
       \ nojustify normalize notranslate nslimit nslimit1 ordering orientation
       \ outputorder overlap overlap_scaling overlap_shrink pack packmode pad
       \ page pagedir pencolor penwidth peripheries pin pos quadtree quantum
       \ rank rankdir ranksep ratio rects regular remincross repulsiveforce
       \ resolution root rotate rotation samehead sametail samplepoints scale
       \ searchsize sep shape shapefile showboxes sides size skew smoothing
-      \ sortv splines start style stylesheet tail_lp tailclip tailhref 
+      \ sortv splines start style stylesheet tail_lp tailclip tailhref
       \ taillabel tailport tailtarget tailtooltip tailURL target tooltip
-      \ truecolor URL vertices viewport voro_margin weight width xdotversion 
+      \ truecolor URL vertices viewport voro_margin weight width xdotversion
       \ xlabel xlp z
 
 " Special chars

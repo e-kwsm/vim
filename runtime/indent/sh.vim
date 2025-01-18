@@ -147,7 +147,7 @@ function! GetShIndent()
     " in insert mode, try to place the cursor after the fi statement
     let endp = '\<fi\>' .. (mode ==? 'i' ? '\zs' : '')
     let startp = '^\s*\<if\>'
-    let previous_line = searchpair(startp, '', endp , 'bnW', 
+    let previous_line = searchpair(startp, '', endp , 'bnW',
           \ 'synIDattr(synID(line("."),col("."), 1),"name") =~? "comment\\|quote\\|option"')
     if previous_line > 0
       let ind = indent(previous_line)

@@ -14,7 +14,7 @@ syn case ignore
 syn keyword pl1Todo TODO FIXME XXX DEBUG NOTE
 
 " pl1CommentGroup allows adding matches for special things in comments
-" 20010723az: Added this so that these could be matched in comments...  
+" 20010723az: Added this so that these could be matched in comments...
 syn cluster pl1CommentGroup contains=pl1Todo
 
 syn match   pl1Garbage        "[^ \t()]"
@@ -22,7 +22,7 @@ syn match   pl1Identifier     "[a-z][a-z0-9$_#]*"
 syn match   pl1HostIdentifier ":[a-z][a-z0-9$_#]*"
 
 " 20010723az: When wanted, highlight the trailing whitespace -- this is
-" based on c_space_errors 
+" based on c_space_errors
 if exists("c_space_errors")
     if !exists("c_no_trail_space_error")
         syn match pl1SpaceError "\s\+$"
@@ -32,7 +32,7 @@ if exists("c_space_errors")
     endif
 endif
 
-" Symbols.  
+" Symbols.
 syn match   pl1Symbol         "\(;\|,\|\.\)"
 syn match   pl1PreProcSym     "%"
 
@@ -53,7 +53,7 @@ syn keyword pl1Attribute PREC PRINT READONLY RECORD REFER RETURNS SEQUENTIAL SEQ
 syn keyword pl1Attribute STATIC STREAM STRUCTURE TRUNCATE UNALIGNED UNAL UNION UPDATE
 syn keyword pl1Attribute VARIABLE VARYING VAR COMPLEX CPLX REAL BINARY BIN BIT
 syn keyword pl1Attribute CHARACTER CHAR DECIMAL DEC DESCRIPTOR DESC DIMENSION DIM
-syn keyword pl1Attribute FIXED FLOAT OFFSET POINTER PTR REFERENCE VALUE VAL 
+syn keyword pl1Attribute FIXED FLOAT OFFSET POINTER PTR REFERENCE VALUE VAL
 
 " Functions
 syn keyword pl1Function AFTER ALL ANY BEFORE COMPLETION CPLN CONJG COUNT
@@ -69,7 +69,7 @@ syn keyword pl1Function ONARGSLIST ONCHAR ONCODE ONFILE ONKEY ONSOURCE PAGENO PO
 syn keyword pl1Function PRESENT PROD RANK RELEASE RESIGNAL REVERSE REWIND ROUND
 syn keyword pl1Function RTRIM SEARCH SIGN SIN SIND SINH SIZE SOME SPACEBLOCK SQRT
 syn keyword pl1Function STRING SUBSTR SUBTRACT SUM TAN TAND TANH TIME TRANSLATE TRIM
-syn keyword pl1Function TRUNC UNSPEC VALID VARIANT VERIFY WARN 
+syn keyword pl1Function TRUNC UNSPEC VALID VARIANT VERIFY WARN
 
 " Other keywords
 syn keyword pl1Other ATTENTION ATTN C CONVERSION CONV DATA NAME NOCONVERSION
@@ -103,12 +103,12 @@ syn keyword pl1Other SKIP SPOOL STORAGE STRINGRANGE STRG SUBSCRIPTRANGE SUBRG
 syn keyword pl1Other SUPERSEDE SYSIN SYSPRINT SYSTEM_PROTECTION TAB TEMPORARY
 syn keyword pl1Other TIMEOUT_PERIOD TITLE TO UNDEFINEDFILE UNDF UNDERFLOW UFL
 syn keyword pl1Other UNTIL USER_OPEN VAXCONDITION WAIT_FOR_RECORD WHILE
-syn keyword pl1Other WORLD_PROTECTION WRITE_BEHIND WRITE_CHECK X ZERODIVIDE ZDIV 
+syn keyword pl1Other WORLD_PROTECTION WRITE_BEHIND WRITE_CHECK X ZERODIVIDE ZDIV
 
 " PreProcessor keywords
 syn keyword pl1PreProc ACTIVATE DEACTIVATE DECLARE DCL DICTIONARY DO END ERROR
 syn keyword pl1PreProc FATAL GOTO IF INCLUDE INFORM LIST NOLIST PAGE PROCEDURE PROC
-syn keyword pl1PreProc REPLACE RETURN SBTTL TITLE WARN THEN ELSE 
+syn keyword pl1PreProc REPLACE RETURN SBTTL TITLE WARN THEN ELSE
 
 " Statements
 syn keyword pl1Statement CALL SUB ENTRY BY NAME CASE CHECK COPY DEFAULT DFT DELAY
@@ -118,7 +118,7 @@ syn keyword pl1Statement SYSTEM TAB UNLOCK WAIT ALLOCATE ALLOC BEGIN CALL CLOSE
 syn keyword pl1Statement DECLARE DCL DELETE DO ELSE END FORMAT GET GOTO GO TO IF
 syn keyword pl1Statement LEAVE NORESCAN ON OPEN OTHERWISE OTHER PROCEDURE PROC PUT
 syn keyword pl1Statement READ RESCAN RETURN REVERT REWRITE SELECT SIGNAL SNAP
-syn keyword pl1Statement STATEMENT STOP SYSTEM THEN WHEN WRITE 
+syn keyword pl1Statement STATEMENT STOP SYSTEM THEN WHEN WRITE
 
 " PL1's own keywords
 " syn match   pl1Keyword "\<END\>"

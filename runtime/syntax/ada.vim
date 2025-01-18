@@ -25,7 +25,7 @@
 " The formal spec of Ada 2005 (ARM) is the "Ada 2005 Reference Manual".
 " For more Ada 2005 info, see http://www.gnuada.org and http://www.adapower.com.
 "
-" This vim syntax file works on vim 7.0 only and makes use of most of Voim 7.0 
+" This vim syntax file works on vim 7.0 only and makes use of most of Voim 7.0
 " advanced features.
 "------------------------------------------------------------------------------
 
@@ -251,7 +251,7 @@ endif
 
 " Section: String and character constants. {{{1
 "
-syntax region  adaString	contains=@Spell start=+"+ skip=+""+ end=+"+ 
+syntax region  adaString	contains=@Spell start=+"+ skip=+""+ end=+"+
 syntax match   adaCharacter "'.'"
 
 " Section: Todo (only highlighted in comments) {{{1
@@ -260,10 +260,10 @@ syntax keyword adaTodo contained TODO FIXME XXX NOTE
 
 " Section: Comments. {{{1
 "
-syntax region  adaComment 
-    \ oneline 
+syntax region  adaComment
+    \ oneline
     \ contains=adaTodo,adaLineError,@Spell
-    \ start="--" 
+    \ start="--"
     \ end="$"
 
 " Section: line errors {{{1

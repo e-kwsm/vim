@@ -2,7 +2,7 @@
 " VIM_TEST_SETUP hi link vimCmdSep Operator
 
 
-uniq 
+uniq
 uniq!
 
 uniq  ilu

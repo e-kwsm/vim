@@ -705,7 +705,7 @@ function! s:BeginningOfClauseFound(stack, token, stored_vcol, lnum, i)
       if a:lnum ==# 0
         " Set lnum and i to be NextIndToken-friendly
         let lnum = 1
-        let i = -1 
+        let i = -1
       else
         let lnum = a:lnum
         let i = a:i
@@ -749,10 +749,10 @@ let g:erlang_indent_searchpair_timeout = 2000
 " TODO
 function! s:SearchPair(lnum, curr_col, start, middle, end)
   call cursor(a:lnum, a:curr_col + 1)
-  let [lnum_new, col1_new] = 
+  let [lnum_new, col1_new] =
       \searchpairpos(a:start, a:middle, a:end, 'bW',
                     \'synIDattr(synID(line("."), col("."), 0), "name") ' .
-                    \'=~? "string\\|quotedatom\\|todo\\|comment\\|' . 
+                    \'=~? "string\\|quotedatom\\|todo\\|comment\\|' .
                     \'erlangmodifier"',
                     \0, g:erlang_indent_searchpair_timeout)
   return [lnum_new, col1_new - 1]
@@ -1154,7 +1154,7 @@ function! s:ErlangCalcIndent2(lnum, stack)
         " If we can be sure that there is synchronization in the Erlang
         " syntax, we use searchpair to make the script quicker. Otherwise we
         " just push the token onto the stack and keep parsing.
-    
+
         " No synchronization -> no searchpair optimization
         if !exists('b:erlang_syntax_synced')
           call s:Push(stack, token)

@@ -48,7 +48,7 @@ set cpoptions-=C
 
 " Section: Comments  {{{1
 "
-setlocal comments=O:--,:--\ \ 
+setlocal comments=O:--,:--\ \
 setlocal commentstring=--\ \ %s
 setlocal complete=.,w,b,u,t,i
 

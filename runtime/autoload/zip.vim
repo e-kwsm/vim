@@ -117,7 +117,7 @@ fun! s:SafeExecutable(exe)
     return v:false
   endif
   if !dist#vim#IsSafeExecutable('zip', exe) && !s:isPS()
-    call s:Mess('Error', "Warning: NOT executing " .. a:exe .. " from current directory!") 
+    call s:Mess('Error', "Warning: NOT executing " .. a:exe .. " from current directory!")
     return v:false
   endif
   return v:true

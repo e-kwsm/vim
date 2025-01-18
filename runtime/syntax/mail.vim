@@ -32,7 +32,7 @@ syn case match
 syn region	mailHeader	contains=@mailHeaderFields,@NoSpell start="^From .*\d\d\d\d$" skip="^\s" end="\v^[!-9;-~]*([^!-~]|$)"me=s-1 fold
 syn match	mailHeaderKey	contained contains=mailEmail,@NoSpell "^From\s.*\d\d\d\d$"
 
-" Nothing else depends on case. 
+" Nothing else depends on case.
 syn case ignore
 
 " Headers in properly quoted (with "> " or ">") emails are matched
@@ -56,8 +56,8 @@ syn region	mailSignature	keepend contains=@mailLinks,@mailQuoteExps start="^--\s
 syn region	mailSignature	keepend contains=@mailLinks,@mailQuoteExps,@NoSpell start="^\z(\(> \?\)\+\)--\s$" end="^\z1$" end="^\z1\@!"me=s-1 end="^\z1\(> \?\)\+"me=s-1 fold
 
 " Treat verbatim Text special.
-syn region	mailVerbatim	contains=@NoSpell keepend start="^#v+$" end="^#v-$" fold 
-syn region	mailVerbatim	contains=@mailQuoteExps,@NoSpell keepend start="^\z(\(> \?\)\+\)#v+$" end="\z1#v-$" fold 
+syn region	mailVerbatim	contains=@NoSpell keepend start="^#v+$" end="^#v-$" fold
+syn region	mailVerbatim	contains=@mailQuoteExps,@NoSpell keepend start="^\z(\(> \?\)\+\)#v+$" end="\z1#v-$" fold
 
 " URLs start with a known protocol or www,web,w3.
 syn match mailURL contains=@NoSpell `\v<(((https?|ftp|gopher)://|(mailto|file|news):)[^' 	<>"]+|(www|web|w3)[a-z0-9_-]*\.[a-z0-9._-]+\.[^' 	<>"]+)[a-z0-9/]`

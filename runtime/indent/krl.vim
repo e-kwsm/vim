@@ -20,7 +20,7 @@ setlocal indentkeys=!^F,o,O,=~end,0=~else,0=~case,0=~default,0=~until,0=~continu
 let b:undo_indent = "setlocal lisp< cindent< smartindent< autoindent< indentexpr< indentkeys<"
 
 if get(g:,'krlSpaceIndent',1)
-  " Use spaces, not tabs, for indention, 2 is enough. 
+  " Use spaces, not tabs, for indention, 2 is enough.
   " More or even tabs would waste valuable space on the teach pendant.
   setlocal softtabstop=2
   setlocal shiftwidth=2
@@ -96,13 +96,13 @@ function GetKrlIndent() abort
   endif
 
   " First case after a switch gets the indent of the switch.
-  if currentLine =~? '\v^\s*case>'  
+  if currentLine =~? '\v^\s*case>'
         \&& preNoneBlankLine =~? '\v^\s*switch>'
     let ind = ind + &sw
   endif
 
   " align continue with the following instruction
-  if currentLine =~? '\v^\s*continue>'  
+  if currentLine =~? '\v^\s*continue>'
         \&& getline(v:lnum + 1) =~? subtractShiftwidthPattern
     let ind = ind - &sw
   endif

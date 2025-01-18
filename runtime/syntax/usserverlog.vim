@@ -42,8 +42,8 @@ syn match usserverlog_Profile /Full of \zs\S\{1,8}\ze$/
 syn match usserverlog_Profile /Incr. of \zs\S\{1,8}\ze$/
 syn match usserverlog_Profile /Profile=\zs\S\{1,8}\ze,/
 " Target:
-syn region usserverlog_Target start="Computer: \zs" end="\ze[\]\)]" 
-syn region usserverlog_Target start="Computer name \zs\"" end="\"\ze" 
+syn region usserverlog_Target start="Computer: \zs" end="\ze[\]\)]"
+syn region usserverlog_Target start="Computer name \zs\"" end="\"\ze"
 syn region usserverlog_Target start="Registration add request successful \zs" end="$"
 syn region usserverlog_Target start="request to registered name \zs" end=" "
 syn region usserverlog_Target start=", sending to \zs" end="$"

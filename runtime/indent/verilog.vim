@@ -88,7 +88,7 @@ function GetVerilogIndent()
     endif
 
   " Indent after if/else/for/case/always/initial/specify/fork blocks
-  " Note: We exclude '`if' or '`else' and consider 'end else' 
+  " Note: We exclude '`if' or '`else' and consider 'end else'
   "       'end if' is redundant here
   elseif last_line =~ '^\s*\(end\)\=\s*`\@<!\<\(if\|else\)\>' ||
     \ last_line =~ '^\s*\<\(for\|case\%[[zx]]\)\>' ||
