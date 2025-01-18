@@ -7,7 +7,7 @@
 "               in July 2024 with the docs for version 8.4
 " Last Change:  2016 Apr 11
 "  2024-07-21:  update MySQL functions as of MySQL 8.4 (by Vim Project)
-" 
+"
 
 " quit when a syntax file was already loaded
 if exists("b:current_syntax")

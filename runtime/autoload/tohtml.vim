@@ -742,7 +742,7 @@ func! tohtml#GetUserSettings() "{{{
     call tohtml#GetOption(user_settings,          'line_ids', user_settings.number_lines )
     call tohtml#GetOption(user_settings, 'use_input_for_pc', 'none')
     " }}}
-    
+
     " override those settings that need it {{{
 
     " hover opening implies dynamic folding
@@ -807,7 +807,7 @@ func! tohtml#GetUserSettings() "{{{
       endif
     else
       " Figure out proper MIME charset from 'fileencoding' if possible
-      if &l:fileencoding != '' 
+      if &l:fileencoding != ''
 	" If the buffer is not a "normal" type, the 'fileencoding' value may not
 	" be trusted; since the buffer should not be written the fileencoding is
 	" not intended to be used.

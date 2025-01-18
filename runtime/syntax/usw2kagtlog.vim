@@ -36,8 +36,8 @@ syn match usw2kagtlog_Profile /Full of \zs\S\{1,8}\ze$/
 syn match usw2kagtlog_Profile /Incr. of \zs\S\{1,8}\ze$/
 syn match usw2kagtlog_Profile /profile name "\zs\S\{1,8}\ze"/
 " Target:
-syn region usw2kagtlog_Target start="Computer: \zs" end="\ze[\]\)]" 
-syn region usw2kagtlog_Target start="Computer name \zs\"" end="\"\ze" 
+syn region usw2kagtlog_Target start="Computer: \zs" end="\ze[\]\)]"
+syn region usw2kagtlog_Target start="Computer name \zs\"" end="\"\ze"
 " Agent Keywords:
 syn keyword usw2kagtlog_Agentword opened closed
 

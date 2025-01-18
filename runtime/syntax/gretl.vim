@@ -27,10 +27,10 @@ syn match gFloat /\.\d\+\([Ee][-+]\=\d\+\)\=/
 syn match gFloat /\d\+[Ee][-+]\=\d\+/
 
 " Gretl commands
-syn keyword gCommands add addobs addto adf append ar arch arma break boxplot chow coeffsum coint coint2 corc corr corrgm criteria critical cusum data delete diff else end endif endloop eqnprint equation estimate fcast fcasterr fit freq function funcerr garch genr gnuplot graph hausman hccm help hilu hsk hurst if import include info kpss label labels lad lags ldiff leverage lmtest logistic logit logs loop mahal meantest mle modeltab mpols multiply nls nulldata ols omit omitfrom open outfile panel pca pergm plot poisson pooled print printf probit pvalue pwe quit remember rename reset restrict rhodiff rmplot run runs scatters sdiff set setobs setmiss shell sim smpl spearman square store summary system tabprint testuhat tobit transpos tsls var varlist vartest vecm vif wls 
+syn keyword gCommands add addobs addto adf append ar arch arma break boxplot chow coeffsum coint coint2 corc corr corrgm criteria critical cusum data delete diff else end endif endloop eqnprint equation estimate fcast fcasterr fit freq function funcerr garch genr gnuplot graph hausman hccm help hilu hsk hurst if import include info kpss label labels lad lags ldiff leverage lmtest logistic logit logs loop mahal meantest mle modeltab mpols multiply nls nulldata ols omit omitfrom open outfile panel pca pergm plot poisson pooled print printf probit pvalue pwe quit remember rename reset restrict rhodiff rmplot run runs scatters sdiff set setobs setmiss shell sim smpl spearman square store summary system tabprint testuhat tobit transpos tsls var varlist vartest vecm vif wls
 
 "Gretl genr functions
-syn keyword gGenrFunc log exp sin cos tan atan diff ldiff sdiff mean sd min max sort int ln coeff abs rho sqrt sum nobs firstobs lastobs normal uniform stderr cum missing ok misszero corr vcv var sst cov median zeromiss pvalue critical obsnum mpow dnorm cnorm gamma lngamma resample hpfilt bkfilt fracdiff varnum isvector islist nelem 
+syn keyword gGenrFunc log exp sin cos tan atan diff ldiff sdiff mean sd min max sort int ln coeff abs rho sqrt sum nobs firstobs lastobs normal uniform stderr cum missing ok misszero corr vcv var sst cov median zeromiss pvalue critical obsnum mpow dnorm cnorm gamma lngamma resample hpfilt bkfilt fracdiff varnum isvector islist nelem
 
 " Identifier
 " identifier with leading letter and optional following keyword characters
@@ -69,7 +69,7 @@ hi def link gString       String
 hi def link gNumber       Number
 hi def link gBoolean      Boolean
 hi def link gFloat        Float
-hi def link gCommands     Repeat	
+hi def link gCommands     Repeat
 hi def link gGenrFunc     Type
 hi def link gDelimiter    Delimiter
 hi def link gError        Error
