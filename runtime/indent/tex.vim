@@ -220,7 +220,7 @@ function! GetTeXIndent() " {{{
     " if line =~ '^\s*\\begin{\(.*\)}'  && line !~ 'verbatim'
     " LH modification : \begin does not always start a line
     " ZYC modification : \end after \begin won't cause wrong indent anymore
-    if line =~ '\\begin{.*}' 
+    if line =~ '\\begin{.*}'
         if line !~ g:tex_noindent_env
             let ind = ind + shiftwidth()
             let stay = 0

@@ -2,7 +2,7 @@
 " Maintainer:		Dominique PELLE <dominique.pelle@free.fr>
 " Last Change:		2012 May 01
 " Original translations
-" 
+"
 " Quit when menu translations have already been done.
 if exists("did_menu_trans")
   finish
@@ -139,7 +139,7 @@ menutrans To\ &Next\ error<Tab>]s		Al\ sek&vonta\ eraro<Tab>]s
 menutrans To\ &Previous\ error<Tab>[s		Al\ an&taŭa\ eraro<Tab>[s
 menutrans Suggest\ &Corrections<Tab>z=		&Sugesti\ korektojn<Tab>z=
 menutrans &Repeat\ correction<Tab>:spellrepall	R&ipeti\ korekton<Tab>:spellrepall
-  
+
 menutrans Set\ language\ to\ "en"		Angla
 menutrans Set\ language\ to\ "en_au"		Angla\ (Aŭstralio)
 menutrans Set\ language\ to\ "en_ca"		Angla\ (Kanado)

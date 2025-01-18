@@ -71,7 +71,7 @@ syn region sqlString	matchgroup=Quote start=+n\?q'\[+  end=+]'+
 syn match sqlNumber	"-\=\<\d*\.\=[0-9_]\>"
 
 " Comments:
-syn region sqlComment	start="/\*"  end="\*/" contains=sqlTodo,@Spell fold 
+syn region sqlComment	start="/\*"  end="\*/" contains=sqlTodo,@Spell fold
 syn match sqlComment	"--.*$" contains=sqlTodo,@Spell
 syn match sqlComment "^rem.*$" contains=sqlTodo,@Spell
 

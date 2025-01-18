@@ -36,7 +36,7 @@ syn keyword esterelStatement	var in  run  suspend
 syn keyword esterelStatement	repeat times combine with
 syn keyword esterelStatement	assert sustain
 " check what it is the following
-syn keyword esterelStatement	relation						
+syn keyword esterelStatement	relation
 syn keyword esterelFunctions	function procedure task
 syn keyword esterelSysCall		call trap exit exec
 " Esterel Types
