@@ -6,7 +6,7 @@
 " File Types:   .cabal
 " Last Change:  22 Oct 2022
 " v1.6: Added support for foreign-libraries
-"       Added highlighting for various fields 
+"       Added highlighting for various fields
 " v1.5: Incorporated changes from
 "       https://github.com/sdiehl/haskell-vim-proto/blob/master/vim/syntax/cabal.vim
 "       Use `syn keyword` instead of `syn match`.
@@ -25,7 +25,7 @@
 "       Cabal known compiler are highlighted too.
 "
 " V1.2: Added cpp-options which was missing. Feature implemented
-"       by GHC, found with a GHC warning, but undocumented. 
+"       by GHC, found with a GHC warning, but undocumented.
 "       Whatever...
 "
 " v1.1: Fixed operator problems and added ftdetect file
@@ -186,7 +186,7 @@ syn match cabalVersionRegionA
 	\ contains=cabalVersionOperator,cabalVersion
 	\ keepend
 	\ /\%(==\|\^\?>=\|<=\|<\|>\)\s*\d\+\%(\.\d\+\)*\%(\.\*\)\?\>/
-" version inside `version: ...` 
+" version inside `version: ...`
 syn match cabalVersionRegionB
 	\ contains=cabalStatementRegion,cabalVersionOperator,cabalVersion
 	\ /^\s*\%(cabal-\)\?version\s*:.*$/

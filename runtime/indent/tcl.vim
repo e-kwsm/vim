@@ -38,7 +38,7 @@ function s:ends_with_backslash(lnum)
   else
     return 0
   endif
-endfunction 
+endfunction
 
 function s:count_braces(lnum, count_open)
   let n_open = 0
@@ -77,7 +77,7 @@ function GetTclIndent()
 
   " Default indentation is to preserve the previous indentation.
   let ind = indent(pnum)
- 
+
   " ...but if previous line introduces an open brace, then increase current line's indentation
   if s:count_braces(pnum, 1) > 0
     let ind += shiftwidth()
@@ -98,6 +98,6 @@ function GetTclIndent()
   if line =~ '^\s*}'
     let ind -= shiftwidth()
   endif
-  
+
   return ind
 endfunction

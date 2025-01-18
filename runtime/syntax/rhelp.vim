@@ -16,15 +16,15 @@
 " Version Clears: {{{1
 if exists("b:current_syntax")
   finish
-endif 
+endif
 
 scriptencoding utf-8
 
 syn case match
 
 " R help identifiers {{{1
-syn region rhelpIdentifier matchgroup=rhelpSection	start="\\name{" end="}" 
-syn region rhelpIdentifier matchgroup=rhelpSection	start="\\alias{" end="}" 
+syn region rhelpIdentifier matchgroup=rhelpSection	start="\\name{" end="}"
+syn region rhelpIdentifier matchgroup=rhelpSection	start="\\alias{" end="}"
 syn region rhelpIdentifier matchgroup=rhelpSection	start="\\pkg{" end="}" contains=rhelpLink
 syn region rhelpIdentifier matchgroup=rhelpSection	start="\\CRANpkg{" end="}" contains=rhelpLink
 syn region rhelpIdentifier matchgroup=rhelpSection start="\\method{" end="}" contained
@@ -60,8 +60,8 @@ syn region rhelpS4method matchgroup=Delimiter start="\\S4method{.*}(" matchgroup
 syn region rhelpSexpr matchgroup=Delimiter start="\\Sexpr{" matchgroup=Delimiter transparent end="}" contains=@R
 
 " PreProc {{{1
-syn match rhelpPreProc "^#ifdef.*" 
-syn match rhelpPreProc "^#endif.*" 
+syn match rhelpPreProc "^#ifdef.*"
+syn match rhelpPreProc "^#endif.*"
 
 " Special Delimiters {{{1
 syn match rhelpDelimiter		"\\cr"
@@ -230,7 +230,7 @@ syn match rhelpSection		"\\donttest\>"
 
 " Freely named Sections {{{1
 syn region rhelpFreesec matchgroup=Delimiter start="\\section{" matchgroup=Delimiter transparent end="}"
-syn region rhelpFreesubsec matchgroup=Delimiter start="\\subsection{" matchgroup=Delimiter transparent end="}" 
+syn region rhelpFreesubsec matchgroup=Delimiter start="\\subsection{" matchgroup=Delimiter transparent end="}"
 
 syn match rhelpDelimiter "{\|\[\|(\|)\|\]\|}"
 

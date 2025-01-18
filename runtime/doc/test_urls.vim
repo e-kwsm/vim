@@ -28,7 +28,7 @@ func Test_check_URLs()
         echoerr 'To work in OS Windows requires the program "PowerShell" version 3.0 or higher'
         return
       endif
-      let s:command1 = 
+      let s:command1 =
             \ "powershell -nologo -noprofile \"{[Net.ServicePointManager]::SecurityProtocol = 'Tls12, Tls11, Tls, Ssl3'};try{(Invoke-WebRequest -MaximumRedirection 2 -TimeoutSec 5 -Uri "
       let s:command2 = ').StatusCode}catch{exit [int]$Error[0].Exception.Status}"'
     endif

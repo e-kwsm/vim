@@ -747,14 +747,14 @@ enddef
 def s:BMRedraw()
   # Remove old menu, if it exists; keep one entry to avoid a torn off menu to
   # disappear.  Use try/catch to avoid setting v:errmsg
-  try 
-    unmenu &Buffers 
-  catch 
+  try
+    unmenu &Buffers
+  catch
   endtry
   exe 'noremenu ' .. g:bmenu_priority .. ".1 &Buffers.Dummy l"
-  try 
-    unmenu! &Buffers 
-  catch 
+  try
+    unmenu! &Buffers
+  catch
   endtry
 
   # create new menu
