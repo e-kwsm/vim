@@ -246,7 +246,7 @@ hi def link litestepNumber                            Number
 hi def link litestepString                            String
 hi def link litestepSubValue                          litestepString
 hi def link litestepBoolean                           Boolean
-"hi def link litestepLine 
+"hi def link litestepLine
 "hi def link litestepColor                             Type
 hi def link litestepOperator                          Operator
 hi def link litestepRelationalOperator                litestepOperator

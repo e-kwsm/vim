@@ -15,13 +15,13 @@ import true
   : "bar.vim"
 
 import true ? # comment
-  # comment 
+  # comment
   "foo.vim" :
   # comment
   "bar.vim"
 
 import true # comment
-  # comment 
+  # comment
   ? "foo.vim"
   # comment
   : "bar.vim"
@@ -40,7 +40,7 @@ import true
   as baz
 
 import true ? # comment
-  # comment 
+  # comment
   "foo.vim" :
   # comment
   "bar.vim"
@@ -48,7 +48,7 @@ import true ? # comment
   as baz
 
 import true # comment
-  # comment 
+  # comment
   ? "foo.vim"
   # comment
   : "bar.vim"
@@ -72,13 +72,13 @@ import autoload true
   : "bar.vim"
 
 import autoload true ? # comment
-  # comment 
+  # comment
   "foo.vim" :
   # comment
   "bar.vim"
 
 import autoload true # comment
-  # comment 
+  # comment
   ? "foo.vim"
   # comment
   : "bar.vim"
@@ -97,7 +97,7 @@ import autoload true
   as baz
 
 import autoload true ? # comment
-  # comment 
+  # comment
   "foo.vim" :
   # comment
   "bar.vim"
@@ -105,7 +105,7 @@ import autoload true ? # comment
   as baz
 
 import autoload true # comment
-  # comment 
+  # comment
   ? "foo.vim"
   # comment
   : "bar.vim"

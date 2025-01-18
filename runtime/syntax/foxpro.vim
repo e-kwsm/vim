@@ -5,14 +5,14 @@
 " Maintainer:   Bill W. Smith, Jr. <donal@brewich.com>
 " Last Change:  15 May 2006
 
-"     This file replaces the FoxPro for DOS v2.x syntax file 
+"     This file replaces the FoxPro for DOS v2.x syntax file
 " maintained by Powing Tse <powing@mcmug.org>
-" 
+"
 " Change Log:	added support for FoxPro Codebook highlighting
 " 		corrected highlighting of comments that do NOT start in col 1
 " 		corrected highlighting of comments at end of line (&&)
-" 
-" 
+"
+"
 " quit when a syntax file was already loaded
 if exists("b:current_syntax")
     finish

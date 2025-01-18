@@ -40,6 +40,6 @@ if (has("gui_win32") || has("gui_gtk")) && !exists("b:browsefilter")
     endif
     let b:undo_ftplugin .= " | unlet! b:browsefilter"
 endif
-       
+
 let &cpo = s:cpo_save
 unlet s:cpo_save

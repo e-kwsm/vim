@@ -13,7 +13,7 @@ syntax case ignore
 syntax clear @testCluster
 syntax clear testGroup
 syntax clear @testCluster testGroup
-syntax clear testGroup @testCluster 
+syntax clear testGroup @testCluster
 
 " :syn-conceal
 
@@ -250,9 +250,9 @@ syn keyword testKeyword
       "\ nextgroup option
       \ nextgroup=
       "\ a comment
-      \ testNext0 , testNext1 , 
+      \ testNext0 , testNext1 ,
       "\ a comment
-      \ testNext[2-8].* , 
+      \ testNext[2-8].* ,
       "\ a comment
       \ testNext9 , @testCluster skipwhite
       "\ KEYWORDS LIST
@@ -303,7 +303,7 @@ syn keyword testKeyword
       \ keyword2
       "\ keyword 3
       \ keyword3
-   
+
 
 " leaking contained groups
 
@@ -362,7 +362,7 @@ syntax cluster typstCodeKeywords
 
 
 syntax cluster typstCodeKeywords
-    \ contains= 
+    \ contains=
 	    "\ comment
 	    \  typstCodeConditional
             \ ,typstCodeRepeat

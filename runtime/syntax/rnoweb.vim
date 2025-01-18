@@ -3,14 +3,14 @@
 " Maintainer:  Johannes Ranke <jranke@uni-bremen.de>
 " Last Change: Thu Apr 05, 2018  11:06PM
 " Version:     0.9.1
-" Remarks:     - This file is inspired by the proposal of 
+" Remarks:     - This file is inspired by the proposal of
 "                Fernando Henrique Ferraz Pereira da Rosa <feferraz@ime.usp.br>
 "                http://www.ime.usp.br/~feferraz/en/sweavevim.html
 "
 
 if exists("b:current_syntax")
   finish
-endif 
+endif
 
 syn case match
 

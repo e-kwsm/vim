@@ -14,7 +14,7 @@ fun s:Test3() abort		" fun
   fun s:DoTest3() abort		" fun
     return 3
   endfun			" endfun
-  return s:DoTest3() 
+  return s:DoTest3()
 endfun				" endfun
 
 def s:Test4(): number		# def

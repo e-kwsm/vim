@@ -19,8 +19,8 @@
 "
 " Version 16.0 (Dec 2015)
 "     - NF: If resetting the cache and table, procedure or view completion
-"           had been used via dbext, have dbext delete or recreate the 
-"           dictionary so that new objects are picked up for the 
+"           had been used via dbext, have dbext delete or recreate the
+"           dictionary so that new objects are picked up for the
 "           next completion.
 "
 " Version 15.0 (May 2013)

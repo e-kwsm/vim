@@ -12,7 +12,7 @@ endif
 syn match   prescribeSpecial	"!R!"
 
 " all prescribe commands
-syn keyword prescribeStatement	ALTF AMCR ARC ASFN ASTK BARC BLK BOX CALL 
+syn keyword prescribeStatement	ALTF AMCR ARC ASFN ASTK BARC BLK BOX CALL
 syn keyword prescribeStatement	CASS CIR CLIP CLPR CLSP COPY CPTH CSET CSTK
 syn keyword prescribeStatement	CTXT DAF DAM DAP DELF DELM DPAT DRP DRPA DUPX
 syn keyword prescribeStatement	DXPG DXSD DZP ENDD ENDM ENDR EPL EPRM EXIT

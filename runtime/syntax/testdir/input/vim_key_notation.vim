@@ -1,7 +1,7 @@
 " Key notation
- 
 
-map foo 
+
+map foo
       \ <Space>
       \ <Tab>
       \ <Tab>
@@ -149,7 +149,7 @@ map foo
       \ <ScriptCmd>
       \ <FocusGained>
       \ <FocusLost>
-      \ 
+      \
       \ <cword>
       \ <cWORD>
       \ <cexpr>

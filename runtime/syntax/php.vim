@@ -3,7 +3,7 @@
 " Maintainer: Tyson Andre <tysonandre775@hotmail.com>
 " Last Change: Sep 18, 2021
 " URL: https://github.com/TysonAndre/php-vim-syntax
-" Former Maintainers: 
+" Former Maintainers:
 "         Jason Woofenden <jason@jasonwoof.com>
 "         Peter Hodge <toomuchphp-vim@yahoo.com>
 "         Debian VIM Maintainers <pkg-vim-maintainers@lists.alioth.debian.org>
@@ -30,14 +30,14 @@
 "   Set to anything to enable:
 "     php_sql_query           SQL syntax highlighting inside strings
 "     php_htmlInStrings       HTML syntax highlighting inside strings
-" 
+"
 "                             By setting this to 2, this will use a local copy of
 "                             HTML syntax highlighting instead of the official
 "                             HTML syntax highlighting, and properly highlight
 "                             `<?php $startTag = '<?php';`.
 "                             This may become the new default in the future.
-" 
-"                             By setting this to 3 (or any unrecognized value), 
+"
+"                             By setting this to 3 (or any unrecognized value),
 "                             this will use the official installed top level html syntax highlighting rules.
 "     php_baselib             highlighting baselib functions
 "     php_asp_tags            highlighting ASP-style short tags
@@ -90,20 +90,20 @@ endif
 "
 " The default behavior of php_htmlInStrings causes a bug
 " when you're working with code that contains the string literal `'<?php'`.
-" E.g. code that reads php files or generates the contents of php files or 
+" E.g. code that reads php files or generates the contents of php files or
 " generates snippets to `eval()`.
-" 
+"
 " When php_htmlInStrings was set to any value,
 " it would cause the html syntax rules to be embedded inside of the string
 " contents.
-" 
+"
 " However, php.vim extends html.vim by allowing the php start tag to be
 " included, meaning that this is parsed as `<?php';`, i.e. the start of a
 " new string literal.
-" 
+"
 " Work around that by using a different set of rules that don't allow
 " embedding php in most places (phpInnerHtmlPreProc).
-" 
+"
 " The default behavior may be changed to this in the future for constants other
 " than 2 or 3 if there are no issues.
 "
@@ -227,7 +227,7 @@ if exists("php_htmlInStrings") && php_htmlInStrings==2
 
   " The default highlighting.
   " NOTE: For now, this deliberately copies the definitions from html rather than link
-  " to the corresponding html tag name. If html is refactored to rename any 
+  " to the corresponding html tag name. If html is refactored to rename any
   " keywords then html highlighting would unexpectedly be cleared.
   hi def link phpInnerHtmlTag                     Function
   hi def link phpInnerHtmlEndTag                  Identifier
@@ -422,7 +422,7 @@ syn keyword phpFunctions ezmlm_hash mail contained
 syn keyword phpFunctions mailparse_determine_best_xfer_encoding mailparse_msg_create mailparse_msg_extract_part_file mailparse_msg_extract_part mailparse_msg_free mailparse_msg_get_part_data mailparse_msg_get_part mailparse_msg_get_structure mailparse_msg_parse_file mailparse_msg_parse mailparse_rfc822_parse_addresses mailparse_stream_encode mailparse_uudecode_all contained
 syn keyword phpFunctions abs acos acosh asin asinh atan2 atan atanh base_convert bindec ceil cos cosh decbin dechex decoct deg2rad exp expm1 floor fmod getrandmax hexdec hypot is_finite is_infinite is_nan lcg_value log10 log1p log max min mt_getrandmax mt_rand mt_srand octdec pi pow rad2deg rand round sin sinh sqrt srand tan tanh contained
 syn keyword phpFunctions array_key_first array_key_last boolval cli_get_process_title cli_set_process_title convert_uudecode convert_uuencode debug_zval_dump error_clear_last error_get_last forward_static_call forward_static_call_array fputcsv get_headers gethostname getimagesizefromstring header_register_callback header_remove hex2bin hrtime htmlspecialchars_decode http_response_code image_type_to_extension inet_ntop inet_pton intdiv is_countable is_iterable lcfirst lchgrp lchown memory_get_peak_usage net_get_interfaces parse_ini_string password_algos password_get_info password_hash password_needs_rehash password_verify php_ini_loaded_file php_strip_whitespace quoted_printable_encode random_bytes random_int realpath_cache_get realpath_cache_size setrawcookie str_getcsv stream_bucket_append stream_bucket_make_writeable stream_bucket_new stream_bucket_prepend stream_context_get_default stream_context_get_params stream_context_set_default stream_filter_remove stream_is_local stream_isatty stream_resolve_include_path stream_set_chunk_size stream_set_read_buffer stream_socket_enable_crypto stream_socket_pair stream_socket_shutdown stream_supports_lock stream_wrapper_restore stream_wrapper_unregister strpbrk strptime sys_get_temp_dir sys_getloadavg time_nanosleep time_sleep_until vfprintf contained
- 
+
 syn keyword phpFunctions mb_convert_case mb_convert_encoding mb_convert_kana mb_convert_variables mb_decode_mimeheader mb_decode_numericentity mb_detect_encoding mb_detect_order mb_encode_mimeheader mb_encode_numericentity mb_ereg_match mb_ereg_replace mb_ereg_search_getpos mb_ereg_search_getregs mb_ereg_search_init mb_ereg_search_pos mb_ereg_search_regs mb_ereg_search_setpos mb_ereg_search mb_ereg mb_eregi_replace mb_eregi mb_get_info mb_http_input mb_http_output mb_internal_encoding mb_language mb_output_handler mb_parse_str mb_preferred_mime_name mb_regex_encoding mb_regex_set_options mb_send_mail mb_split mb_strcut mb_strimwidth mb_strlen mb_strpos mb_strrpos mb_strtolower mb_strtoupper mb_strwidth mb_substitute_character mb_substr_count mb_substr mb_check_encoding mb_chr mb_encoding_aliases mb_ereg_replace_callback mb_list_encodings mb_ord mb_scrub mb_str_split mb_stripos mb_stristr mb_strrchr mb_strrichr mb_strripos mb_strstr mbereg mbereg_match mbereg_replace mbereg_search mbereg_search_getpos mbereg_search_getregs mbereg_search_init mbereg_search_pos mbereg_search_regs mbereg_search_setpos mberegi mberegi_replace mbregex_encoding mbsplit contained
 syn keyword phpFunctions mcal_append_event mcal_close mcal_create_calendar mcal_date_compare mcal_date_valid mcal_day_of_week mcal_day_of_year mcal_days_in_month mcal_delete_calendar mcal_delete_event mcal_event_add_attribute mcal_event_init mcal_event_set_alarm mcal_event_set_category mcal_event_set_class mcal_event_set_description mcal_event_set_end mcal_event_set_recur_daily mcal_event_set_recur_monthly_mday mcal_event_set_recur_monthly_wday mcal_event_set_recur_none mcal_event_set_recur_weekly mcal_event_set_recur_yearly mcal_event_set_start mcal_event_set_title mcal_expunge mcal_fetch_current_stream_event mcal_fetch_event mcal_is_leap_year mcal_list_alarms mcal_list_events mcal_next_recurrence mcal_open mcal_popen mcal_rename_calendar mcal_reopen mcal_snooze mcal_store_event mcal_time_valid mcal_week_of_year contained
 syn keyword phpFunctions mcrypt_cbc mcrypt_cfb mcrypt_create_iv mcrypt_decrypt mcrypt_ecb mcrypt_enc_get_algorithms_name mcrypt_enc_get_block_size mcrypt_enc_get_iv_size mcrypt_enc_get_key_size mcrypt_enc_get_modes_name mcrypt_enc_get_supported_key_sizes mcrypt_enc_is_block_algorithm_mode mcrypt_enc_is_block_algorithm mcrypt_enc_is_block_mode mcrypt_enc_self_test mcrypt_encrypt mcrypt_generic_deinit mcrypt_generic_end mcrypt_generic_init mcrypt_generic mcrypt_get_block_size mcrypt_get_cipher_name mcrypt_get_iv_size mcrypt_get_key_size mcrypt_list_algorithms mcrypt_list_modes mcrypt_module_close mcrypt_module_get_algo_block_size mcrypt_module_get_algo_key_size mcrypt_module_get_supported_key_sizes mcrypt_module_is_block_algorithm_mode mcrypt_module_is_block_algorithm mcrypt_module_is_block_mode mcrypt_module_open mcrypt_module_self_test mcrypt_ofb mdecrypt_generic contained
@@ -757,7 +757,7 @@ syntax keyword phpSpecialFunction containedin=ALLBUT,phpComment,phpStringDouble,
 hi def link phpSpecialFunction phpOperator
 
 " Highlighting for PHP5's built-in classes
-" Note: Some of the names have inconsistent cases. 
+" Note: Some of the names have inconsistent cases.
 " Those are probably the actual name in reflection and should not be changed in
 " this file.
 " (CURLFile and CurlShareHandle, XMLReader and XmlParser, etc)
@@ -768,8 +768,8 @@ syntax keyword phpClasses containedin=ALLBUT,phpComment,phpStringDouble,phpStrin
   \ RecursiveIteratorIterator IteratorIterator FilterIterator RecursiveFilterIterator ParentIterator LimitIterator
   \ CachingIterator RecursiveCachingIterator NoRewindIterator AppendIterator InfiniteIterator EmptyIterator
   \ ArrayIterator RecursiveArrayIterator DirectoryIterator RecursiveDirectoryIterator
-  \ CallbackFilterIterator FilesystemIterator GlobIterator MultipleIterator RecursiveCallbackFilterIterator 
-  \ RecursiveRegexIterator RecursiveTreeIterator RegexIterator SplDoublyLinkedList 
+  \ CallbackFilterIterator FilesystemIterator GlobIterator MultipleIterator RecursiveCallbackFilterIterator
+  \ RecursiveRegexIterator RecursiveTreeIterator RegexIterator SplDoublyLinkedList
   \ SplFixedArray SplHeap SplMaxHeap SplMinHeap SplPriorityQueue SplQueue SplStack
   \ InvalidArgumentException LengthException OutOfRangeException RuntimeException OutOfBoundsException
   \ Attribute InternalIterator Stringable UnhandledMatchError ValueError WeakMap
@@ -777,7 +777,7 @@ syntax keyword phpClasses containedin=ALLBUT,phpComment,phpStringDouble,phpStrin
   \ PDO PDOException PDOStatement PDORow
   \ Reflection ReflectionFunction ReflectionParameter ReflectionMethod ReflectionClass
   \ ReflectionObject ReflectionProperty ReflectionExtension ReflectionException
-  \ ReflectionClassConstant ReflectionFunctionAbstract ReflectionGenerator ReflectionNamedType 
+  \ ReflectionClassConstant ReflectionFunctionAbstract ReflectionGenerator ReflectionNamedType
   \ ReflectionReference ReflectionType ReflectionZendExtension
   \ ReflectionAttribute ReflectionUnionType
   \ SplFileInfo SplFileObject SplTempFileObject SplObjectStorage
@@ -791,7 +791,7 @@ syntax keyword phpClasses containedin=ALLBUT,phpComment,phpStringDouble,phpStrin
   \ DOMLocator DOMConfiguration DOMCdataSection DOMDocumentType DOMNotation DOMEntity
   \ DOMEntityReference DOMProcessingInstruction DOMStringExtend DOMXPath
   \ DOMChildNode DOMParentNode
-  \ EnchantBroker EnchantDictionary 
+  \ EnchantBroker EnchantDictionary
   \ GdImage
   \ OpenSSLAsymmetricKey OpenSSLCertificate OpenSSLCertificateSigningRequest
   \ Shmop

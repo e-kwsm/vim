@@ -225,7 +225,7 @@ map ,d "qd$@q
 map ,Y "qy$@q
 "
 " Yank the character under the cursor
-map ,j y 
+map ,j y
 "
 " Put the current cut buffer after the cursor
 map ,m p

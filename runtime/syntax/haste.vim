@@ -5,7 +5,7 @@
 "		files
 " Version:	0.9
 " Last Change:	0.9 improvement of haste numbers detection
-" Change:	0.8 error matching for wrong hierarchical connections 
+" Change:	0.8 error matching for wrong hierarchical connections
 " Change:	0.7 added more rules to highlight pre-processor directives
 
 " HASTE
@@ -21,7 +21,7 @@ endif
 syn case match
 
 " HASTE keywords
-syn keyword hasteStatement act alias arb array begin bitvec 
+syn keyword hasteStatement act alias arb array begin bitvec
 syn keyword hasteStatement bitwidth boolvec broad case
 syn keyword hasteStatement cast chan const dataprobe do edge
 syn keyword hasteStatement else end export false ff fi file
@@ -32,12 +32,12 @@ syn keyword hasteStatement posedge probe proc ram ramreg
 syn keyword hasteStatement repeat rom romreg sample sel si
 syn keyword hasteStatement sign sizeof skip stop then true
 syn keyword hasteStatement type until var wait wire
-syn keyword hasteFutureExt Z ffe partial 
-syn keyword hasteVerilog   buf reg while 
+syn keyword hasteFutureExt Z ffe partial
+syn keyword hasteVerilog   buf reg while
 
 " Special match for "if", "or", and "else" since "else if"
 " and other "else+if" combination shouldn't be highlighted.
-" The right keyword is "or" 
+" The right keyword is "or"
 syn match   hasteStatement	"\<\(if\|then\|else\|fi\)\>"
 syn match   hasteNone		"\<else\s\+if\>$"
 syn match   hasteNone		"\<else\s\+if\>\s"
@@ -73,7 +73,7 @@ syn match hasteNumber "-\=\<\d\+\>"
 " syn match hasteNumber "0*2#[01_]\+#\(\^[+\-]\=\d\+\)\="
 " syn match hasteNumber "0*16#[0-9a-f_]\+#\(\^[+\-]\=\d\+\)\="
 " operators
-syn keyword hasteSeparators	& , . \| 
+syn keyword hasteSeparators	& , . \|
 syn keyword hasteExecution	\|\| ; @
 syn keyword hasteOperator	:= ? ! :
 syn keyword hasteTypeConstr	"[" << >> .. "]" ~

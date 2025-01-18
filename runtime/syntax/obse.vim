@@ -45,7 +45,7 @@ syn match obseOperator "\v\|"
 " Numbers {{{
 syn match obseInt '\d\+'
 syn match obseInt '[-+]\d\+'
-syn match obseFloat '\d\+\.\d*' 
+syn match obseFloat '\d\+\.\d*'
 syn match obseFloat '[-+]\d\+\.\d*'
 " }}}
 
@@ -95,7 +95,7 @@ syn match obseCondition "Else"
 " }}}
 
 " Repeat loops {{{
-syn match obseRepeat "Label" 
+syn match obseRepeat "Label"
 syn match obseRepeat "GoTo"
 syn match obseRepeat "While"
 syn match obseRepeat "Loop"
@@ -308,7 +308,7 @@ syn keyword csFunction
       \ EnablePlayerControls
       \ EquipItem
       \ EssentialDeathReload
-      \ EvaluatePackage	
+      \ EvaluatePackage
       \ ForceAV
       \ ForceActorValue
       \ ForceCloseOblivionGate
@@ -3063,7 +3063,7 @@ syn keyword addActorValuesFunction
       \ GetAVMaxC
       \ GetAVMaxF
       \ GetAVCurrentC
-      \ GetAVCurrent 
+      \ GetAVCurrent
 " }}}
 
 " memoryDumperFunction {{{

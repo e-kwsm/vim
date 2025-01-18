@@ -362,7 +362,7 @@ syn match	logtalkOperator		"\(0'\)\@<!|"
 syn match	logtalkOperator		"\(0'\)\@<!^"
 
 
-" Logtalk numbers 
+" Logtalk numbers
 
 syn match	logtalkNumber		"\<\d\+\>"
 syn match	logtalkNumber		"\<\d\+\.\d\+\>"

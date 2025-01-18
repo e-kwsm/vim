@@ -40,7 +40,7 @@ syn keyword bbTodo              COMBAK FIXME TODO XXX contained
 syn match bbComment             "#.*$" contains=@bbCommentGroup
 
 " String helpers
-syn match bbQuote               +['"]+ contained 
+syn match bbQuote               +['"]+ contained
 syn match bbDelimiter           "[(){}=]" contained
 syn match bbArrayBrackets       "[\[\]]" contained
 

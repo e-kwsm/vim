@@ -22,7 +22,7 @@ syn keyword	lifelinesDecl		char_encoding require option include
 syn keyword	lifelinesStatement	set
 syn keyword	lifelinesUser		getindi geindiset getfam getint getstr choosechild
 syn keyword	lifelinesUser		chooseindi choosespouse choosesubset menuchoose
-syn keyword	lifelinesUser		choosefam 
+syn keyword	lifelinesUser		choosefam
 syn keyword	lifelinesProc		proc func return call
 syn keyword	lifelinesInclude	include
 syn keyword	lifelinesDef		global
@@ -52,16 +52,16 @@ syn keyword	lifelinesList		list empty length enqueue dequeue requeue
 syn keyword	lifelinesList		push pop setel getel forlist inlist dup clear
 syn keyword	lifelinesTable		table insert lookup
 syn keyword	lifelinesGedcom		xref tag value parent child sibling savenode
-syn keyword	lifelinesGedcom		fornodes traverse createnode addnode 
+syn keyword	lifelinesGedcom		fornodes traverse createnode addnode
 syn keyword	lifelinesGedcom		detachnode foreven fornotes forothr forsour
 syn keyword	lifelinesGedcom		reference dereference getrecord
-syn keyword	lifelinesGedcom		gengedcomstrong 
+syn keyword	lifelinesGedcom		gengedcomstrong
 syn keyword	lifelinesFunct		date place year long short gettoday dayformat
 syn keyword	lifelinesFunct		monthformat dateformat extractdate eraformat
 syn keyword	lifelinesFunct		complexdate complexformat complexpic datepic
 syn keyword	lifelinesFunct		extractnames extractplaces extracttokens lower
 syn keyword	lifelinesFunct		yearformat
-syn keyword	lifelinesFunct		upper capitalize trim rjustify 
+syn keyword	lifelinesFunct		upper capitalize trim rjustify
 syn keyword 	lifelinesFunct		concat strconcat strlen substring index
 syn keyword	lifelinesFunct		titlecase gettext
 syn keyword	lifelinesFunct		d card ord alpha roman strsoundex strtoint

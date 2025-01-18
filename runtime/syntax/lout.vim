@@ -10,7 +10,7 @@
 " Lout: Basser Lout document formatting system.
 
 " Many Thanks to...
-" 
+"
 " 2012-02-12:
 " Thilo Six <T.Six at gmx dot de> send a patch for cpoptions.
 " See the discussion at http://thread.gmane.org/gmane.editors.vim.devel/32151

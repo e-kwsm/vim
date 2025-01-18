@@ -16,11 +16,11 @@ syn sync fromstart
 syn region chaiscriptString        start=+"+ end=+"+ skip=+\\\\\|\\"+ contains=chaiscriptSpecial,chaiscriptEval,@Spell
 
 " Escape characters
-syn match  chaiscriptSpecial       contained "\\[\\abfnrtv\'\"]\|\\\d\{,3}" 
+syn match  chaiscriptSpecial       contained "\\[\\abfnrtv\'\"]\|\\\d\{,3}"
 
 " String evals
-syn region chaiscriptEval          contained start="${" end="}" 
- 
+syn region chaiscriptEval          contained start="${" end="}"
+
 " integer number
 syn match  chaiscriptNumber        "\<\d\+\>"
 

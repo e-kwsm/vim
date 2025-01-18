@@ -11,10 +11,10 @@
 "
 "  Tim Brown's aCC is: "HP ANSI C++ B3910B A.03.33"
 "  and it also works fine...
-"  
+"
 "  Now suggestions by aCC are supported (compile flag aCC +w).
 "  Thanks to Tim Brown again!!
-"  
+"
 
 if exists("current_compiler")
   finish

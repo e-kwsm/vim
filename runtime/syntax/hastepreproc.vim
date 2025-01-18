@@ -1,5 +1,5 @@
 " Vim syntax file
-" Language:	Haste preprocessor files 
+" Language:	Haste preprocessor files
 " Maintainer:	M. Tranchero - maurizio.tranchero@gmail.com
 " Credits:	some parts have been taken from vhdl, verilog, and C syntax
 "		files

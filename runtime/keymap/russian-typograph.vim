@@ -165,7 +165,7 @@ loadkeymap
 <char-0x002b>	    <char-0x002b>	" PLUS SIGN
 
 "	The ALT key pressed
-<A-char-0x0060>	    <char-0x0060>	" GRAVE ACCENT 
+<A-char-0x0060>	    <char-0x0060>	" GRAVE ACCENT
 <A-char-0x0031>	    <char-0x2116>       " NUMERO SIGN
 <A-char-0x0032>	    <char-0x2013>	" EN DASH
 <A-char-0x0033>	    <char-0x201e>	" DOUBLE LOW-9 QUOTATION MARK

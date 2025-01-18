@@ -39,14 +39,14 @@ function GetDTSIndent()
         " set cursor to closing bracket on current line
         let col = matchend(line, '^\s*[>}]')
         call cursor(lnum, col)
-        
+
         " determine bracket type, {} or <>
         let pair = strpart('{}<>', stridx('}>', line[col-1]) * 2, 2)
 
         " find matching bracket pair
         let pairline = searchpair(pair[0], '', pair[1], 'bW')
 
-        if pairline > 0 
+        if pairline > 0
             return indent(pairline)
         else
             return prevind - sw

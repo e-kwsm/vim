@@ -242,22 +242,22 @@ fun! s:LP_Execute(preclvl)
 "   call Decho("op<".op."> nop=".s:nopstack." [preclvl=".a:preclvl."] < [opprec_".s:nopstack."=".s:opprec_{s:nopstack}."]")
 
    let s:nopstack = s:nopstack - 1
- 
+
    if     op == '!'
     let n1= s:LP_PatPop(1)
 	call s:LP_PatPush(s:LP_Not(n1))
- 
+
    elseif op == '|'
     let n1= s:LP_PatPop(1)
     let n2= s:LP_PatPop(1)
     call s:LP_PatPush(s:LP_Or(n2,n1))
- 
+
    elseif op =~ '&'
     let n1= s:LP_PatPop(1)
     let n2= s:LP_PatPop(1)
     call s:LP_PatPush(s:LP_And(n2,n1))
    endif
- 
+
 "   call s:StackLook("execute") "Decho
   endwhile
 

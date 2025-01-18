@@ -71,7 +71,7 @@ syn match   fanStringSubst      	contained "\$[A-Za-z][A-Za-z_.]*"
 syn match   fanStringSubst      	contained "\${[^}]*}"
 syn region  fanString		start=+"+ end=+"+ contains=fanSpecialChar,fanSpecialError,fanStringSubst,@Spell
 syn region  fanTripleString	start=+"""+ end=+"""+ contains=fanSpecialChar,fanSpecialError,fanStringSubst,@Spell
-syn region  fanDSL		start=+<|+ end=+|>+ 
+syn region  fanDSL		start=+<|+ end=+|>+
 syn match   fanUri		 "`[^`]*`"
 syn match   fanCharacter	 "'[^']*'" contains=fanSpecialChar,fanSpecialCharError
 syn match   fanCharacter	 "'\\''" contains=fanSpecialChar

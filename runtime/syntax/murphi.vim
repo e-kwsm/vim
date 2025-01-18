@@ -3,7 +3,7 @@
 " Maintainer: Matthew Fernandez <matthew.fernandez@gmail.com>
 " Last Change: 2019 Aug 27
 " Version: 2
-" Remark: Originally authored by Diego Ongaro <ongaro@cs.stanford.edu> 
+" Remark: Originally authored by Diego Ongaro <ongaro@cs.stanford.edu>
 
 if version < 600
   syntax clear

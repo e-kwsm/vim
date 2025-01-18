@@ -26,7 +26,7 @@ setlocal iskeyword=_,-,+,.,a-z,A-Z,48-57
 " Syntax items common to fvwm1 and fvwm2 config files
 syn cluster fvwmConstants	contains=fvwmEnvVar,fvwmNumber
 syn match   fvwmEnvVar		"\$\w\+"
-syn match   fvwmNumber		'\v<(\d+|0x[0-9a-f]+)>' 
+syn match   fvwmNumber		'\v<(\d+|0x[0-9a-f]+)>'
 
 syn match   fvwmModConf		nextgroup=fvwmModArg	"\v^\s*\*\a+"
 syn region  fvwmModArg		contained contains=fvwmString,fvwmRGBValue
@@ -229,7 +229,7 @@ else
 				\ Version EnvIsSet EnvMatch EdgeHasPointer
 				\ EdgeIsActive Start Init Restart Exit Quit
 				\ ToRestart True False F R W X I
-    
+
     " TestRc
     syn keyword fvwmKeyword	nextgroup=fvwmTRCond skipwhite
 				\ TestRc
@@ -430,7 +430,7 @@ else
     syn keyword fvwmKeyword	nextgroup=fvwmBNum	skipwhite
 				\ ButtonStyle AddButtonStyle
     syn match	fvwmBNum	contained
-				\ nextgroup=fvwmBState,fvwmBStyleArgs skipwhite 
+				\ nextgroup=fvwmBState,fvwmBStyleArgs skipwhite
 				\ '\v<([0-9]|All|Left|Right|Reset)>'
     syn keyword	fvwmBState	contained nextgroup=fvwmBStyleArgs skipwhite
 				\ ActiveUp ActiveDown InactiveUp InactiveDown
@@ -497,7 +497,7 @@ else
     " Paths
     syn keyword fvwmKeyword	nextgroup=fvwmPath	skipwhite
 				\ IconPath ImagePath LocalePath PixmapPath
-				\ ModulePath 
+				\ ModulePath
     syn match	fvwmPath	contained contains=fvwmEnvVar '\v.+$'
 
     " Window list command

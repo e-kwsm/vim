@@ -409,7 +409,7 @@ syn region stataFunc matchgroup=Function start=/\<vec(/ end=/)/ contains=@stataF
 syn region stataFunc matchgroup=Function start=/\<vecdiag(/ end=/)/ contains=@stataFuncGroup
 
 " Errors to catch
-" taken from $VIMRUNTIME/syntax/c.vim 
+" taken from $VIMRUNTIME/syntax/c.vim
 " catch errors caused by wrong parenthesis, braces and brackets
 syn region	stataParen	transparent start=/(/ end=/)/  contains=ALLBUT,@stataParenGroup,stataErrInBracket,stataErrInBrace
 syn region	stataBracket	transparent start=/\[/ end=/]/ contains=ALLBUT,@stataParenGroup,stataErrInParen,stataErrInBrace

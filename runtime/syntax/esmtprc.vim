@@ -17,7 +17,7 @@ syntax keyword esmtprcIdentifier default enabled disabled required
 "We're trying to be smarer than /."*@.*/ :)
 syntax match esmtprcAddress /[a-z0-9_.-]*[a-z0-9]\+@[a-z0-9_.-]*[a-z0-9]\+\.[a-z]\+/
 syntax match esmtprcFulladd /[a-z0-9_.-]*[a-z0-9]\+\.[a-z]\+:[0-9]\+/
- 
+
 "String..
 syntax region esmtprcString start=/"/ end=/"/
 

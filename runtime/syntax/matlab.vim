@@ -39,7 +39,7 @@ syn match matlabLineContinuation	"\.\{3}"
 "syn match matlabIdentifier		"\<\a\w*\>"
 
 " String
-" MT_ADDON - added 'skip' in order to deal with 'tic' escaping sequence 
+" MT_ADDON - added 'skip' in order to deal with 'tic' escaping sequence
 syn region matlabString			start=+'+ end=+'+	oneline skip=+''+
 syn region matlabStringArray		start=+"+ end=+"+	oneline skip=+""+
 

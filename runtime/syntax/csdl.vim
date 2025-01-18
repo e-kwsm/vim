@@ -8,7 +8,7 @@ if exists("b:current_syntax")
 endif
 
 setlocal iskeyword=.,@,48-57,_,192-255
-syn case ignore 
+syn case ignore
 
 syn match csdlKeyword "tag "
 syn match csdlKeyword "stream "

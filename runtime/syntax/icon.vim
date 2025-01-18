@@ -83,7 +83,7 @@ syn keyword iconFunction WDone WFlush WOpen WQuit WRead WReads WriteImage
 syn keyword iconFunction WSync WWrite WWrites
 
 " String and character constants {{{1
-syn match  iconStringSpecial "\\x\x\{2}\|\\\o\{3\}\|\\[bdeflnrtv\"\'\\]\|\\^[a-zA-Z0-9]" contained 
+syn match  iconStringSpecial "\\x\x\{2}\|\\\o\{3\}\|\\[bdeflnrtv\"\'\\]\|\\^[a-zA-Z0-9]" contained
 syn match  iconStringSpecial "\\$"							 contained
 syn match  iconStringSpecial "_\ze\s*$"						         contained
 
@@ -95,17 +95,17 @@ syn region iconCset   start=+'+ skip=+\\\\\|\\'+ end=+'+ contains=iconStringSpec
 if !exists("icon_no_bracket_errors")
   " catch errors caused by wrong brackets (ACE 2002.09.18)
   syn cluster iconBracketGroup contains=iconBracketError,iconIncluded
-  syn region  iconBracket      start='\[' end='\]' contains=ALLBUT,@iconBracketGroup,@iconNotTop transparent 
+  syn region  iconBracket      start='\[' end='\]' contains=ALLBUT,@iconBracketGroup,@iconNotTop transparent
   syn match   iconBracketError "]"
-  
+
   "catch errors caused by wrong braces (ACE 2002.09.18)
   syn cluster iconBraceGroup contains=iconBraceError,iconIncluded
-  syn region  iconBrace	     start='{' end='}' contains=ALLBUT,@iconBraceGroup,@iconNotTop transparent 
+  syn region  iconBrace	     start='{' end='}' contains=ALLBUT,@iconBraceGroup,@iconNotTop transparent
   syn match   iconBraceError "}"
-  
+
   "catch errors caused by wrong parenthesis
   syn cluster iconParenGroup contains=iconParenError,iconIncluded
-  syn region  iconParen	     start='(' end=')' contains=ALLBUT,@iconParenGroup,@iconNotTop transparent 
+  syn region  iconParen	     start='(' end=')' contains=ALLBUT,@iconParenGroup,@iconNotTop transparent
   syn match   iconParenError ")"
 end
 
@@ -140,7 +140,7 @@ syn match   iconDocField "^#\s\+\zs\%(File\|Subject\|Authors\=\|Date\|Version\|L
 if exists("icon_no_comment_fold")
   syn region iconDocumentation	  start="\%^#\{2,}\%(\n#\+\%(\s\+.*\)\=\)\+"   end="^#\+\n\s*$"		  contains=iconDocField keepend
 else
-  syn region iconMultilineComment start="^\s*#.*\n\%(^\s*#\)\@=" end="^\s*#.*\n\%(^\s*#\)\@!" contains=iconComment  keepend fold transparent 
+  syn region iconMultilineComment start="^\s*#.*\n\%(^\s*#\)\@=" end="^\s*#.*\n\%(^\s*#\)\@!" contains=iconComment  keepend fold transparent
   syn region iconDocumentation	  start="\%^#\{2,}\%(\n#\)\+"	 end="^#\+\n\%([^#]\|$\)"     contains=iconDocField keepend fold
 endif
 
@@ -164,7 +164,7 @@ syn keyword iconPreSymbol _LARGE_INTEGERS _MACINTOSH _MEMORY_MONITOR _MSDOS
 syn keyword iconPreSymbol _MSDOS_386 _MULTIREGION _MULTITASKING _OS2 _PIPES
 syn keyword iconPreSymbol _PORT _PRESENTATION_MGR _RECORD_IO _STRING_INVOKE
 syn keyword iconPreSymbol _SYSTEM_FUNCTION _UNIX _VISUALIZATION _VMS
-syn keyword iconPreSymbol _WINDOW_FUNCTIONS _X_WINDOW_SYSTEM 
+syn keyword iconPreSymbol _WINDOW_FUNCTIONS _X_WINDOW_SYSTEM
 
 " Syncing {{{1
 if !exists("icon_minlines")

@@ -5,7 +5,7 @@ vim9script
 # Declarations
 
 var foo = expr
- 
+
 b:foo = expr
 g:foo = expr
 t:foo = expr
@@ -14,7 +14,7 @@ w:foo = expr
 v:true = expr
 
 $FOO = expr
- 
+
 var [foo, bar] = expr
 var [foo,
       \ bar] = expr
@@ -58,9 +58,9 @@ var foo: tuple<number, ...list<string>> = expr
 
 var foo: tuple<
       #\ comment
-      \number, 
+      \number,
       #\ comment
-      \string, 
+      \string,
       #\ comment
       \bool
       \>
@@ -123,12 +123,12 @@ w:foo ..= expr
 
 $FOO = expr
 $FOO ..= expr
- 
+
 @f = expr
 @f ..= expr
- 
+
 &ari = expr
- 
+
 &t_k1 = "\<Esc>[234;"
 
 &ari ..= expr
@@ -147,7 +147,7 @@ $FOO ..= expr
 &g:aleph ..= expr
 &g:aleph += expr
 &g:aleph -= expr
- 
+
 [foo, bar] = expr
 [foo,
       \ bar] = expr
