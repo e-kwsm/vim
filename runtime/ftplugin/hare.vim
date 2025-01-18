@@ -15,7 +15,7 @@ set cpo&vim
 " Formatting settings.
 setlocal comments=://
 setlocal commentstring=//\ %s
-setlocal formatlistpat=^\ \\?-\ 
+setlocal formatlistpat=^\ \\?-\
 setlocal formatoptions+=croqnlj/ formatoptions-=t
 
 " Search for Hare modules.

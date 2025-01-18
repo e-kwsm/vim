@@ -6,7 +6,7 @@ profile  stop
 profile  pause
 profile  continue
 profile  func MyFunc
-profile  file MyScript.vim 
+profile  file MyScript.vim
 profile! file MyScript.vim
 profile  dump
 

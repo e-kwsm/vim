@@ -1,4 +1,4 @@
-" thaana keymap 
+" thaana keymap
 " Maintainer: Ibrahim fayaz <p h a y a x at gmail dot com>
 " please set enc to utf-8
 " thaana phonetic keyboard is used as a reference
@@ -17,7 +17,7 @@ r	<char-0x0783> "raa
 b	<char-0x0784> "baa
 L	<char-0x0785> "lhaviani
 k	<char-0x0786> "kaafu
-w	<char-0x0787> "alifu  
+w	<char-0x0787> "alifu
 v	<char-0x0788> "vaavu
 m	<char-0x0789> "meemu
 f	<char-0x078A> "faafu
@@ -66,13 +66,13 @@ q	<char-0x07B0> "sukun
 
 "OTHER THAANA RELATED
 F	<char-0xFDF2> "arabic ligature allah isolated form
-?	<char-0x061F> "arabic question mark 
-"~	<char-0xFDFD> "arabic -bismillah ahrahman araheem- not in phonetic keyboard, thats why commented 
-[	<char-0x005D> "english open bracket is thaana closing bracket 
+?	<char-0x061F> "arabic question mark
+"~	<char-0xFDFD> "arabic -bismillah ahrahman araheem- not in phonetic keyboard, thats why commented
+[	<char-0x005D> "english open bracket is thaana closing bracket
 ]	<char-0x005B> "english close bracket = thaana open bracket
 {	<char-0x007B> "braces reversed
 }	<char-0x007D>
-x	<char-0x00D7> " x for multiplication sign.. 
+x	<char-0x00D7> " x for multiplication sign..
 P	<char-0x00F7> " division symbol mapped to 'p'
 >	<char-0x003C>
 <	<char-0x003E>
