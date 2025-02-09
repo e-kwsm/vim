@@ -196,6 +196,7 @@ syn keyword mvConstant	Pi
 syn keyword mvDebug	contained	DEBUG
 syn cluster mvCommentGroup	contains=mvTodo,mvDebug,@Spell
 syn match mvComment "#.*$"	contains=@mvCommentGroup
+syn region mvComment start='(\*' end='\*)' contains=@mvCommentGroup
 
 " Basic Library Functions: ? index[function]
 syn keyword mvLibrary $	@	@@	ERROR
