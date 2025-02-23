@@ -27,22 +27,26 @@ RUN_VIMTEST = VIMRUNTIME=$(VIMRUNTIME) $(VALGRIND) $(ENVVARS) ../$(VIMPROG) -f $
 # If a test fails a testdir/failed/{name}.dump file will be written.
 # Progress and error messages can be found in "testdir/messages".
 # Comment out the "> /dev/null" part to see the in-progress Vim behaviors.
-test:
+test: testdir/testdeps.mk
 	@# the "vimcmd" file is used by the screendump utils
 	@echo "../$(VIMPROG)" > testdir/vimcmd
 	@echo "$(RUN_VIMTEST)" >> testdir/vimcmd
-	VIMRUNTIME=$(VIMRUNTIME) $(ENVVARS) $(VIMPROG) --clean --not-a-term $(DEBUGLOG) -u testdir/runtest.vim > /dev/null 
+	VIMRUNTIME=$(VIMRUNTIME) $(ENVVARS) $(VIMPROG) --clean --not-a-term $(DEBUGLOG) -u testdir/runtest.vim > /dev/null
 	@rm -f testdir/Xfilter
 	@# FIXME: Temporarily show the whole file to find out what goes wrong
 	@#if [ -f testdir/messages ]; then tail -n 6 testdir/messages; fi
 	@if [ -f testdir/messages ]; then cat testdir/messages; fi
 
+testdir/testdeps.mk:
+	./testdir/maketestdeps > $@
+
+-include testdir/testdeps.mk
 
 clean testclean:
-	rm -f testdir/failed/* testdir/done/* testdir/vimcmd testdir/messages testdir/Xtestscript testdir/Xfilter
+	rm -f testdir/failed/* testdir/done/* testdir/vimcmd testdir/messages testdir/Xtestscript testdir/Xfilter testdir/testdeps.mk
 
 # All initial phony targets; these names may clash with file extensions.
-phonies = clean test testclean
+.PHONY: clean test testclean
 
 # Collect all input filenames and their file extensions.
 testnames != set +f; \
@@ -61,9 +65,6 @@ awk 'BEGIN { \
 }' testdir/input/*.*
 
 .PHONY: self-testing $(testnames)
-
-$(testnames)::
-	@echo $@ >> testdir/Xfilter
 
 self-testing:: $(testnames)
 	@echo self-testing > testdir/Xfilter

@@ -1,0 +1,40 @@
+#!/bin/bash
+# This script generates a dependency graph of 'make test': e.g. in the case of JAVA,
+# - filetype target 'java' depends on all of the testdir/input/java*.java
+# - the JAVA files depends on the JAVA syntax file so that the tests will be rerun against updated
+#   syntax
+# NOTE: At the moment this script does not strictly track dependency, like cpp on c, so you may have
+# to tweak this, or otherwise run
+#   rm -f testdir/done/〈ft〉_*
+# or
+#   touch testdir/input/〈ft〉_*
+# to confirm that update of syntax files brings no regression
+
+set -eu
+
+declare -a filetypes
+
+for input in testdir/input/*.*; do
+	basename=$(basename "$input")
+
+	ft=${input##*.}
+	if [[ $input =~ .+/dts_.+ ]]; then
+		ft=dts
+	elif [[ $ft = p ]]; then
+		ft=progress
+	fi
+
+	filetypes+=("$ft")
+
+	cat << EOF
+$input: $ft.vim
+	touch \$@
+.PHONY: $basename
+$basename:: $input
+	@echo \$@ >> testdir/Xfilter
+$ft:: $basename
+
+EOF
+done
+
+printf '.PHONY: %s\n' "${filetypes[@]}" | sort -u
