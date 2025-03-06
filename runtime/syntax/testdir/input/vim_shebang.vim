@@ -1,5 +1,5 @@
-#!/usr/bin/env vim -S
+#!/usr/bin/env -S vim -S
 " Vim shebang line
 
 
-#!/usr/bin/env vim -S
+#!/usr/bin/env -S vim -S

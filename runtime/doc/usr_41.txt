@@ -1970,7 +1970,7 @@ problems, you can highlight trailing spaces: >
 
 For Unix there is one special way to comment a line, that allows making a Vim
 script executable, and it also works in legacy script: >
-	#!/usr/bin/env vim -S
+	#!/usr/bin/env -S vim -S
 	echo "this is a Vim script"
 	quit
 
