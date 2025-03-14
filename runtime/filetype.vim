@@ -38,7 +38,7 @@ endif
 " Pattern used to match file names which should not be inspected.
 " Currently finds compressed files.
 if !exists("g:ft_ignore_pat")
-  let g:ft_ignore_pat = '\.\(Z\|gz\|bz2\|zip\|tgz\)$'
+  let g:ft_ignore_pat = '\.\(Z\|gz\|bz[23]\|zip\|zst\|tgz\)$'
 endif
 
 " Function used for patterns that end in a star: don't set the filetype if the
