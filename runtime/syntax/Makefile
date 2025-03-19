@@ -44,8 +44,8 @@ test:
 	@#touch "$(VIM_SYNTAX_TEST_LOG)"
 	VIMRUNTIME=$(VIMRUNTIME) $(ENVVARS) $(VIMPROG) --clean --not-a-term $(DEBUGLOG) -u testdir/runtest.vim > /dev/null
 	@# FIXME: Temporarily show the whole file to find out what goes wrong
-	@#if [ -f testdir/messages ]; then tail -n 6 testdir/messages; fi
-	@if [ -f testdir/messages ]; then cat testdir/messages; fi
+	@#if [ -s testdir/messages ]; then tail -n 6 testdir/messages; fi
+	@if [ -s testdir/messages ]; then cat testdir/messages; fi
 
 # add dependence on syntax files
 testdir/testdeps.mk:
