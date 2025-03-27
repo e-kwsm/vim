@@ -108,7 +108,7 @@ Foo = (x: string,
 
 Foo = (x: string,
       \ y: number,
-      \ z: bool): 
+      \ z: bool):
       \ number => expr
 
 
