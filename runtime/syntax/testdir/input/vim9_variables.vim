@@ -58,9 +58,9 @@ var foo: tuple<number, ...list<string>> = expr
 
 var foo: tuple<
       #\ comment
-      \number, 
+      \number,
       #\ comment
-      \string, 
+      \string,
       #\ comment
       \bool
       \>
