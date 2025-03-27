@@ -14,7 +14,7 @@ import autoload 'dist/vim9.vim'
 
 command -complete=shellcmd -nargs=1 Launch vim9.Launch(trim(<q-args>))
 
-# technically, -nargs=1 is correct, but this throws E480: No match 
+# technically, -nargs=1 is correct, but this throws E480: No match
 # when the argument contains a wildchar on Windows
 command -complete=file -nargs=* Open vim9.Open(trim(<q-args>))
 
