@@ -201,22 +201,22 @@ END
 
 # assert_equal(foo, ["END "])
 var foo =<< END
-END 
+END
 END
 
 # assert_equal(foo, [" END "])
 var foo =<< END
- END 
+ END
 END
 
 # assert_equal(foo, ["END "])
 var foo =<< trim END
-  END 
+  END
 END
 
 # assert_equal(foo, ["END "])
   var foo =<< trim END
-    END 
+    END
   END
 
 
@@ -234,7 +234,7 @@ END
 
 # assert_equal(foo, ["END "])
 var foo =<< trim END
-END 
+END
 END
 
   # assert_equal(foo, ["END"])
@@ -244,7 +244,7 @@ END
 
   # assert_equal(foo, ["END "])
   var foo =<< trim END
-    END 
+    END
   END
 
   # assert_equal(foo, ["END"])
@@ -254,12 +254,12 @@ END
 
   # assert_equal(foo, ["END "])
   var foo =<< trim END
-     END 
+     END
   END
 
   # assert_equal(foo, ["END "])
   var foo =<< trim END
-END 
+END
 END
 
   # assert_equal(foo, ["END"])
