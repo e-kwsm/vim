@@ -2387,12 +2387,8 @@ installrtbase: $(HELPSOURCE)/vim.1 $(DEST_VIM) $(VIMTARGET) $(DEST_RT) \
 	@echo generating help tags
 	-@BUILD_DIR=`pwd`; cd $(HELPSOURCE); if test -z "$(CROSS_COMPILING)"; then \
 		$(MAKE) VIMPROG="$$BUILD_DIR/$(VIMTARGET)" vimtags; fi
-	cd $(HELPSOURCE); \
-		files=`ls *.txt tags`; \
-		files="$$files `ls *.??x tags-?? 2>/dev/null || true`"; \
-		$(INSTALL_DATA) $$files  $(DEST_HELP); \
-		cd $(DEST_HELP); \
-		chmod $(HELPMOD) $$files
+	find $(HELPSOURCE) -maxdepth 1 -type f \( -name '*.txt' -o -name tags -o -regex '.*\...x$$' -o -regex '.*/tags-..$$' \) -exec $(INSTALL_DATA) {} $(DEST_HELP) \;
+	find $(DEST_HELP) -maxdepth 1 -type f -exec chmod $(HELPMOD) {} +
 	$(INSTALL_DATA)  $(HELPSOURCE)/*.pl $(DEST_HELP)
 	chmod $(SCRIPTMOD) $(DEST_HELP)/*.pl
 	cd $(HELPSOURCE); if test -f tags.dist; then mv -f tags.dist tags; fi
