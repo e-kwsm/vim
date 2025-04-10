@@ -2483,20 +2483,17 @@ installrtbase: $(HELPSOURCE)/vim.1 $(DEST_VIM) $(VIMTARGET) $(DEST_RT) \
 
 installmacros: $(DEST_VIM) $(DEST_RT) $(DEST_MACRO)
 	$(INSTALL_DATA_R) $(MACROSOURCE)/* $(DEST_MACRO)
-	chmod $(DIRMOD) `find $(DEST_MACRO) -type d -print`
-	chmod $(FILEMOD) `find $(DEST_MACRO) -type f -print`
+	find $(DEST_MACRO) -type d -exec chmod $(DIRMOD) {} +
+	find $(DEST_MACRO) -type f -exec chmod $(FILEMOD) {} +
 	chmod $(SCRIPTMOD) $(DEST_MACRO)/less.sh
 # When using CVS some CVS directories might have been copied.
 # Also delete AAPDIR and *.info files.
-	cvs=`find $(DEST_MACRO) \( -name CVS -o -name AAPDIR -o -name "*.info" \) -print`; \
-	      if test -n "$$cvs"; then \
-		 rm -rf $$cvs; \
-	      fi
+	find $(DEST_MACRO) \( -name CVS -o -name AAPDIR -o -name "*.info" \) -exec rm -rf {} +
 
 installpack: $(DEST_VIM) $(DEST_RT) $(DEST_PACK)
 	$(INSTALL_DATA_R) $(PACKSOURCE)/* $(DEST_PACK)
-	chmod $(DIRMOD) `find $(DEST_PACK) -type d -print`
-	chmod $(FILEMOD) `find $(DEST_PACK) -type f -print`
+	find $(DEST_PACK) -type d -exec chmod $(DIRMOD) {} +
+	find $(DEST_PACK) -type f -exec chmod $(FILEMOD) {} +
 
 # install the tutor files
 installtutorbin: $(DEST_BIN)
@@ -2544,10 +2541,7 @@ installtools: $(TOOLS) $(DESTDIR)$(exec_prefix) $(DEST_BIN) \
 # install the runtime tools
 	$(INSTALL_DATA_R) $(TOOLSSOURCE)/* $(DEST_TOOLS)
 # When using CVS some CVS directories might have been copied.
-	cvs=`find $(DEST_TOOLS) \( -name CVS -o -name AAPDIR \) -print`; \
-	      if test -n "$$cvs"; then \
-		 rm -rf $$cvs; \
-	      fi
+	find $(DEST_TOOLS) \( -name CVS -o -name AAPDIR \) -exec rm -rf {} +
 	-chmod $(FILEMOD) $(DEST_TOOLS)/*
 # replace the path in some tools
 	perlpath=`./which.sh perl` && sed -e "s+/usr/bin/perl+$$perlpath+" $(TOOLSSOURCE)/efm_perl.pl >$(DEST_TOOLS)/efm_perl.pl
