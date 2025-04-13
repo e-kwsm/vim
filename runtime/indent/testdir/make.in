@@ -1,0 +1,20 @@
+# vim:ft=make
+# START_INDENT
+.POSIX:
+VIMPROG = vim
+# END_INDENT
+
+# START_INDENT
+.PHONY: all
+VIMRUNTIME = ..
+# END_INDENT
+
+# START_INDENT
+all:
+@echo $(VIMPROG)
+# END_INDENT
+
+# START_INDENT
+.c.o:
+$(CC) -c -o $@ $<
+# END_INDENT
