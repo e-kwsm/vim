@@ -125,6 +125,16 @@ if get(b:, 'make_flavor', s:make_flavor) == 'gnu'
   syn match makeStatement contained "[({]\(abspath\|addprefix\|addsuffix\|and\|basename\|call\|dir\|error\|eval\|file\|filter-out\|filter\|findstring\|firstword\|flavor\|foreach\|guile\|if\|info\|intcmp\|join\|lastword\|let\|notdir\|or\|origin\|patsubst\|realpath\|shell\|sort\|strip\|subst\|suffix\|value\|warning\|wildcard\|word\|wordlist\|words\)\>"ms=s+1
 endif
 
+if get(b:, 'make_flavor', s:make_flavor) == 'bsd'
+  syn match makeInclude		'^\.[-ds]\=include\s\+<\f\+>'
+  syn match makeInclude		'^\.[-ds]\=include\s\+"\f\+"'
+  syn match makeBSDFor		'^\.\%(end\)\=for\>'
+  syn match makeBSDBreak	'^\.break\>'
+  syn match makeBSDExport	'^\.\%(export\%(-all\|-env\|-literal\)\=\|unexport\%(-env\)\=\)\>'
+  syn match makeBSDExport	'^\.undef\ze\s'
+  syn match makeBSDIf		'^\.\%(\%(el\)\=if\%(n\=\%(def\|make\)\)\=\|else\|endif\)\>'
+endif
+
 " Comment
 if !exists("make_no_comments")
   if get(b:, 'make_flavor', s:make_flavor) == 'microsoft'
@@ -174,6 +184,9 @@ hi def link makeImplicit	Function
 hi def link makeTarget		Function
 hi def link makeTargetinDefine		Function
 hi def link makeInclude		Include
+hi def link makeBSDFor		Repeat
+hi def link makeBSDBreak	Statement
+hi def link makeBSDIf		Conditional
 hi def link makePreCondit	PreCondit
 hi def link makeStatement	Statement
 hi def link makeIdent		Identifier
