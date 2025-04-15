@@ -3,6 +3,9 @@
 " Maintainer:	Mikolaj Machowski ( mikmach AT wp DOT pl )
 " Last Change:	2019 Sep 27
 
+let s:cpo_save = &cpo
+set cpo-=C
+
 " Distinguish between HTML versions.
 " To use with other HTML versions add another "elseif" condition to match
 " proper DOCTYPE.
@@ -806,4 +809,8 @@ function! htmlcomplete#CheckDoctype() " {{{
 	endif
 endfunction
 " }}}
+
+let &cpo = s:cpo_save
+unlet s:cpo_save
+
 " vim:set foldmethod=marker:
