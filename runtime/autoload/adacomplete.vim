@@ -23,6 +23,9 @@ if version < 700
    finish
 endif
 
+let s:cpo_save = &cpo
+set cpo-=C
+
 " Section: adacomplete#Complete () {{{1
 "
 " This function is used for the 'omnifunc' option.
@@ -97,6 +100,9 @@ function! adacomplete#Complete (findstart, base)
       return []
    endif
 endfunction adacomplete#Complete
+
+let &cpo = s:cpo_save
+unlet s:cpo_save
 
 finish " 1}}}
 
