@@ -13,6 +13,8 @@
 "   https://downloads.haskell.org/~ghc/7.0.4/docs/html/users_guide/flag-reference.html
 "   https://downloads.haskell.org/~ghc/8.4.3/docs/html/users_guide/flags.html
 
+let s:cpo_save = &cpo
+set cpo-=C
 
 function! haskellcomplete#Complete(findstart, base)
     if a:findstart
@@ -3376,3 +3378,6 @@ let s:commonModules =
     \ , "Servant.Server.StaticFiles"
     \ , "Servant.Utils.StaticFiles"
     \ ]
+
+let &cpo = s:cpo_save
+unlet s:cpo_save
