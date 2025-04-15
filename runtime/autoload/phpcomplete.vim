@@ -50,6 +50,9 @@
 "	  phpStrings this can be even a bonus but outside of <?php?> it is not the
 "	  best situation
 
+let s:cpo_save = &cpo
+set cpo-=C
+
 if !exists('g:phpcomplete_relax_static_constraint')
 	let g:phpcomplete_relax_static_constraint = 0
 endif
@@ -2984,5 +2987,8 @@ let g:php_builtin_vars ={
 " }}}
 endfunction
 " }}}
+
+let &cpo = s:cpo_save
+unlet s:cpo_save
 
 " vim: foldmethod=marker:noexpandtab:ts=8:sts=4
