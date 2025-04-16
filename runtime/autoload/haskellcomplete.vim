@@ -14,7 +14,7 @@
 "   https://downloads.haskell.org/~ghc/8.4.3/docs/html/users_guide/flags.html
 
 let s:cpo_save = &cpo
-set cpo-=C
+set cpo&vim
 
 function! haskellcomplete#Complete(findstart, base)
     if a:findstart

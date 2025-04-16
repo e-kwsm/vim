@@ -4,7 +4,7 @@
 " Last Change:	2019 Sep 27
 
 let s:cpo_save = &cpo
-set cpo-=C
+set cpo&vim
 
 " Distinguish between HTML versions.
 " To use with other HTML versions add another "elseif" condition to match

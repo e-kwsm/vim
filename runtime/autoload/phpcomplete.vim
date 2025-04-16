@@ -51,7 +51,7 @@
 "	  best situation
 
 let s:cpo_save = &cpo
-set cpo-=C
+set cpo&vim
 
 if !exists('g:phpcomplete_relax_static_constraint')
 	let g:phpcomplete_relax_static_constraint = 0

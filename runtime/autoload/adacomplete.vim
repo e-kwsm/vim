@@ -24,7 +24,7 @@ if version < 700
 endif
 
 let s:cpo_save = &cpo
-set cpo-=C
+set cpo&vim
 
 " Section: adacomplete#Complete () {{{1
 "
