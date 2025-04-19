@@ -46,14 +46,14 @@ endif
 " ------------------------------------------------------------
 
 "syn match nroffEscChar /\\[CN]/ nextgroup=nroffEscCharArg
-syn match nroffEscChar /\\C'u\x\+'/
-syn match nroffEscChar /\\N'\d\+'/
+syn match nroffUnicodeChar /\\C'u\x\+'/
+syn match nroffNumberedChar /\\N'\d\+'/
 syn match nroffDefinedString /\\\*\%(\[.\+\]\|(\S\S\|\S\)/
-syn match nroffFont /\\[fF]\%(\[.*\]\|(\S\S\|\S\)/
+syn match nroffFontSelection /\\[fF]\%(\[.*\]\|(\S\S\|\S\)/
 "syn match nroffEscape /\\[*fgmnYV]/ nextgroup=nroffEscRegPar,nroffEscRegArg
-syn match nroffEscape /\\[gmnYV]/ nextgroup=nroffEscRegPar,nroffEscRegArg
-syn match nroffEscape /\\s[+-]\=/ nextgroup=nroffSize
-syn match nroffEscape /\\[$AbDhlLRvxXZ]/ nextgroup=nroffEscPar,nroffEscArg
+syn match nroffEscape /\\[gk]\%(\[.\+\]\|(\S\S\|\S\)/
+"syn match nroffEscape /\\s[+-]\=/ nextgroup=nroffSize
+"syn match nroffEscape /\\[$AbDhlLRvxXZ]/ nextgroup=nroffEscPar,nroffEscArg
 
 "syn match nroffEscRegArg /\S/ contained
 "syn match nroffEscRegArg2 /\S\S/ contained
@@ -192,9 +192,12 @@ syn keyword nroffTodo TODO XXX FIXME contained
 " Only when an item doesn't have highlighting yet
 "
 
-hi def link nroffEscChar nroffSpecialChar
+hi def link nroffEscape Special
+hi def link nroffUnicodeChar Character
+hi def link nroffNumberedChar Character
+hi def link nroffEscChar Character
 hi def link nroffDefinedString String
-hi def link nroffFont Special
+hi def link nroffFontSelection Special
 "hi def link nroffEscCharArg nroffSpecialChar
 hi def link nroffSpecialChar SpecialChar
 hi def link nroffSpace Delimiter
