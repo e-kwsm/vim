@@ -22,6 +22,7 @@ setlocal commentstring=.\\\"\ %s
 setlocal comments=:.\\\"
 setlocal sections+=Sh
 setlocal define=.\s*de
+setlocal paragraphs+=XP
 
 if get(b:, 'preprocs_as_sections')
   setlocal sections=EQTSPS[\ G1GS
