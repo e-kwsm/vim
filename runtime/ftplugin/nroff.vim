@@ -21,8 +21,14 @@ setlocal commentstring=.\\\"\ %s
 setlocal comments=:.\\\"
 setlocal sections+=Sh
 setlocal define=.\s*de
+setlocal paragraphs+=XP
 
-let b:undo_ftplugin = 'setlocal commentstring< comments< sections< define<'
+let b:undo_ftplugin = 'setlocal commentstring< comments< sections< define< paragraphs&vim'
+
+" Activate navigation to preprocessor sections.
+if exists("b:preprocs_as_sections")
+  setlocal sections=EQTSPS[\ G1GS
+endif
 
 if exists('loaded_matchit')
   let b:match_words = '^\.\s*ie\>:^\.\s*el\>'
