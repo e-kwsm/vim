@@ -75,7 +75,8 @@ syn match nroffEscape /\\\$[@*]/
 
 syn match nroffSpecialChar /\\[\\eE?!-]/
 syn match nroffSpace "\\[&%~|^0)/,]"
-syn match nroffSpecialChar /\\(../
+syn match nroffSpecialChar /\\(\S\S/
+syn match nroffSpecialChar /\\\[\S\+\]/
 
 if exists("b:nroff_is_groff")
 	syn match nroffSpecialChar /\\\[[^]]*]/
