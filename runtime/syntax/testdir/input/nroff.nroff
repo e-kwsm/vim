@@ -1,13 +1,17 @@
 'ds s foo
-\fBbold\fR
-\fIitalic\fR
-.br
 'ig \"
 this is ignored
 ..
-\(dqquotes\(dq
-\*[s]
+\fBbold\fR
+\fIitalic\fR
+\f[BI]bold italic\fR
+.br
 .ig EOF
 ignored as well
 . EOF
+\*[s]
+soft\%hyphen
+\[lq]quote\(rq
+.br
+\[u4000] \(<> \C'u4FFF'
 '\" vi:ft=nroff
