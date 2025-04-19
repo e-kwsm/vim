@@ -166,7 +166,8 @@ syn region nroffGremlin start=/^\.\s*GS\>/ end=/^\.\s*GE|GF\>/
 " {{{1 Comments
 " ------------------------------------------------------------
 
-syn region nroffIgnore start=/^[.']\s*ig/ end=/^['.]\s*\./
+syn region nroffIgnore start=/^[.']\s*ig\>\%(\s\+\\".*\)\=$/ end=/^[.']\s*\./
+syn region nroffIgnore start=/^[.']\s*ig\s\+\z(\w\+\)/ end=/^[.']\s*\z1\>/
 syn match nroffComment /\(^[.']\s*\)\=\\".*/ contains=nroffTodo,@Spell
 syn match nroffComment /^'''.*/  contains=nroffTodo,@Spell
 
