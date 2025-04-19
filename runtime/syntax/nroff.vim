@@ -45,20 +45,25 @@ endif
 " {{{1 Escape sequences
 " ------------------------------------------------------------
 
-syn match nroffEscChar /\\[CN]/ nextgroup=nroffEscCharArg
-syn match nroffEscape /\\[*fgmnYV]/ nextgroup=nroffEscRegPar,nroffEscRegArg
+"syn match nroffEscChar /\\[CN]/ nextgroup=nroffEscCharArg
+syn match nroffEscChar /\\C'u\x\+'/
+syn match nroffEscChar /\\N'\d\+'/
+syn match nroffDefinedString /\\\*\%(\[.\+\]\|(\S\S\|\S\)/
+syn match nroffFont /\\[fF]\%(\[.*\]\|(\S\S\|\S\)/
+"syn match nroffEscape /\\[*fgmnYV]/ nextgroup=nroffEscRegPar,nroffEscRegArg
+syn match nroffEscape /\\[gmnYV]/ nextgroup=nroffEscRegPar,nroffEscRegArg
 syn match nroffEscape /\\s[+-]\=/ nextgroup=nroffSize
 syn match nroffEscape /\\[$AbDhlLRvxXZ]/ nextgroup=nroffEscPar,nroffEscArg
 
-syn match nroffEscRegArg /./ contained
-syn match nroffEscRegArg2 /../ contained
-syn match nroffEscRegPar /(/ contained nextgroup=nroffEscRegArg2
-syn match nroffEscArg /./ contained
-syn match nroffEscArg2 /../ contained
+"syn match nroffEscRegArg /\S/ contained
+"syn match nroffEscRegArg2 /\S\S/ contained
+"syn match nroffEscRegPar /(/ contained nextgroup=nroffEscRegArg2
+syn match nroffEscArg /\S/ contained
+syn match nroffEscArg2 /\S\S/ contained
 syn match nroffEscPar /(/ contained nextgroup=nroffEscArg2
 syn match nroffSize /\((\d\)\=\d/ contained
 
-syn region nroffEscCharArg start=/'/ end=/'/ contained
+"syn region nroffEscCharArg start=/'/ end=/'/ contained
 syn region nroffEscArg start=/'/ end=/'/ contained contains=nroffEscape,@nroffSpecial
 
 if exists("b:nroff_is_groff")
@@ -188,7 +193,9 @@ syn keyword nroffTodo TODO XXX FIXME contained
 "
 
 hi def link nroffEscChar nroffSpecialChar
-hi def link nroffEscCharArg nroffSpecialChar
+hi def link nroffDefinedString String
+hi def link nroffFont Special
+"hi def link nroffEscCharArg nroffSpecialChar
 hi def link nroffSpecialChar SpecialChar
 hi def link nroffSpace Delimiter
 
