@@ -1,0 +1,24 @@
+'ig \"
+this is ignored
+..
+\" define strings
+'ds s foo
+'ds st bar
+'ds str baz
+.ig EOF
+this is ignored
+. EOF
+\# select font
+\fBbold\f[]
+\f[I]italic\fR
+\f(BIbold italic\fR
+.br
+\*s \*(st \*[str]
+.br
+soft\%hyphen\N'46'
+.br
+\l'2m'
+I\'m \[lq]\M[cyan]\m[red]\V[USER]\m[]\M[]\(rq
+.br
+\[u4000] \(<> \C'u4FFF'
+'\" vi:ft=nroff
