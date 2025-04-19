@@ -1,16 +1,13 @@
-.Dd $Mdocdate$
-.Dt "TESTING ROFF HIGHLIGHT" 7
-.Os
-.Sh NAME
-.Nm name
-.Nd description
-.Sh DESCRIPTION
-lorem ipsum
+'ds s foo
+\fBbold\fR
+\fIitalic\fR
+.br
 'ig \"
-dolor sit amet,
+this is ignored
 ..
-.ig <OF
-consectetur adipiscing elit,
-.<OF
-sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+\(dqquotes\(dq
+\*[s]
+.ig EOF
+ignored as well
+. EOF
 '\" vi:ft=nroff
