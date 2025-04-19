@@ -1728,10 +1728,10 @@ au BufNewFile,BufRead *.me
 	\   setf nroff |
 	\ endif
 au BufNewFile,BufRead *.tr,*.nr,*.roff,*.tmac,*.mom	setf nroff
-au BufNewFile,BufRead *.[0-9],*.[013]p,*.[1-8]x,*.3{am,perl,pm,posix,type},*.[nop]	call dist#ft#FTnroff()
+au BufNewFile,BufRead *.[0-9],*.[013]p,*.[1-8]x,*.3{am,perl,pm,posix,type},*.[no]	call dist#ft#FTnroff()
 
 " lex or nroff (man)
-au BufNewFile,BufRead *.l call dist#ft#FTnroff() | setf lex
+au BufNewFile,BufRead *.l	if !dist#ft#FTnroff() | setf lex | endif
 
 " Nroff or Objective C++
 au BufNewFile,BufRead *.mm			call dist#ft#FTmm()
@@ -2019,7 +2019,7 @@ au BufNewFile,BufRead *.w			call dist#ft#FTprogress_cweb()
 au BufNewFile,BufRead *.i			call dist#ft#FTi()
 
 " Progress or Pascal
-au BufNewFile,BufRead *.p			call dist#ft#FTprogress_pascal()
+au BufNewFile,BufRead *.p			if !dist#ft#FTnroff() | call dist#ft#FTprogress_pascal() | endif
 
 " Software Distributor Product Specification File (POSIX 1387.2-1995)
 au BufNewFile,BufRead *.psf			setf psf
