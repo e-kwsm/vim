@@ -53,16 +53,17 @@ syn match nroffFontSelection /\\[fF]\%(\[.*\]\|(\S\S\|\S\)/
 "syn match nroffEscape /\\[*fgmnYV]/ nextgroup=nroffEscRegPar,nroffEscRegArg
 syn match nroffEscape /\\[gknVY]\%(\[.\+\]\|(\S\S\|\S\)/
 syn match nroffEscape /\\[mM]\%(\[.*\]\|(\S\S\|\S\)/
-"syn match nroffEscape /\\s[+-]\=/ nextgroup=nroffSize
+" syn match nroffEscape /\\s[+-]\=/ nextgroup=nroffSize
+syn match nroffFontSize /\\s\%('[+-][1-9]\d\?'\)/
 "syn match nroffEscape /\\[$AbDhlLRvxXZ]/ nextgroup=nroffEscPar,nroffEscArg
 
 "syn match nroffEscRegArg /\S/ contained
 "syn match nroffEscRegArg2 /\S\S/ contained
 "syn match nroffEscRegPar /(/ contained nextgroup=nroffEscRegArg2
-syn match nroffEscArg /\S/ contained
-syn match nroffEscArg2 /\S\S/ contained
-syn match nroffEscPar /(/ contained nextgroup=nroffEscArg2
-syn match nroffSize /\((\d\)\=\d/ contained
+"syn match nroffEscArg /\S/ contained
+"syn match nroffEscArg2 /\S\S/ contained
+"syn match nroffEscPar /(/ contained nextgroup=nroffEscArg2
+"syn match nroffSize /\((\d\)\=\d/ contained
 
 "syn region nroffEscCharArg start=/'/ end=/'/ contained
 syn region nroffEscArg start=/'/ end=/'/ contained contains=nroffEscape,@nroffSpecial
@@ -201,6 +202,7 @@ hi def link nroffNumberedChar Character
 hi def link nroffEscChar Character
 hi def link nroffDefinedString String
 hi def link nroffFontSelection Special
+hi def link nroffFontSize Special
 "hi def link nroffEscCharArg nroffSpecialChar
 hi def link nroffSpecialChar SpecialChar
 hi def link nroffSpace Delimiter
