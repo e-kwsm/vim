@@ -251,4 +251,4 @@ let b:current_syntax = "nroff"
 
 let &cpo = s:cpo_save
 unlet s:cpo_save
-" vim600: set fdm=marker fdl=2:
+" vim600: set fdm=marker fdl=2 noet sw=8:
