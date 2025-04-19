@@ -646,6 +646,10 @@ export def FTnroff(): number
   var n = 1
   while n <= 5
     var line = getline(n)
+    if line =~ '^%[{%]'
+      # lex?
+      return 0
+    endif
     if line =~ '^\%([.'']\s*\%(TH\|D[dt]\|S[Hh]\|d[es]1\?\|so\)\s\+\S\|[.'']\s*ig\>\|\%([.'']\s*\)\?\\"\)'
       setf nroff
       return 1

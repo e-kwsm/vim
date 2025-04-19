@@ -2978,6 +2978,7 @@ func Test_nroff_file()
   call writefile(['%%', '.|\n { }'], 'Xfile.l', 'D')
   split Xfile.l
   call assert_notequal('nroff', &filetype)
+  bwipe!
 endfunc
 
 func Test_org_file()

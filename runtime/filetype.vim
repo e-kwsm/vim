@@ -1402,7 +1402,7 @@ au BufNewFile,BufRead *.leo			setf leo
 au BufNewFile,BufRead *.less			setf less
 
 " Lex
-au BufNewFile,BufRead *.lex,*.l,*.lxx,*.l++	setf lex
+au BufNewFile,BufRead *.lex,*.lxx,*.l++	setf lex
 
 " Libao
 au BufNewFile,BufRead */etc/libao.conf,*/.libao	setf libao
@@ -1728,7 +1728,10 @@ au BufNewFile,BufRead *.me
 	\   setf nroff |
 	\ endif
 au BufNewFile,BufRead *.tr,*.nr,*.roff,*.tmac,*.mom	setf nroff
-au BufNewFile,BufRead *.[0-9],*.[013]p,*.[1-8]x,*.3{am,perl,pm,posix,type},*.[nlop]	call dist#ft#FTnroff()
+au BufNewFile,BufRead *.[0-9],*.[013]p,*.[1-8]x,*.3{am,perl,pm,posix,type},*.[nop]	call dist#ft#FTnroff()
+
+" lex or nroff (man)
+au BufNewFile,BufRead *.l call dist#ft#FTnroff() | setf lex
 
 " Nroff or Objective C++
 au BufNewFile,BufRead *.mm			call dist#ft#FTmm()
