@@ -100,6 +100,8 @@ if exists("b:nroff_is_groff")
 	syn region nroffPreserve  matchgroup=nroffSpecialChar start=/\\?/ end=/\\?/ oneline
 endif
 
+syn match nroffUnicodeChar /\\\[u\x\{4,\}\]/
+
 syn region nroffPreserve matchgroup=nroffSpecialChar start=/\\!/ end=/$/ oneline
 
 syn cluster nroffSpecial contains=nroffSpecialChar,nroffSpace
