@@ -1,16 +1,19 @@
 'ds s foo
+'ds st bar
+'ds str baz
 'ig \"
 this is ignored
 ..
-\fBbold\fR
-\fIitalic\fR
-\f[BI]bold italic\fR
+\fBbold\f[]
+\fIitalic\f[R]
+\f(BIbold italic\fR
 .br
 .ig EOF
 ignored as well
 . EOF
-\*[s]
-soft\%hyphen
+\*s \*(st \*[str]
+.br
+soft\%hyphen\N'46'
 \[lq]quote\(rq
 .br
 \[u4000] \(<> \C'u4FFF'
