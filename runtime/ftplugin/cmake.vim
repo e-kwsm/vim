@@ -20,7 +20,8 @@ let b:undo_ftplugin = "setl inc< sua< commentstring<"
 
 if exists('loaded_matchit')
   let b:match_words = '\<if\>:\<elseif\>\|\<else\>:\<endif\>'
-        \ . ',\<foreach\>\|\<while\>:\<break\>:\<endforeach\>\|\<endwhile\>'
+        \ . ',\<foreach\>:\<break\>:\<endforeach\>'
+        \ . ',\<while\>:\<break\>:\<endwhile\>'
         \ . ',\<macro\>:\<endmacro\>'
         \ . ',\<function\>:\<endfunction\>'
   let b:match_ignorecase = 1
