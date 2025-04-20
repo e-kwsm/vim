@@ -12,7 +12,6 @@ this is ignored
 \fBbold\f[]
 \f[I]italic\fR
 \f(BIbold italic\fR
-\s'10'xx
 .br
 \*s \*(st \*[str]
 .br
