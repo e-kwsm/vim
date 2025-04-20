@@ -48,8 +48,8 @@ endif
 "syn match nroffEscChar /\\[CN]/ nextgroup=nroffEscCharArg
 syn match nroffUnicodeChar /\\C'u\x\{4,\}'/
 syn match nroffNumberedChar /\\N'\d\+'/
-syn match nroffDefinedString /\\\*\%(\[.\+\]\|(\S\S\|\S\)/
-syn match nroffFontSelection /\\[fF]\%(\[.*\]\|(\S\S\|\S\)/
+syn match nroffDefinedString /\\\*\%(\[.\{-}\]\|(\S\S\|\S\)/
+syn match nroffFontSelection /\\[fF]\%([^[(]\|(\S\S\|\[.\{-}\]\)/
 "syn match nroffEscape /\\[*fgmnYV]/ nextgroup=nroffEscRegPar,nroffEscRegArg
 syn match nroffEscape /\\[gknVY]\%(\[.\+\]\|(\S\S\|\S\)/
 syn match nroffEscape /\\[mM]\%(\[.*\]\|(\S\S\|\S\)/
