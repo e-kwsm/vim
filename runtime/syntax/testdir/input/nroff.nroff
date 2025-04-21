@@ -11,14 +11,14 @@ this is ignored
 \# select font
 \fBbold\f[]
 \f[I]italic\fR
-\f(BIbold italic\fR
+\f(BIbold\-italic\fR
 .br
 \*s \*(st \*[str]
 .br
 soft\%hyphen\N'46'
 .br
 \l'2m'
-I\'m \[lq]\M[cyan]\m[red]\V[USER]\m[]\M[]\(rq
+I am \[lq]\M[cyan]\m[red]\V[USER]\m[]\M[]\(rq
 .br
 \[u6F22] \(<> \C'u5B57'
 '\" vi:ft=nroff
