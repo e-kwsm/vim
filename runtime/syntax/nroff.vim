@@ -53,6 +53,7 @@ syn match nroffNumberedChar	/\\N'\d\+'/
 syn match nroffDefinedString      /\\\*\%([^[(]\|(\S\S\|\[[^]].\{-}\]\)/
 syn match nroffError		/\\\*\[\%(\s.*\)\?\]/
 syn match nroffFontSelection    /\\[fF]\%([^[(]\|(\S\S\|\[.\{-}\]\)/
+syn match nroffColorSelection    /\\[mM]\%([^[(]\|(\S\S\|\[.\{-}\]\)/
 ""	"syn match nroffEscape /\\[*fgmnYV]/ nextgroup=nroffEscRegPar,nroffEscRegArg
 "syn match nroffEscape        /\\[knVY]\%([^[(]\|(\S\S\|\[.\{-}\]\)/
 syn match nroffEscape        /\\[gk]\%([^[(]\|(\S\S\|\[.\{-1,}\]\)/
@@ -209,6 +210,7 @@ hi def link nroffUnicodeChar Character
 "hi def link nroffEscChar Character
 hi def link nroffDefinedString String
 hi def link nroffFontSelection Special
+hi def link nroffColorSelection Special
 "hi def link nroffFontSize Special
 ""	"hi def link nroffEscCharArg nroffSpecialChar
 "hi def link nroffSpecialChar SpecialChar
