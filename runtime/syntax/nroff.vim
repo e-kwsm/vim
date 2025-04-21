@@ -46,18 +46,23 @@ endif
 " {{{1 Escape sequences
 " ------------------------------------------------------------
 
-""	"syn match nroffEscChar /\\[CN]/ nextgroup=nroffEscCharArg
-syn match nroffUnicodeChar /\\C'u\x\{4,\}'/
-syn match nroffNumberedChar /\\N'\d\+'/
-"syn match nroffDefinedString      /\\\*\%([^[(]\|(\S\S\|\[.\{-}\]\)/
-"syn match nroffFontSelection    /\\[fF]\%([^[(]\|(\S\S\|\[.\{-}\]\)/
+let b:hoge = '\%(\_s\|(\%(\_s.\?\|\S\_s\)\|\[\%(\s.*\)\?\]\)'
+
+syn match nroffUnicodeChar	/\\C'u\x\{4,\}'/
+syn match nroffNumberedChar	/\\N'\d\+'/
+syn match nroffDefinedString      /\\\*\%([^[(]\|(\S\S\|\[[^]].\{-}\]\)/
+syn match nroffError		/\\\*\[\%(\s.*\)\?\]/
+syn match nroffFontSelection    /\\[fF]\%([^[(]\|(\S\S\|\[.\{-}\]\)/
 ""	"syn match nroffEscape /\\[*fgmnYV]/ nextgroup=nroffEscRegPar,nroffEscRegArg
 "syn match nroffEscape        /\\[knVY]\%([^[(]\|(\S\S\|\[.\{-}\]\)/
-"syn match nroffEscape        /\\[g]\%([^[(]\|(\S\S\|\[.\{-1,}\]\)/
+syn match nroffEscape        /\\[gk]\%([^[(]\|(\S\S\|\[.\{-1,}\]\)/
+exe 'syn match nroffError        /\\[gk]' . b:hoge . '/'
 "syn match nroffEscape           /\\[mM]\%([^[(]\|(\S\S\|\[.\{-}\]\)/
 ""	" syn match nroffEscape /\\s[+-]\=/ nextgroup=nroffSize
 "syn match nroffFontSize /\\s\%('[+-][1-9]\d\?'\)/
 ""	"syn match nroffEscape /\\[$AbDhlLRvxXZ]/ nextgroup=nroffEscPar,nroffEscArg
+
+unlet b:hoge
 
 ""	"syn match nroffEscRegArg /\S/ contained
 ""	"syn match nroffEscRegArg2 /\S\S/ contained
@@ -199,11 +204,11 @@ syn match nroffComment /^'''.*/  contains=nroffTodo,@Spell
 ""	"
 
 "hi def link nroffEscape Special
-hi def link nroffUnicodeChar Character
 hi def link nroffNumberedChar Character
+hi def link nroffUnicodeChar Character
 "hi def link nroffEscChar Character
-"hi def link nroffDefinedString String
-"hi def link nroffFontSelection Special
+hi def link nroffDefinedString String
+hi def link nroffFontSelection Special
 "hi def link nroffFontSize Special
 ""	"hi def link nroffEscCharArg nroffSpecialChar
 "hi def link nroffSpecialChar SpecialChar
@@ -241,7 +246,7 @@ hi def link nroffComment Comment
 "hi def link nroffNumber Number
 "hi def link nroffBadChar nroffError
 "hi def link nroffSpaceError nroffError
-"hi def link nroffError Error
+hi def link nroffError Error
 
 "hi def link nroffPreserve String
 "hi def link nroffString String
