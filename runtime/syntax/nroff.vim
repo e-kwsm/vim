@@ -47,17 +47,19 @@ endif
 " ------------------------------------------------------------
 
 let b:hoge = '\%(\_s\|(\%(\_s.\?\|\S\_s\)\|\[\%(\s.*\)\?\]\)'
+let b:fuga = '\%(\_s\|(\%(\_s.\?\|\S\_s\)\|\[\%(\s.*\)\]\)'
 
 syn match nroffUnicodeChar	/\\C'u\x\{4,\}'/
 syn match nroffNumberedChar	/\\N'\d\+'/
 syn match nroffDefinedString      /\\\*\%([^[(]\|(\S\S\|\[[^]].\{-}\]\)/
 syn match nroffError		/\\\*\[\%(\s.*\)\?\]/
 syn match nroffFontSelection    /\\[fF]\%([^[(]\|(\S\S\|\[.\{-}\]\)/
-syn match nroffColorSelection    /\\[mM]\%([^[(]\|(\S\S\|\[.\{-}\]\)/
+syn match nroffColorSelection   /\\[mM]\%([^[(]\|(\S\S\|\[.\{-}\]\)/
 ""	"syn match nroffEscape /\\[*fgmnYV]/ nextgroup=nroffEscRegPar,nroffEscRegArg
 "syn match nroffEscape        /\\[knVY]\%([^[(]\|(\S\S\|\[.\{-}\]\)/
 syn match nroffEscape        /\\[gk]\%([^[(]\|(\S\S\|\[.\{-1,}\]\)/
 exe 'syn match nroffError        /\\[gk]' . b:hoge . '/'
+exe 'syn match nroffError        /\\[fFmM]' . b:fuga . '/'
 "syn match nroffEscape           /\\[mM]\%([^[(]\|(\S\S\|\[.\{-}\]\)/
 ""	" syn match nroffEscape /\\s[+-]\=/ nextgroup=nroffSize
 "syn match nroffFontSize /\\s\%('[+-][1-9]\d\?'\)/
