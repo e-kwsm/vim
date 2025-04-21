@@ -14,4 +14,4 @@ nroff:
 
 .PHONY: cat
 cat:
-	groff input/nroff.nroff | cat -s
+	nroff input/nroff.nroff | cat -s
