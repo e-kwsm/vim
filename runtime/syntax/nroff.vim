@@ -90,6 +90,7 @@ unlet b:hoge
 "endif
 
 "syn match nroffEscape /\\[adprtu{}]/
+syn match nroffEscape /\\[acdeEprtu]/
 "syn match nroffEscape /\\$/
 "syn match nroffEscape /\\\$[@*]/
 
@@ -194,14 +195,14 @@ syn match nroffUnicodeChar /\\\[u\x\{4,\}\]/
 
 syn region nroffIgnore start=/^[.']\s*ig\>\%(\s\+\\".*\)\=$/ end=/^[.']\s*\./
 syn region nroffIgnore start=/^[.']\s*ig\s\+\z(\w\+\)/ end=/^[.']\s*\z1\>/
-syn match nroffComment /\(^[.']\s*\)\=\\".*/ contains=nroffTodo,@Spell
+syn match nroffComment /\(^[.']\s*\)\=\\["#].*/ contains=nroffTodo,@Spell
 syn match nroffComment /^'''.*/  contains=nroffTodo,@Spell
 
 "if exists("b:nroff_is_groff")
 "	syn match nroffComment "\\#.*$" contains=nroffTodo,@Spell
 "endif
 
-"syn keyword nroffTodo TODO XXX FIXME contained
+syn keyword nroffTodo TODO XXX FIXME contained
 
 ""	" {{{1 Hilighting
 ""	" ------------------------------------------------------------
@@ -239,7 +240,7 @@ hi def link nroffEscape PreProc
 
 hi def link nroffIgnore Comment
 hi def link nroffComment Comment
-"hi def link nroffTodo Todo
+hi def link nroffTodo Todo
 
 "hi def link nroffReqLeader nroffRequest
 "hi def link nroffReqName nroffRequest
