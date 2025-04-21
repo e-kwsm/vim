@@ -51,16 +51,16 @@ let b:fuga = '\%(\_s\|(\%(\_s.\?\|\S\_s\)\|\[\%(\s.*\)\]\)'
 
 syn match nroffUnicodeChar	/\\C'u\x\{4,\}'/
 syn match nroffNumberedChar	/\\N'\d\+'/
-syn match nroffDefinedString      /\\\*\%([^[(]\|(\S\S\|\[[^]].\{-}\]\)/
-syn match nroffError		/\\\*\[\%(\s.*\)\?\]/
+syn match nroffDefinedString      /\\\*\%([^[(]\|(\S\S\|\[.\{-1,}\]\)/
+syn match nroffEnvironment         /\\V\%([^[(]\|(\S\S\|\[.\{-1,}\]\)/
+"syn match nroffError		/\\\*\[\%(\s.*\)\?\]/
 syn match nroffFontSelection    /\\[fF]\%([^[(]\|(\S\S\|\[.\{-}\]\)/
 syn match nroffColorSelection   /\\[mM]\%([^[(]\|(\S\S\|\[.\{-}\]\)/
 ""	"syn match nroffEscape /\\[*fgmnYV]/ nextgroup=nroffEscRegPar,nroffEscRegArg
 "syn match nroffEscape        /\\[knVY]\%([^[(]\|(\S\S\|\[.\{-}\]\)/
-syn match nroffEscape        /\\[gk]\%([^[(]\|(\S\S\|\[.\{-1,}\]\)/
+syn match nroffEscape          /\\[gknY]\%([^[(]\|(\S\S\|\[.\{-1,}\]\)/
 exe 'syn match nroffError        /\\[gk]' . b:hoge . '/'
 exe 'syn match nroffError        /\\[fFmM]' . b:fuga . '/'
-"syn match nroffEscape           /\\[mM]\%([^[(]\|(\S\S\|\[.\{-}\]\)/
 ""	" syn match nroffEscape /\\s[+-]\=/ nextgroup=nroffSize
 "syn match nroffFontSize /\\s\%('[+-][1-9]\d\?'\)/
 ""	"syn match nroffEscape /\\[$AbDhlLRvxXZ]/ nextgroup=nroffEscPar,nroffEscArg
@@ -100,7 +100,7 @@ unlet b:hoge
 "	syn region nroffPreserve  matchgroup=nroffSpecialChar start=/\\?/ end=/\\?/ oneline
 "endif
 
-"syn match nroffUnicodeChar /\\\[u\x\{4,\}\]/
+syn match nroffUnicodeChar /\\\[u\x\{4,\}\]/
 
 "syn region nroffPreserve matchgroup=nroffSpecialChar start=/\\!/ end=/$/ oneline
 
@@ -209,6 +209,7 @@ syn match nroffComment /^'''.*/  contains=nroffTodo,@Spell
 "hi def link nroffEscape Special
 hi def link nroffNumberedChar Character
 hi def link nroffUnicodeChar Character
+hi def link nroffEnvironment String
 "hi def link nroffEscChar Character
 hi def link nroffDefinedString String
 hi def link nroffFontSelection Special
@@ -227,7 +228,7 @@ hi def link nroffColorSelection Special
 "hi def link nroffEscRegPar nroffEscape
 "hi def link nroffEscArg nroffEscape
 "hi def link nroffSize nroffEscape
-"hi def link nroffEscape PreProc
+hi def link nroffEscape PreProc
 
 hi def link nroffIgnore Comment
 hi def link nroffComment Comment
