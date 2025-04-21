@@ -49,8 +49,13 @@ endif
 let b:hoge = '\%(\_s\|(\%(\_s.\?\|\S\_s\)\|\[\%(\s.*\)\?\]\)'
 let b:fuga = '\%(\_s\|(\%(\_s.\?\|\S\_s\)\|\[\%(\s.*\)\]\)'
 
+syn match nroffError /\\./
 syn match nroffUnicodeChar	/\\C'u\x\{4,\}'/
+syn match nroffUnicodeChar	/\\\[u\x\{4,\}\]/
 syn match nroffNumberedChar	/\\N'\d\+'/
+syn match nroffNumberedChar	/\\\[char\d\+\]/
+syn match nroffEscapedChar	/\\['`_-]/
+syn match nroffSpecialChar	/\\\%((\S\S\|\[\S\{-1,\}\]\)/
 syn match nroffDefinedString      /\\\*\%([^[(]\|(\S\S\|\[.\{-1,}\]\)/
 syn match nroffEnvironment         /\\V\%([^[(]\|(\S\S\|\[.\{-1,}\]\)/
 "syn match nroffError		/\\\*\[\%(\s.*\)\?\]/
@@ -70,6 +75,8 @@ exe 'syn match nroffError        /\\[fFmM]' . b:fuga . '/'
 ""	" syn match nroffEscape /\\s[+-]\=/ nextgroup=nroffSize
 "syn match nroffFontSize /\\s\%('[+-][1-9]\d\?'\)/
 ""	"syn match nroffEscape /\\[$AbDhlLRvxXZ]/ nextgroup=nroffEscPar,nroffEscArg
+syn match nroffEscape          /\\\$\%(\d\|(\d\{2}\|\[\d\+\]\)/
+syn match nroffEscape          /\\\$[*@^]/
 
 unlet b:hoge
 
@@ -214,8 +221,11 @@ syn keyword nroffTodo TODO XXX FIXME contained
 ""	"
 
 "hi def link nroffEscape Special
+hi def link nroffChar Character
 hi def link nroffNumberedChar Character
 hi def link nroffUnicodeChar Character
+hi def link nroffEscapedChar Character
+hi def link nroffSpecialChar Character
 hi def link nroffEnvironment String
 "hi def link nroffEscChar Character
 hi def link nroffDefinedString String
