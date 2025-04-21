@@ -32,12 +32,12 @@ esac
 hash make 2> /dev/null || exit 81
 hash git  2> /dev/null || exit 82
 
-case "$(git status --porcelain=v1)" in
-'')	;;
-*)	printf >&2 'Resolve ALL changes before proceeding.\n'
-	exit 83
-	;;
-esac
+#case "$(git status --porcelain=v1)" in
+#'')	;;
+#*)	printf >&2 'Resolve ALL changes before proceeding.\n'
+#	exit 83
+#	;;
+#esac
 
 templet=$(printf "\t\t\t\t$(tput rev)%%s$(tput sgr0)") || exit 84
 cd "$(dirname "$0")/../../../syntax" || exit 85
@@ -83,13 +83,13 @@ do
 			;;
 		esac
 
-		i=$(($i + 1))
+		i=$((i + 1))
 		sleep 1
 	done
 done
 
 # For a 20-file set, initially fail for a series of: 1-6, 7-12, 13-18, 19-20.
-tries=$(($tries + 3))
+tries=$((tries + 3))
 i=0
 
 while test "$i" -le "$tries"
@@ -111,7 +111,7 @@ do
 	esac
 
 	sleep 1
-	i=$(($i + 1))
+	i=$((i + 1))
 done
 
 make clean
