@@ -63,10 +63,10 @@ syn match nroffFontSelection    /\\[fF]\%([^[(]\|(\S\S\|\[.\{-}\]\)/
 syn match nroffColorSelection   /\\[mM]\%([^[(]\|(\S\S\|\[.\{-}\]\)/
 ""	"syn match nroffEscape /\\[*fgmnYV]/ nextgroup=nroffEscRegPar,nroffEscRegArg
 "syn match nroffEscape        /\\[knVY]\%([^[(]\|(\S\S\|\[.\{-}\]\)/
-syn match nroffEscape          /\\[gknY]\%([^[(]\|(\S\S\|\[.\{-1,}\]\)/
-syn match nroffEscape          /\\[AbBowXZ]'.\{-}'/
-syn match nroffEscape          /\\[R]'\S\+\s\+[+-]\d\+'/
-syn match nroffFontSize          /\\[H]'[+-]\?\d\+[ciPpfvmnuM]\?'/
+syn match nroffEscape         /\\[gknY]\%([^[(]\|(\S\S\|\[.\{-1,}\]\)/
+syn match nroffEscape		/\\[AbBowXZ]'.\{-}'/
+syn match nroffEscape		/\\[R]'\S\+\s\+[+-]\d\+'/
+syn match nroffFontSize		/\\[H]'[+-]\?\d\+[ciPpfvmnuM]\?'/
 syn match nroffEscape	/\\[h]'|\?\d\+[ciPpfvmnuM]\?'/
 syn match nroffDraw	/\\D'.\{-1,}'/
 syn match nroffDraw	/\\[lL]'\d\+[ciPpfvmnuM]\?'/
@@ -113,8 +113,6 @@ syn match nroffEscape /\\[acdeEprtu]/
 "	syn match nroffSpecialChar /\\\[[^]]*]/
 "	syn region nroffPreserve  matchgroup=nroffSpecialChar start=/\\?/ end=/\\?/ oneline
 "endif
-
-syn match nroffUnicodeChar /\\\[u\x\{4,\}\]/
 
 "syn region nroffPreserve matchgroup=nroffSpecialChar start=/\\!/ end=/$/ oneline
 
