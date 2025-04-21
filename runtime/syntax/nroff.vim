@@ -48,6 +48,7 @@ endif
 
 let b:hoge = '\%(\_s\|(\%(\_s.\?\|\S\_s\)\|\[\%(\s.*\)\?\]\)'
 let b:fuga = '\%(\_s\|(\%(\_s.\?\|\S\_s\)\|\[\%(\s.*\)\]\)'
+let b:roff_unit = '[ciPpfvmnuM]'
 
 syn match nroffError /\\./
 syn match nroffUnicodeChar	/\\C'u\x\{4,\}'/
@@ -66,8 +67,8 @@ syn match nroffColorSelection   /\\[mM]\%([^[(]\|(\S\S\|\[.\{-}\]\)/
 syn match nroffEscape         /\\[gknY]\%([^[(]\|(\S\S\|\[.\{-1,}\]\)/
 syn match nroffEscape		/\\[AbBowXZ]'.\{-}'/
 syn match nroffEscape		/\\[R]'\S\+\s\+[+-]\d\+'/
-syn match nroffFontSize		/\\[H]'[+-]\?\d\+[ciPpfvmnuM]\?'/
-syn match nroffEscape	/\\[h]'|\?\d\+[ciPpfvmnuM]\?'/
+exe 'syn match nroffFontSize		/\\[H]''[+-]\?\d\+' . b:roff_unit . '\?''/'
+exe 'syn match nroffEscape	/\\[h]''|\?\d\+' . b:roff_unit . '\?''/'
 syn match nroffDraw	/\\D'.\{-1,}'/
 syn match nroffDraw	/\\[lL]'\d\+[ciPpfvmnuM]\?'/
 exe 'syn match nroffError        /\\[gk]' . b:hoge . '/'
@@ -77,6 +78,8 @@ exe 'syn match nroffError        /\\[fFmM]' . b:fuga . '/'
 ""	"syn match nroffEscape /\\[$AbDhlLRvxXZ]/ nextgroup=nroffEscPar,nroffEscArg
 syn match nroffEscape          /\\\$\%(\d\|(\d\{2}\|\[\d\+\]\)/
 syn match nroffEscape          /\\\$[*@^]/
+
+unlet b:roff_unit
 
 unlet b:hoge
 
@@ -198,7 +201,7 @@ syn match nroffEscape /\\[acdeEprtu]/
 ""	" {{{1 Comments
 ""	" ------------------------------------------------------------
 
-syn region nroffIgnore start=/^[.']\s*ig\>\%(\s\+\\".*\)\=$/ end=/^[.']\s*\./
+syn region nroffIgnore start=/^[.']\s*ig\>\%(\s\+\\["#].*\)\=$/ end=/^[.']\s*\./
 syn region nroffIgnore start=/^[.']\s*ig\s\+\z(\w\+\)/ end=/^[.']\s*\z1\>/
 syn match nroffComment /\(^[.']\s*\)\=\\["#].*/ contains=nroffTodo,@Spell
 syn match nroffComment /^'''.*/  contains=nroffTodo,@Spell
