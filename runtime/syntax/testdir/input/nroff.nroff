@@ -20,5 +20,5 @@ soft\%hyphen\N'46'
 \l'2m'
 I\'m \[lq]\M[cyan]\m[red]\V[USER]\m[]\M[]\(rq
 .br
-\[u4000] \(<> \C'u4FFF'
+\[u6F22] \(<> \C'u5B57'
 '\" vi:ft=nroff

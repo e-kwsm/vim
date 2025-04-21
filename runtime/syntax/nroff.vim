@@ -52,7 +52,6 @@ let b:roff_unit = '[ciPpfvmnuM]'
 
 syn match nroffError /\\./
 syn match nroffUnicodeChar	/\\C'u\x\{4,\}'/
-syn match nroffUnicodeChar	/\\\[u\x\{4,\}\]/
 syn match nroffNumberedChar	/\\N'\d\+'/
 syn match nroffNumberedChar	/\\\[char\d\+\]/
 syn match nroffEscapedChar	/\\['`_-]/
@@ -78,6 +77,7 @@ exe 'syn match nroffError        /\\[fFmM]' . b:fuga . '/'
 ""	"syn match nroffEscape /\\[$AbDhlLRvxXZ]/ nextgroup=nroffEscPar,nroffEscArg
 syn match nroffEscape          /\\\$\%(\d\|(\d\{2}\|\[\d\+\]\)/
 syn match nroffEscape          /\\\$[*@^]/
+syn match nroffUnicodeChar	/\\\[u\x\{4,\}\]/
 
 unlet b:roff_unit
 
