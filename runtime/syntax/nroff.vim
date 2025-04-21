@@ -60,6 +60,7 @@ syn match nroffColorSelection   /\\[mM]\%([^[(]\|(\S\S\|\[.\{-}\]\)/
 "syn match nroffEscape        /\\[knVY]\%([^[(]\|(\S\S\|\[.\{-}\]\)/
 syn match nroffEscape          /\\[gknY]\%([^[(]\|(\S\S\|\[.\{-1,}\]\)/
 syn match nroffEscape          /\\[AbBowXZ]'.\{-}'/
+syn match nroffEscape          /\\[R]'\S\+\s\+[+-]\d\+'/
 syn match nroffFontSize          /\\[H]'[+-]\?\d\+[ciPpfvmnuM]\?'/
 syn match nroffEscape	/\\[h]'|\?\d\+[ciPpfvmnuM]\?'/
 syn match nroffDraw	/\\D'.\{-1,}'/
