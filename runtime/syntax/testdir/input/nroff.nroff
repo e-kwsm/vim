@@ -20,6 +20,7 @@ soft\%hyphen\N'46'
 \l'2m'
 I\'m \[lq]\M[cyan]\m[red]\V[USER]\m[]\M[]\(rq
 .br
-\m[red]colored\m[]
+I am \m[red]\V[USER]\m[]
+.br
 \[u4000] \(<> \C'u4FFF'
 '\" vi:ft=nroff
