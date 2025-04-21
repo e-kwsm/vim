@@ -59,6 +59,11 @@ syn match nroffColorSelection   /\\[mM]\%([^[(]\|(\S\S\|\[.\{-}\]\)/
 ""	"syn match nroffEscape /\\[*fgmnYV]/ nextgroup=nroffEscRegPar,nroffEscRegArg
 "syn match nroffEscape        /\\[knVY]\%([^[(]\|(\S\S\|\[.\{-}\]\)/
 syn match nroffEscape          /\\[gknY]\%([^[(]\|(\S\S\|\[.\{-1,}\]\)/
+syn match nroffEscape          /\\[AbBowXZ]'.\{-}'/
+syn match nroffFontSize          /\\[H]'[+-]\?\d\+[ciPpfvmnuM]\?'/
+syn match nroffEscape	/\\[h]'|\?\d\+[ciPpfvmnuM]\?'/
+syn match nroffDraw	/\\D'.\{-1,}'/
+syn match nroffDraw	/\\[lL]'\d\+[ciPpfvmnuM]\?'/
 exe 'syn match nroffError        /\\[gk]' . b:hoge . '/'
 exe 'syn match nroffError        /\\[fFmM]' . b:fuga . '/'
 ""	" syn match nroffEscape /\\s[+-]\=/ nextgroup=nroffSize
@@ -214,7 +219,8 @@ hi def link nroffEnvironment String
 hi def link nroffDefinedString String
 hi def link nroffFontSelection Special
 hi def link nroffColorSelection Special
-"hi def link nroffFontSize Special
+hi def link nroffFontSize Special
+hi def link nroffDraw Special
 ""	"hi def link nroffEscCharArg nroffSpecialChar
 "hi def link nroffSpecialChar SpecialChar
 "hi def link nroffSpace Delimiter
