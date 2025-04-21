@@ -15,7 +15,7 @@
 
 case "$1" in
 -h | --help)
-	printf >&2 "Usage: [time VIM_SYNTAX_TEST_LOG=/tmp/log] $0 [1 | 2 | ...]\n"
+	printf >&2 "Usage: [time VIM_SYNTAX_TEST_LOG=/tmp/log] %s [1 | 2 | ...]\n" "$0"
 	exit 0
 	;;
 esac
@@ -29,8 +29,8 @@ case "$tries" in
 	;;
 esac
 
-test -x "$(command -v make)"	|| exit 81
-test -x "$(command -v git)"	|| exit 82
+hash make 2> /dev/null || exit 81
+hash git  2> /dev/null || exit 82
 
 case "$(git status --porcelain=v1)" in
 '')	;;
