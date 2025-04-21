@@ -10,7 +10,7 @@
 if exists('current_compiler')
     finish
 endif
-let current_compiler = 'ifort'
+let current_compiler = 'ifx'
 let s:keepcpo= &cpo
 set cpo&vim
 
