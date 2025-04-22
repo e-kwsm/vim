@@ -3317,7 +3317,7 @@ au BufNewFile,BufRead */doc/{,.}bash[_-]completion{,.d,.sh}{,/*} setf text
 
 " Shell scripts ending in a star
 au BufNewFile,BufRead .bashrc*,.bash[_-]profile*,.bash[_-]logout*,.bash[_-]aliases*,bash-fc[-.]*,PKGBUILD*,APKBUILD*,*/{,.}bash[_-]completion{,.d,.sh}{,/*} call dist#ft#SetFileTypeSH("bash")
-au BufNewFile,BufRead .kshrc* call dist#ft#SetFileTypeSH("ksh")
+au BufNewFile,BufRead .kshrc*,.mkshrc* call dist#ft#SetFileTypeSH("ksh")
 au BufNewFile,BufRead .profile* call dist#ft#SetFileTypeSH(getline(1))
 
 " Sudoers
