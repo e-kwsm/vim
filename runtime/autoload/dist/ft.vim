@@ -936,7 +936,7 @@ export def SetFileTypeSH(name: string, setft = true): string
   elseif name =~ '^zsh$' || name =~ '^#!.\{-2,}\<zsh\>'
     # Some .sh scripts contain #!/bin/zsh.
     return SetFileTypeShell("zsh", setft)
-  elseif name =~ '^m\=?ksh$' || name =~ '^#!.\{-2,}\<m\=ksh\>'
+  elseif name =~ '^m\=ksh$' || name =~ '^#!.\{-2,}\<m\=ksh\>'
     b:is_kornshell = 1
     if exists("b:is_bash")
       unlet b:is_bash
