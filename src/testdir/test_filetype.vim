@@ -1071,13 +1071,13 @@ enddef
 " Various forms of "env" optional arguments.
 def s:GetScriptEnvChecks(): dict<list<list<string>>>
   return {
-    perl: [['#!/usr/bin/env VAR=val perl']],
-    scala: [['#!/usr/bin/env VAR=val VVAR=vval scala']],
+    perl: [['#!/usr/bin/env -S VAR=val perl']],
+    scala: [['#!/usr/bin/env -S VAR=val VVAR=vval scala']],
     awk: [['#!/usr/bin/env --split-string=awk -vFS="," -f']],
     execline: [['#!/usr/bin/env execlineb']],
     scheme: [['#!/usr/bin/env VAR=val --ignore-environment scheme']],
     python: [['#!/usr/bin/env -S -i VAR=val python -B -u']],
-    wml: [['#!/usr/bin/env VAR=val --split-string wml']],
+    wml: [['#!/usr/bin/env --split-string=VAR=val wml']],
     nix: [['#!/usr/bin/env nix-shell']],
   }
 enddef
