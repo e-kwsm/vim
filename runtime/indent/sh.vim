@@ -94,7 +94,7 @@ function! GetShIndent()
 
   if s:start_block(line)
     let ind += s:indent_value('default')
-  elseif line =~ '^\s*\%(if\|then\|do\|else\|elif\|case\|while\|until\|for\|select\|foreach\)\>\($\|\s\)' ||
+  elseif line =~ '^\%(\s*\%(if\|then\|do\|else\|elif\|case\|while\|until\|for\|select\|foreach\)\||\s*\%(if\|while\)\)\>\($\|\s\)' ||
         \  (&ft is# 'zsh' && line =~ '^\s*\<\%(if\|then\|do\|else\|elif\|case\|while\|until\|for\|select\|foreach\)\>\($\|\s\)')
     if !s:is_end_expression(line)
       let ind += s:indent_value('default')
