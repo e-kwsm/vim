@@ -69,7 +69,7 @@ enddef
 # Returns an empty string when not recognized.
 export def Exe2filetype(name: string, line1: string): string
     # Bourne-like shell scripts: bash bash2 dash ksh ksh93 sh
-  if name =~ '^\(bash\d*\|d\?ash\|ksh\d*\|sh\)\>'
+  if name =~ '^\(bash\d*\|d\?ash\|m\=ksh\d*\|sh\)\>'
     return dist#ft#SetFileTypeSH(line1, false)
 
     # csh scripts
