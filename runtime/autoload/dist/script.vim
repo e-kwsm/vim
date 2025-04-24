@@ -26,9 +26,14 @@ def DetectFromHashBang(firstline: string)
   # "#!/usr/bin/bash" to make matching easier.
   # Recognize only a few {options} that are commonly used.
   if line1 =~ '^#!\s*\S*\<env\s'
-    line1 = substitute(line1, '\s\zs--split-string[ \t=]', '', '')
+    # in shebang, env (coreutils 9.7) does not accept
+    # - `-iS` and `-Si`
+    # - `--split-string sh`; only `--split-string=sh` is valid, and arguments
+    #   can be appended
+    # but some implementation may support them
     line1 = substitute(line1, '\s\zs[A-Za-z0-9_]\+=\S*\ze\s', '', 'g')
     line1 = substitute(line1, '\s\zs\%(-[iS]\+\|--ignore-environment\)\ze\s', '', 'g')
+    line1 = substitute(line1, '\s\zs--split-string[ \t=]', '', '')
     line1 = substitute(line1, '\<env\s\+', '', '')
   endif
 
