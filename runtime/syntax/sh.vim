@@ -267,7 +267,7 @@ endif
 syn cluster shCommandSubList	contains=shAlias,shArithmetic,shBracketExpr,shCmdParenRegion,shCommandSub,shComment,shCtrlSeq,shDeref,shDerefSimple,shDoubleQuote,shEcho,shEscape,shExDoubleQuote,shExpr,shExSingleQuote,shHereDoc,shNumber,shOperator,shOption,shPosnParm,shHereString,shRedir,shSingleQuote,shSpecial,shStatement,shSubSh,shTest,shVariable
 syn cluster shCurlyList	contains=shNumber,shComma,shDeref,shDerefSimple,shDerefSpecial
 " COMBAK: removing shEscape from shDblQuoteList fails ksh04:43 -- Jun 09, 2022: I don't see the problem with ksh04, so am reinstating shEscape
-syn cluster shDblQuoteList	contains=shArithmetic,shCommandSub,shCommandSubBQ,shSubshare,shValsub,shDeref,shDerefSimple,shEscape,shPosnParm,shCtrlSeq,shSpecial,shSpecialDQ
+syn cluster shDblQuoteList	contains=shArithmetic,shCommandSub,shCommandSubBQ,shSubshare,shValsub,shDeref,shDerefSimple,shEscape,shPosnParm,shSpecialDQ
 syn cluster shDerefList	contains=shDeref,shDerefSimple,shDerefVar,shDerefSpecial,shDerefWordError,shDerefPSR,shDerefPPS
 syn cluster shDerefVarList	contains=shDerefOffset,shDerefOp,shDerefVarArray,shDerefOpError
 syn cluster shEchoList	contains=shArithmetic,shBracketExpr,shCommandSub,shCommandSubBQ,shDerefVarArray,shSubshare,shValsub,shDeref,shDerefSimple,shEscape,shExSingleQuote,shExDoubleQuote,shSingleQuote,shDoubleQuote,shCtrlSeq,shEchoQuote
@@ -536,7 +536,7 @@ syn match   shNumber	"\<-\=\.\=\d\+\>#\="
 syn match   shCtrlSeq	"\\\d\d\d\|\\[abcfnrtv0]"			contained
 if exists("b:is_bash") || exists("b:is_kornshell")
     syn match   shSpecial	"[^\\]\(\\\\\)*\zs\\\o\o\o\|\\x\x\x\|\\c[^"]\|\\[abefnrtv]"	contained
-    syn match   shSpecial	"^\(\\\\\)*\zs\\\o\o\o\|\\x\x\x\|\\c[^"]\|\\[abefnrtv]"	contained
+    syn match   shSpecial	"^\(\\\\\)*\zs\\\o\{1,3}|\\x\x\x\|\\c[^"]\|\\[abefnrtv]"	contained
     syn region  shExSingleQuote	matchgroup=shQuote start=+\$'+ skip=+\\\\\|\\.+ end=+'+	contains=shStringSpecial,shSpecial		nextgroup=shSpecialNxt
     syn region  shExDoubleQuote	matchgroup=shQuote start=+\$"+ skip=+\\\\\|\\.\|\\"+ end=+"+	contains=@shDblQuoteList,shStringSpecial,shSpecial	nextgroup=shSpecialNxt
 elseif !exists("g:sh_no_error")
