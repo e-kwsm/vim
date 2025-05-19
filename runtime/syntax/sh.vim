@@ -535,7 +535,7 @@ syn match   shNumber	"\<\d\+\>#\="
 syn match   shNumber	"\<-\=\.\=\d\+\>#\="
 syn match   shCtrlSeq	"\\\d\d\d\|\\[abcfnrtv0]"			contained
 if exists("b:is_bash") || exists("b:is_kornshell")
-    syn match   shSpecial	"[^\\]\(\\\\\)*\zs\\\o\o\o\|\\x\x\x\|\\c[^"]\|\\[abefnrtv]"	contained
+    syn match   shSpecial	"[^\\]\(\\\\\)*\zs\\\o\{1,3}\|\\x\x\x\|\\c[^"]\|\\[abefnrtv]"	contained
     syn match   shSpecial	"^\(\\\\\)*\zs\\\o\{1,3}|\\x\x\x\|\\c[^"]\|\\[abefnrtv]"	contained
     syn region  shExSingleQuote	matchgroup=shQuote start=+\$'+ skip=+\\\\\|\\.+ end=+'+	contains=shStringSpecial,shSpecial		nextgroup=shSpecialNxt
     syn region  shExDoubleQuote	matchgroup=shQuote start=+\$"+ skip=+\\\\\|\\.\|\\"+ end=+"+	contains=@shDblQuoteList,shStringSpecial,shSpecial	nextgroup=shSpecialNxt
