@@ -1,0 +1,2 @@
+.ifmake all
+.endif
