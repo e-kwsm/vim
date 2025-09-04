@@ -16,7 +16,7 @@ set cpoptions&vim
 syntax region CMakeCacheComment start="#\|//" end="$"
 
 " Match 'key' in key:type=value
-syntax match CMakeCacheKey "^\s*\w\+\(-ADVANCED\)\=:"me=e-1
+syntax match CMakeCacheKey "^[a-zA-Z0-9_-]\+:"me=e-1
 
 " Highlight 'str' in key:STRING=str (many thanks to Nickspoons in #vim!)
 syntax region CMakeCacheStringVar   matchgroup=CMakeCacheType start=":STRING="ms=s+1,rs=e-1 end="$" contains=CMakeCacheString keepend
