@@ -45,7 +45,7 @@ syntax region CMakeCacheInternal    start="="ms=s+1 end="$" contained
 hi def link CMakeCacheComment   Comment
 hi def link CMakeCacheKey       Identifier
 hi def link CMakeCacheString    String
-hi def link CMakeCacheBool      Constant
+hi def link CMakeCacheBool      Boolean
 hi def link CMakeCachePath      Directory
 hi def link CMakeCacheFilePath  Normal
 hi def link CMakeCacheStatic    Normal
