@@ -81,7 +81,7 @@ syn keyword hsTypedef type
 syn keyword hsNewtypedef newtype
 syn keyword hsTypeFam family
 syn keyword hsStatement mdo do case of let in
-syn keyword hsConditional if then else
+syn keyword hsConditional if then else otherwise
 
 " Not real keywords, but close.
 if exists("hs_highlight_boolean")
