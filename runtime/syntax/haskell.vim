@@ -81,6 +81,8 @@ syn keyword hsTypedef type
 syn keyword hsNewtypedef newtype
 syn keyword hsTypeFam family
 syn keyword hsStatement mdo do case of let in
+syn keyword hsStatement map
+syn keyword hsStatement print
 syn keyword hsConditional if then else otherwise
 
 " Not real keywords, but close.
