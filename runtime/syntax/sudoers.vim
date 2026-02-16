@@ -228,6 +228,7 @@ syn keyword sudoersBooleanParameter contained skipwhite skipnl
                                   \ runas_allow_unknown_id
                                   \ runas_check_shell
                                   \ runaspw
+                                  \ selinux
                                   \ set_home
                                   \ set_logname
                                   \ set_utmp
@@ -240,6 +241,7 @@ syn keyword sudoersBooleanParameter contained skipwhite skipnl
                                   \ targetpw
                                   \ tty_tickets
                                   \ umask_override
+                                  \ use_loginclass
                                   \ use_netgroups
                                   \ use_pty
                                   \ user_command_timeouts
