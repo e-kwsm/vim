@@ -160,6 +160,8 @@ syn keyword sudoersBooleanParameter contained skipwhite skipnl
                                   \ always_query_group_plugin
                                   \ always_set_home
                                   \ authenticate
+                                  \ case_insensitive_group
+                                  \ case_insensitive_user
                                   \ closefrom_override
                                   \ compress_io
                                   \ env_editor
@@ -174,9 +176,26 @@ syn keyword sudoersBooleanParameter contained skipwhite skipnl
                                   \ ignore_logfile_errors
                                   \ ignore_unknown_defaults
                                   \ insults
+                                  \ intercept
+                                  \ intercept_allow_setid
+                                  \ intercept_authenticate
+                                  \ intercept_verify
+                                  \ iolog_flush
+                                  \ log_allowed
+                                  \ log_denied
+                                  \ log_exit_status
                                   \ log_host
                                   \ log_input
                                   \ log_output
+                                  \ log_passwords
+                                  \ log_server_keepalive
+                                  \ log_server_verify
+                                  \ log_stderr
+                                  \ log_stdin
+                                  \ log_stdout
+                                  \ log_subcmds
+                                  \ log_ttyin
+                                  \ log_ttyout
                                   \ log_year
                                   \ long_otp_prompt
                                   \ mail_all_cmnds
@@ -188,8 +207,13 @@ syn keyword sudoersBooleanParameter contained skipwhite skipnl
                                   \ match_group_by_gid
                                   \ netgroup_tuple
                                   \ noexec
+                                  \ noninteractive_auth
+                                  \ pam_acct_mgmt
+                                  \ pam_rhost
+                                  \ pam_ruser
                                   \ pam_session
                                   \ pam_setcred
+                                  \ pam_silent
                                   \ passprompt_override
                                   \ path_info
                                   \ preserve_groups
@@ -197,6 +221,8 @@ syn keyword sudoersBooleanParameter contained skipwhite skipnl
                                   \ requiretty
                                   \ root_sudo
                                   \ rootpw
+                                  \ runas_allow_unknown_id
+                                  \ runas_check_shell
                                   \ runaspw
                                   \ set_home
                                   \ set_logname
@@ -221,6 +247,7 @@ syn keyword sudoersIntegerParameter contained
                                   \ skipwhite skipnl
                                   \ closefrom
                                   \ command_timeout
+                                  \ log_server_timeout
                                   \ loglinelen
                                   \ maxseq
                                   \ passwd_timeout
