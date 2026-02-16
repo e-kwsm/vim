@@ -228,7 +228,6 @@ syn keyword sudoersBooleanParameter contained skipwhite skipnl
                                   \ runas_allow_unknown_id
                                   \ runas_check_shell
                                   \ runaspw
-                                  \ selinux
                                   \ set_home
                                   \ set_logname
                                   \ set_utmp
