@@ -240,7 +240,6 @@ syn keyword sudoersBooleanParameter contained skipwhite skipnl
                                   \ targetpw
                                   \ tty_tickets
                                   \ umask_override
-                                  \ use_loginclass
                                   \ use_netgroups
                                   \ use_pty
                                   \ user_command_timeouts
