@@ -252,8 +252,6 @@ syn keyword sudoersIntegerParameter contained
                                   \ nextgroup=sudoersIntegerParameterEquals
                                   \ skipwhite skipnl
                                   \ closefrom
-                                  \ command_timeout
-                                  \ log_server_timeout
                                   \ loglinelen
                                   \ maxseq
                                   \ passwd_tries
@@ -270,6 +268,12 @@ syn keyword sudoersModeParameter contained
                                   \ skipwhite skipnl
                                   \ iolog_mode
                                   \ umask
+
+syn keyword sudoersTimeoutParameter contained
+                                  \ nextgroup=sudoersTimeoutParameterEquals
+                                  \ skipwhite skipnl
+                                  \ command_timeout
+                                  \ log_server_timeout
 
 syn keyword sudoersStringParameter  contained
                                   \ nextgroup=sudoersStringParameterEquals
@@ -329,12 +333,16 @@ syn cluster sudoersParameter        contains=sudoersBooleanParameter,sudoersInte
 syn match   sudoersIntegerParameterEquals contained '[+-]\==' nextgroup=sudoersIntegerValue skipwhite skipnl
 syn match   sudoersModeParameterEquals    contained       '=' nextgroup=sudoersModeValue    skipwhite skipnl
 syn match   sudoersTimespecParameterEquals contained      '=' nextgroup=sudoersTimespecValue skipwhite skipnl
+syn match   sudoersTimeoutParameterEquals contained '[+-]\==' nextgroup=sudoersTimeoutValue skipwhite skipnl
 syn match   sudoersStringParameterEquals  contained '[+-]\==' nextgroup=sudoersStringValue  skipwhite skipnl
 syn match   sudoersListParameterEquals    contained '[+-]\==' nextgroup=sudoersListValue    skipwhite skipnl
 
 syn match   sudoersIntegerValue contained '\d\+' nextgroup=sudoersParameterListComma skipwhite skipnl
 syn match   sudoersModeValue    contained '\<\o\+\>' nextgroup=sudoersParameterListComma skipwhite skipnl
 syn match   sudoersTimespecValue contained '\<\d\+\>\|\<\d\+\%(\.\%(\d\+\>\)\?\)\?\|\.\d\+\>' nextgroup=sudoersParameterListComma skipwhite skipnl
+syn match   sudoersTimeoutValue contained '\d\+' nextgroup=sudoersTimeoutListComma skipwhite skipnl
+syn match   sudoersTimeoutValue contained '\%(\d\+d\)\?\%(\%(\d\+h\)\?\%(\d\+m\)\?\%(\d\+s\)\?\)\?' nextgroup=sudoersTimeoutListComma skipwhite skipnl
+syn match   sudoersTimeoutValue contained '\%(\d\+h\)\?\%(\%(\d\+m\)\?\%(\d\+s\)\?\)\?' nextgroup=sudoersTimeoutListComma skipwhite skipnl
 syn match   sudoersStringValue  contained '[^[:space:],:=\\]*\%(\\[[:space:],:=\\][^[:space:],:=\\]*\)*' nextgroup=sudoersParameterListComma skipwhite skipnl
 syn region  sudoersStringValue  contained start=+"+ skip=+\\"+ end=+"+ nextgroup=sudoersParameterListComma skipwhite skipnl
 syn match   sudoersListValue    contained '[^[:space:],:=\\]*\%(\\[[:space:],:=\\][^[:space:],:=\\]*\)*' nextgroup=sudoersParameterListComma skipwhite skipnl
