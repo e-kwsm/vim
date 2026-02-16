@@ -253,8 +253,6 @@ syn keyword sudoersIntegerParameter contained
                                   \ nextgroup=sudoersIntegerParameterEquals
                                   \ skipwhite skipnl
                                   \ closefrom
-                                  \ command_timeout
-                                  \ log_server_timeout
                                   \ maxseq
                                   \ passwd_tries
                                   \ syslog_maxlen
@@ -279,6 +277,12 @@ syn keyword sudoersModeOrBooleanParameter contained
                                   \ nextgroup=sudoersModeParameterEquals
                                   \ skipwhite skipnl
                                   \ umask
+
+syn keyword sudoersTimeoutParameter contained
+                                  \ nextgroup=sudoersTimeoutParameterEquals
+                                  \ skipwhite skipnl
+                                  \ command_timeout
+                                  \ log_server_timeout
 
 syn keyword sudoersStringParameter  contained
                                   \ nextgroup=sudoersStringParameterEquals
@@ -366,12 +370,16 @@ syn cluster sudoersParameter        contains=sudoersBooleanParameter,sudoersInte
 syn match   sudoersIntegerParameterEquals contained       '=' nextgroup=sudoersIntegerValue skipwhite skipnl
 syn match   sudoersModeParameterEquals    contained       '=' nextgroup=sudoersModeValue    skipwhite skipnl
 syn match   sudoersTimespecParameterEquals contained      '=' nextgroup=sudoersTimespecValue skipwhite skipnl
+syn match   sudoersTimeoutParameterEquals contained       '=' nextgroup=sudoersTimeoutValue skipwhite skipnl
 syn match   sudoersStringParameterEquals  contained '[+-]\==' nextgroup=sudoersStringValue  skipwhite skipnl
 syn match   sudoersListParameterEquals    contained '[+-]\==' nextgroup=sudoersListValue    skipwhite skipnl
 
 syn match   sudoersIntegerValue contained '\<\d\+\>' nextgroup=sudoersParameterListComma skipwhite skipnl
 syn match   sudoersModeValue    contained '\<\o\+\>' nextgroup=sudoersParameterListComma skipwhite skipnl
 syn match   sudoersTimespecValue contained '\<\d\+\>\|\<\d\+\%(\.\%(\d\+\>\)\?\)\?\|\.\d\+\>' nextgroup=sudoersParameterListComma skipwhite skipnl
+syn match   sudoersTimeoutValue contained '\<\d\+\>' nextgroup=sudoersTimeoutListComma skipwhite skipnl
+syn match   sudoersTimeoutValue contained '\%(\d\+[dD]\)\?\%(\%(\d\+[hH]\)\?\%(\d\+[mM]\)\?\%(\d\+[sS]\)\?\)\?' nextgroup=sudoersTimeoutListComma skipwhite skipnl
+syn match   sudoersTimeoutValue contained '\%(\d\+[hH]\)\?\%(\%(\d\+[mM]\)\?\%(\d\+[sS]\)\?\)\?' nextgroup=sudoersTimeoutListComma skipwhite skipnl
 syn match   sudoersStringValue  contained '[^[:space:],:=\\]*\%(\\[[:space:],:=\\][^[:space:],:=\\]*\)*' nextgroup=sudoersParameterListComma skipwhite skipnl
 syn region  sudoersStringValue  contained start=+"+ skip=+\\"+ end=+"+ nextgroup=sudoersParameterListComma skipwhite skipnl
 syn match   sudoersListValue    contained '[^[:space:],:=\\]*\%(\\[[:space:],:=\\][^[:space:],:=\\]*\)*' nextgroup=sudoersParameterListComma skipwhite skipnl
@@ -468,6 +476,7 @@ hi def link sudoersIntegerOrBooleanParameter Identifier
 hi def link sudoersModeParameter            Identifier
 hi def link sudoersModeOrBooleanParameter   Identifier
 hi def link sudoersTimespecParameter        Identifier
+hi def link sudoersTimeoutParameter         Identifier
 hi def link sudoersStringParameter          Identifier
 hi def link sudoersStringOrBooleanParameter Identifier
 hi def link sudoersListParameter            Identifier
@@ -475,11 +484,13 @@ hi def link sudoersParameterListComma       Delimiter
 hi def link sudoersIntegerParameterEquals   Operator
 hi def link sudoersModeParameterEquals      Operator
 hi def link sudoersTimespecParameterEquals  Operator
+hi def link sudoersTimeoutParameterEquals   Operator
 hi def link sudoersStringParameterEquals    Operator
 hi def link sudoersListParameterEquals      Operator
 hi def link sudoersIntegerValue             Number
 hi def link sudoersModeValue                Number
 hi def link sudoersTimespecValue            Float
+hi def link sudoersTimeoutValue             Number
 hi def link sudoersStringValue              String
 hi def link sudoersListValue                String
 hi def link sudoersTagSpec                  Special
