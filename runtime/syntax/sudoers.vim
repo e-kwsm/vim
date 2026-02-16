@@ -326,9 +326,24 @@ syn keyword sudoersListParameter    contained
                                   \ env_keep
                                   \ log_servers
 
+syn keyword sudoersResourceParameter contained
+                                  \ nextgroup=sudoersResourceParameterEquals
+                                  \ skipwhite skipnl
+                                  \ rlimit_as
+                                  \ rlimit_core
+                                  \ rlimit_cpu
+                                  \ rlimit_data
+                                  \ rlimit_fsize
+                                  \ rlimit_locks
+                                  \ rlimit_memlock
+                                  \ rlimit_nofile
+                                  \ rlimit_nproc
+                                  \ rlimit_rss
+                                  \ rlimit_stack
+
 syn match   sudoersParameterListComma contained ',' nextgroup=@sudoersParameter skipwhite skipnl
 
-syn cluster sudoersParameter        contains=sudoersBooleanParameter,sudoersIntegerParameter,sudoersModeParameter,sudoersTimespecParameter,sudoersStringParameter,sudoersListParameter
+syn cluster sudoersParameter        contains=sudoersBooleanParameter,sudoersIntegerParameter,sudoersModeParameter,sudoersTimespecParameter,sudoersStringParameter,sudoersListParameter,sudoersResourceParameter
 
 syn match   sudoersIntegerParameterEquals contained '[+-]\==' nextgroup=sudoersIntegerValue skipwhite skipnl
 syn match   sudoersModeParameterEquals    contained       '=' nextgroup=sudoersModeValue    skipwhite skipnl
@@ -336,6 +351,7 @@ syn match   sudoersTimespecParameterEquals contained      '=' nextgroup=sudoersT
 syn match   sudoersTimeoutParameterEquals contained '[+-]\==' nextgroup=sudoersTimeoutValue skipwhite skipnl
 syn match   sudoersStringParameterEquals  contained '[+-]\==' nextgroup=sudoersStringValue  skipwhite skipnl
 syn match   sudoersListParameterEquals    contained '[+-]\==' nextgroup=sudoersListValue    skipwhite skipnl
+syn match   sudoersResourceParameterEquals contained      '=' nextgroup=sudoersResourceValueSpecial,sudoersResourceValue skipwhite skipnl
 
 syn match   sudoersIntegerValue contained '\d\+' nextgroup=sudoersParameterListComma skipwhite skipnl
 syn match   sudoersModeValue    contained '\<\o\+\>' nextgroup=sudoersParameterListComma skipwhite skipnl
@@ -347,6 +363,9 @@ syn match   sudoersStringValue  contained '[^[:space:],:=\\]*\%(\\[[:space:],:=\
 syn region  sudoersStringValue  contained start=+"+ skip=+\\"+ end=+"+ nextgroup=sudoersParameterListComma skipwhite skipnl
 syn match   sudoersListValue    contained '[^[:space:],:=\\]*\%(\\[[:space:],:=\\][^[:space:],:=\\]*\)*' nextgroup=sudoersParameterListComma skipwhite skipnl
 syn region  sudoersListValue    contained start=+"+ skip=+\\"+ end=+"+ nextgroup=sudoersParameterListComma skipwhite skipnl
+syn keyword sudoersResourceValueSpecial contained infinity default user
+syn match sudoersResourceValue contained /\<\d\+\>/
+syn match sudoersResourceValue contained /"\<\d\+\>\%(,\d\+\>\)\?"/
 
 syn match   sudoersTagSpec      contained '\%(NO\)\=\%(EXEC\|FOLLOW\|LOG_\%(INPUT\|OUTPUT\)\|MAIL\|INTERCEPT\|PASSWD\|SETENV\):' nextgroup=sudoersTagSpec,@sudoersCmndInSpec skipwhite
 
@@ -438,17 +457,21 @@ hi def link sudoersModeParameter            Identifier
 hi def link sudoersTimespecParameter        Identifier
 hi def link sudoersStringParameter          Identifier
 hi def link sudoersListParameter            Identifier
+hi def link sudoersResourceParameter        Identifier
 hi def link sudoersParameterListComma       Delimiter
 hi def link sudoersIntegerParameterEquals   Operator
 hi def link sudoersModeParameterEquals      Operator
 hi def link sudoersTimespecParameterEquals  Operator
 hi def link sudoersStringParameterEquals    Operator
 hi def link sudoersListParameterEquals      Operator
+hi def link sudoersResourceParameterEquals  Operator
 hi def link sudoersIntegerValue             Number
 hi def link sudoersModeValue                Number
 hi def link sudoersTimespecValue            Float
 hi def link sudoersStringValue              String
 hi def link sudoersListValue                String
+hi def link sudoersResourceValueSpecial     Special
+hi def link sudoersResourceValue            Number
 hi def link sudoersTagSpec                  Special
 hi def link sudoersInclude                  Statement
 
