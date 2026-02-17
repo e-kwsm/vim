@@ -1,0 +1,7 @@
+# vi:ft=sudoers
+Defaults authenticate
+Defaults@ALL passwd_timeout=0.5
+Defaults@!192.168.0.0/16 env_reset
+Defaults:alice umask=027
+# Defaults!cmnd
+# Defaults>root
