@@ -6,8 +6,8 @@ Defaults@!192.168.0.0/16 env_reset
 # user (:) and runas (>)
 Defaults:alice		!lecture
 Defaults>!#1000		!lecture
-Defaults>%wheel		!lecture
-Defaults:!%#1000	!lecture
+Defaults>!%wheel	!lecture
+Defaults:%#1000		!lecture
 
 # User_Alias ADMIN = !alice, bob, !#1000
 
