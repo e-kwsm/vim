@@ -402,7 +402,7 @@ syn match sudoersResourceValue contained /\<\d\+\>/ nextgroup=sudoersResourcePar
 syn match sudoersResourceValue contained /"\<\%(\d\+\|infinity\)\>\%(,\%(\d\+\|infinity\)\>\)\?"/ nextgroup=sudoersResourceParameterComma
 syn match sudoersResourceValue contained /\<\%(\d\+\|infinity\)\>\\,\%(\d\+\|infinity\)\>\?/ nextgroup=sudoersResourceParameterComma
 
-syn match   sudoersTagSpec      contained '\%(NO\)\=\%(EXEC\|FOLLOW\|LOG_\%(INPUT\|OUTPUT\)\|MAIL\|INTERCEPT\|PASSWD\|SETENV\):' nextgroup=sudoersTagSpec,@sudoersCmndInSpec skipwhite
+syn match   sudoersTagSpec      contained '\<\%(NO\)\=\%(EXEC\|FOLLOW\|LOG_\%(INPUT\|OUTPUT\)\|MAIL\|INTERCEPT\|PASSWD\|SETENV\):' nextgroup=sudoersTagSpec,@sudoersCmndInSpec skipwhite
 
 hi def link sudoersSpecEquals               Operator
 hi def link sudoersTodo                     Todo
