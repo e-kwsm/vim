@@ -2,6 +2,20 @@
 Defaults authenticate
 Defaults@ALL passwd_timeout=0.5
 Defaults@!192.168.0.0/16 env_reset
-Defaults:alice umask=027
-# Defaults!cmnd
-# Defaults>root
+
+# user (:) and runas (>)
+Defaults:alice		!lecture
+Defaults>!#1000		!lecture
+Defaults>%wheel		!lecture
+Defaults:!%#1000	!lecture
+
+# User_Alias ADMIN = !alice, bob, !#1000
+
+# command
+Defaults!/bin/pwd,/usr/bin/pwd root_sudo
+Defaults!!/usr/local/bin/ root_sudo
+Defaults!!sudoedit root_sudo
+Defaults!HASHED,BASE64ENCODED lecture
+
+Cmnd_Alias HASHED = sha224:d14a028c2a3a2bc9476102bb288234c415a2b01f828ea62ac5b3e42f /bin/sh
+Cmnd_Alias BASE64ENCODED = sha256:47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU= /bin/sh
