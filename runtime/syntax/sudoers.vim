@@ -176,6 +176,15 @@ syn match   sudoersDefaultTypeGreaterThan contained '>' nextgroup=@sudoersUser s
 syn match   sudoersDefaultTypeBang        contained '!' nextgroup=@sudoersCmnd skipwhite skipnl
 syn match   sudoersDefaultTypeAny         contained '\s' nextgroup=@sudoersParameter skipwhite skipnl
 
+"syn match sudoersSHA224 /\<sha224:\x\{56\}\>/
+"syn match sudoersSHA256 /\<sha256:\x\{64\}\>/
+"syn match sudoersSHA384 /\<sha384:\x\{96\}\>/
+"syn match sudoersSHA512 /\<sha512:\x\{128\}\>/
+"syn match sudoersSHA224 /\<sha224:[A-Za-z0-9+/]\{38\}==/
+"syn match sudoersSHA256 /\<sha256:[A-Za-z0-9+/]\{43\}=/
+"syn match sudoersSHA384 /\<sha384:[A-Za-z0-9+/]\{64\}\>/
+"syn match sudoersSHA512 /\<sha512:[A-Za-z0-9+/]\{86\}==/
+
 " TODO: could also deal with special characters here
 syn match   sudoersBooleanParameter contained '!' nextgroup=sudoersBooleanParameter,sudoersIntegerOrBooleanParameter,sudoersModeOrBooleanParameter,sudoersStringOrBooleanParameter,sudoersListParameter skipwhite skipnl
 syn keyword sudoersBooleanParameter contained skipwhite skipnl
