@@ -159,6 +159,15 @@ syn match   sudoersDefaultTypeAt          contained '@' nextgroup=@sudoersHost s
 syn match   sudoersDefaultTypeColon       contained ':' nextgroup=@sudoersUser skipwhite skipnl
 syn match   sudoersDefaultTypeGreaterThan contained '>' nextgroup=@sudoersUser skipwhite skipnl
 
+syn match sudoersSHA224 /\<sha224:\x\{56\}\>/
+syn match sudoersSHA256 /\<sha256:\x\{64\}\>/
+syn match sudoersSHA384 /\<sha384:\x\{96\}\>/
+syn match sudoersSHA512 /\<sha512:\x\{128\}\>/
+syn match sudoersSHA224 /\<sha224:[A-Za-z0-9+/]\{38\}==/
+syn match sudoersSHA256 /\<sha256:[A-Za-z0-9+/]\{43\}=/
+syn match sudoersSHA384 /\<sha384:[A-Za-z0-9+/]\{64\}\>/
+syn match sudoersSHA512 /\<sha512:[A-Za-z0-9+/]\{86\}==/
+
 " TODO: could also deal with special characters here
 syn match   sudoersBooleanParameter contained '!' nextgroup=sudoersBooleanParameter,sudoersIntegerOrBooleanParameter,sudoersModeOrBooleanParameter,sudoersStringOrBooleanParameter,sudoersListParameter skipwhite skipnl
 syn keyword sudoersBooleanParameter contained skipwhite skipnl
@@ -508,6 +517,11 @@ hi def link sudoersResourceValueSpecial     Special
 hi def link sudoersResourceValue            Number
 hi def link sudoersTagSpec                  Special
 hi def link sudoersInclude                  Statement
+
+hi def link sudoersSHA224 Number
+hi def link sudoersSHA256 Number
+hi def link sudoersSHA384 Number
+hi def link sudoersSHA512 Number
 
 let b:current_syntax = "sudoers"
 
