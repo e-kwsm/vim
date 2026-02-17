@@ -318,6 +318,7 @@ syn keyword sudoersListParameter    contained
                                   \ env_check
                                   \ env_delete
                                   \ env_keep
+                                  \ log_servers
 
 syn match   sudoersParameterListComma contained ',' nextgroup=@sudoersParameter skipwhite skipnl
 
