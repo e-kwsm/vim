@@ -334,6 +334,7 @@ syn keyword sudoersListParameter    contained
                                   \ env_delete
                                   \ env_keep
                                   \ log_servers
+                                  \ passprompt_regex
 
 syn keyword sudoersResourceParameter contained
                                   \ nextgroup=sudoersResourceParameterEquals
