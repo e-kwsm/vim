@@ -342,6 +342,7 @@ syn keyword sudoersResourceParameter contained
                                   \ rlimit_stack
 
 syn match   sudoersParameterListComma contained ',' nextgroup=@sudoersParameter skipwhite skipnl
+syn match   sudoersResourceParameterComma contained '\\,' nextgroup=@sudoersResourceValueSpecial,@sudoersResourceValue skipwhite skipnl
 
 syn cluster sudoersParameter        contains=sudoersBooleanParameter,sudoersIntegerParameter,sudoersModeParameter,sudoersTimespecParameter,sudoersStringParameter,sudoersListParameter,sudoersResourceParameter
 
@@ -363,8 +364,9 @@ syn match   sudoersStringValue  contained '[^[:space:],:=\\]*\%(\\[[:space:],:=\
 syn region  sudoersStringValue  contained start=+"+ skip=+\\"+ end=+"+ nextgroup=sudoersParameterListComma skipwhite skipnl
 syn match   sudoersListValue    contained '[^[:space:],:=\\]*\%(\\[[:space:],:=\\][^[:space:],:=\\]*\)*' nextgroup=sudoersParameterListComma skipwhite skipnl
 syn region  sudoersListValue    contained start=+"+ skip=+\\"+ end=+"+ nextgroup=sudoersParameterListComma skipwhite skipnl
-syn keyword sudoersResourceValueSpecial contained infinity default user
-syn match sudoersResourceValue contained /\<\d\+\>/
+syn keyword sudoersResourceValueSpecial contained default user
+syn keyword sudoersResourceValueSpecial contained infinity nextgroup=sudoersResourceParameterComma
+syn match sudoersResourceValue contained /\<\d\+\>/ nextgroup=sudoersResourceParameterComma
 syn match sudoersResourceValue contained /"\<\d\+\>\%(,\d\+\>\)\?"/
 
 syn match   sudoersTagSpec      contained '\%(NO\)\=\%(EXEC\|FOLLOW\|LOG_\%(INPUT\|OUTPUT\)\|MAIL\|INTERCEPT\|PASSWD\|SETENV\):' nextgroup=sudoersTagSpec,@sudoersCmndInSpec skipwhite
@@ -459,6 +461,7 @@ hi def link sudoersStringParameter          Identifier
 hi def link sudoersListParameter            Identifier
 hi def link sudoersResourceParameter        Identifier
 hi def link sudoersParameterListComma       Delimiter
+hi def link sudoersResourceParameterComma   Delimiter
 hi def link sudoersIntegerParameterEquals   Operator
 hi def link sudoersModeParameterEquals      Operator
 hi def link sudoersTimespecParameterEquals  Operator
