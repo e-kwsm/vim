@@ -5,13 +5,16 @@ Defaults authenticate
 Defaults@ALL passwd_timeout=0.5
 Defaults@!192.168.0.0/16 env_reset
 
+Host_Alias LOCALHOST = 192.168.0.1
+
 # user (:) and runas (>)
 Defaults:alice		!lecture
 Defaults>!#1000		!lecture
-Defaults>!%wheel	!lecture
-Defaults:%#1000		!lecture
+Defaults>%wheel		!lecture
+Defaults:!%#1000	!lecture
 
-# User_Alias ADMIN = !alice, bob, !#1000
+User_Alias ADMIN = !alice, bob, !#1000
+Runas_Alias ADMIN = !alice, bob, !#1000
 
 # command
 Defaults!/bin/pwd,/usr/bin/pwd root_sudo
