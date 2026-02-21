@@ -46,7 +46,11 @@ Defaults rlimit_data=default
 Defaults rlimit_fsize=user
 Defaults rlimit_locks=infinity
 
-#                     YYYYMMDDHHMMSSZ
+# yyyymmddHHMMSS
+# MM and SS are optional
+# Z for UTC
+# null for local time
+# or timezone offset
 user1 ALL = NOTBEFORE=2025012300		/usr/bin/crontab
 user1 ALL = NOTBEFORE=2025012300Z		/usr/bin/crontab
 user1 ALL = NOTBEFORE=2025012300-1200		/usr/bin/crontab
