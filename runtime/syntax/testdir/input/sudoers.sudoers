@@ -63,9 +63,9 @@ user ALL = NOTAFTER =20260131235959Z		/bin/crontab
 user ALL = NOTBEFORE=20260131235959+1400	/bin/crontab
 
 user ALL = TIMEOUT=1		/bin/cat
-user ALL = TIMEOUT=1s		/bin/cat
+user ALL = TIMEOUT=1S		/bin/cat
 user ALL = TIMEOUT=1m		/bin/cat
-user ALL = TIMEOUT=1h		/bin/cat
+user ALL = TIMEOUT=1H		/bin/cat
 user ALL = TIMEOUT=1d		/bin/cat
 user ALL = TIMEOUT=1D2h3M4s	/bin/cat
 
