@@ -45,3 +45,14 @@ Defaults rlimit_cpu=1\,1
 Defaults rlimit_data=default
 Defaults rlimit_fsize=user
 Defaults rlimit_locks=infinity
+
+#                     YYYYMMDDHHMMSSZ
+user1 ALL = NOTBEFORE=2025012300		/usr/bin/crontab
+user1 ALL = NOTBEFORE=2025012300Z		/usr/bin/crontab
+user1 ALL = NOTBEFORE=2025012300-1200		/usr/bin/crontab
+user1 ALL = NOTBEFORE=202501230023		/usr/bin/crontab
+user1 ALL = NOTBEFORE=202501230023Z		/usr/bin/crontab
+user1 ALL = NOTBEFORE=202501230023+0545		/usr/bin/crontab
+user1 ALL = NOTBEFORE=20250123002359		/usr/bin/crontab
+user1 ALL = NOTBEFORE=20250123002359Z		/usr/bin/crontab
+user1 ALL = NOTBEFORE=20250123002359+1400	/usr/bin/crontab
