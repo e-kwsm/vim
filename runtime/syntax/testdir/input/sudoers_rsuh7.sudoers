@@ -50,9 +50,10 @@ Defaults rlimit_locks=infinity
 # Date_Spec
 # yyyymmddHHMMSS
 # MM and SS are optional
-# Z for UTC
-# null for local time
-# or timezone offset
+# timezone suffix:
+# - Z for UTC
+# - null for local time
+# - timezone offset
 user ALL = NOTBEFORE=2026013123			/bin/crontab
 user ALL = NOTAFTER =2026013123Z		/bin/crontab
 user ALL = NOTBEFORE=2026013123-1200		/bin/crontab
