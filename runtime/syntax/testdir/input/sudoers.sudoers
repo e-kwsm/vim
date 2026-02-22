@@ -11,10 +11,10 @@ Defaults@!192.168.0.1/255.255.0.0 env_reset
 Host_Alias LOCALHOST = 192.168.0.1
 
 # user (:) and runas (>)
-Defaults:alice		!lecture
-Defaults>!bob		!lecture
+Defaults:alice		env_keep += "*EDITOR"
+Defaults>!bob		env_keep += "EDITOR SUDO_EDITOR"
 Defaults:#1000		!lecture
-Defaults>!%wheel	!lecture
+Defaults>!%wheel	lecture
 Defaults:%#1001		!lecture
 
 User_Alias ADMIN = !alice, bob, !#1000
