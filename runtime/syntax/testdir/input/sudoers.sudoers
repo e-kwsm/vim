@@ -1,5 +1,6 @@
 # vi:ft=sudoers
 Defaults authenticate
+Defaults secure_path="/sbin:/bin"
 
 # host
 Defaults@ALL passwd_timeout=0.5
