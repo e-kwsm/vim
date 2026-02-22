@@ -91,6 +91,8 @@ syn match   sudoersCmndAliasInList    contained '\<\u[A-Z0-9_]*\>'  nextgroup=@s
 syn match   sudoersCmndNameInSpec     contained '[^[:space:],:=\\]\+\%(\\[[:space:],:=\\][^[:space:],:=\\]*\)*' nextgroup=@sudoersCmndSpec,sudoersCommandEmptyInSpec,sudoersCommandArgsInSpec skipwhite
 syn match   sudoersCmndAliasInSpec    contained '\<\u[A-Z0-9_]*\>'  nextgroup=@sudoersCmndSpec        skipwhite skipnl
 
+syn match   sudoersDate /\<[1-9][0-9]\{9}\%([0-9]\{2\}\)\{0,2\}\%(Z\|[+-][0-9]\{4\}\)\?\>/
+
 syn match   sudoersUserAliasEquals  contained '=' nextgroup=@sudoersUserInList  skipwhite skipnl
 syn match   sudoersUserListComma    contained ',' nextgroup=@sudoersUserInList  skipwhite skipnl
 syn match   sudoersUserListColon    contained ':' nextgroup=sudoersUserAlias    skipwhite skipnl
@@ -522,6 +524,8 @@ hi def link sudoersSHA224 Number
 hi def link sudoersSHA256 Number
 hi def link sudoersSHA384 Number
 hi def link sudoersSHA512 Number
+
+hi def link sudoersDate Number
 
 let b:current_syntax = "sudoers"
 
