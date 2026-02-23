@@ -6,7 +6,7 @@ Defaults secure_path="/sbin:/bin"
 Defaults@ALL passwd_timeout=0.5
 Defaults@node1 passwd_timeout=0.5
 Defaults@!10.0.0.1 env_reset
-Defaults@172.16.0.1/12 env_reset
+Defaults@!!!172.16.0.1/12 env_reset
 Defaults@!192.168.0.1/255.255.0.0 env_reset
 # Defaults@::ffff:c0a8:102 env_reset
 Defaults@0:0:0:0:0:ffff:c0a8:0102 env_reset
@@ -19,7 +19,7 @@ Host_Alias FOO = ::ffff:c0a8:102, 0:0:0:0:0:ffff:c0a8:0102, 0000:0000:0000:0000:
 Defaults:alice		env_keep += "*EDITOR"
 Defaults>!bob		env_keep += "EDITOR SUDO_EDITOR"
 Defaults:#1000		!lecture
-Defaults>!%wheel	lecture
+Defaults>!!%wheel	lecture
 Defaults:%#1001		!lecture
 
 User_Alias ADMIN = !alice, bob, !#1000
