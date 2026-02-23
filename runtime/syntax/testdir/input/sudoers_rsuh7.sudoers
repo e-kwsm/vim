@@ -21,9 +21,10 @@ Defaults>!bob		env_keep += "EDITOR SUDO_EDITOR"
 Defaults:#1000		!lecture
 Defaults>!!%wheel	lecture
 Defaults:%#1001		!lecture
+Defaults>!!!ALL		!lecture
 
 User_Alias ADMIN = !alice, bob, !#1000
-Runas_Alias ADMIN = !alice, bob, !#1000
+Runas_Alias ADMIN = !alice, bob, !#1000, ALL
 
 # command
 Defaults!/bin/pwd,/usr/bin/pwd root_sudo
