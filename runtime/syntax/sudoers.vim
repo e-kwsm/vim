@@ -49,6 +49,7 @@ syn match   sudoersGroup              contained '%\l[-a-z0-9_]*\>'  nextgroup=su
 syn match   sudoersGID                contained '%#\d\+\>'          nextgroup=sudoersUserComma,@sudoersParameter       skipwhite skipnl
 syn match   sudoersUserNetgroup       contained '+\l[-a-z0-9_]*\>'  nextgroup=sudoersUserComma,@sudoersParameter       skipwhite skipnl
 syn match   sudoersUserAliasRef       contained '\<\u[A-Z0-9_]*\>'  nextgroup=sudoersUserComma,@sudoersParameter       skipwhite skipnl
+syn keyword sudoersRunasAll           contained ALL                 nextgroup=sudoersUserComma,@sudoersParameter       skipwhite skipnl
 syn match   sudoersUserComma          contained ','                 nextgroup=sudoersUserNegation,sudoersUserName,sudoersUID,sudoersGroup,sudoersGID,sudoersUserNetgroup,sudoersUserAliasRef,sudoersRunasAll skipwhite skipnl
 
 syn match   sudoersUserNameInSpec     contained '\<\l[-a-z0-9_]*\>' nextgroup=@sudoersUserSpec        skipwhite skipnl
@@ -141,7 +142,7 @@ syn cluster sudoersUserInList       contains=sudoersUserNegationInList,sudoersUs
 syn cluster sudoersHostInList       contains=sudoersHostNegationInList,sudoersHostNameInList,sudoersIPAddrInList,sudoersNetworkInList,sudoersHostNetgroupInList,sudoersHostAliasInList
 syn cluster sudoersCmndInList       contains=sudoersCmndDigestInList,sudoersCmndNegationInList,sudoersCmndNameInList,sudoersCmndAliasInList
 
-syn cluster sudoersUser             contains=sudoersUserNegation,sudoersUserName,sudoersUID,sudoersGroup,sudoersGID,sudoersUserNetgroup,sudoersUserAliasRef
+syn cluster sudoersUser             contains=sudoersUserNegation,sudoersUserName,sudoersUID,sudoersGroup,sudoersGID,sudoersUserNetgroup,sudoersUserAliasRef,sudoersRunasAll
 syn cluster sudoersHost             contains=sudoersHostNegation,sudoersHostName,sudoersIPAddr,sudoersNetwork,sudoersHostNetgroup,sudoersHostAll,sudoersHostAliasRef
 syn cluster sudoersCmnd             contains=sudoersCmndNegation,sudoersCmndName,sudoersCmndSpecial,sudoersCmndAliasRef
 
@@ -461,6 +462,7 @@ hi def link sudoersGroup                    PreProc
 hi def link sudoersGID                      Number
 hi def link sudoersUserNetgroup             PreProc
 hi def link sudoersUserAliasRef             PreProc
+hi def link sudoersRunasAll                 Special
 hi def link sudoersUserComma                Delimiter
 hi def link sudoersUserNameInSpec           String
 hi def link sudoersUIDInSpec                Number
