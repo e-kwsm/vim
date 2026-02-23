@@ -91,6 +91,7 @@ syn match   sudoersCmndAliasInList    contained '\<\u[A-Z0-9_]*\>'  nextgroup=@s
 syn match   sudoersCmndNameInSpec     contained '[^[:space:],:=\\]\+\%(\\[[:space:],:=\\][^[:space:],:=\\]*\)*' nextgroup=@sudoersCmndSpec,sudoersCommandEmptyInSpec,sudoersCommandArgsInSpec skipwhite
 syn match   sudoersCmndAliasInSpec    contained '\<\u[A-Z0-9_]*\>'  nextgroup=@sudoersCmndSpec        skipwhite skipnl
 
+" yyyymmddHHMMSS
 syn match   sudoersDate /\<[1-9][0-9]\{9}\%([0-9]\{2\}\)\{0,2\}\%(Z\|[+-][0-9]\{4\}\)\?\>/
 
 syn match   sudoersUserAliasEquals  contained '=' nextgroup=@sudoersUserInList  skipwhite skipnl
