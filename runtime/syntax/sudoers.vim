@@ -49,6 +49,7 @@ syn match   sudoersGroup              contained '%\l[-a-z0-9_]*\>'  nextgroup=@s
 syn match   sudoersGID                contained '%#\d\+\>'          nextgroup=@sudoersParameter       skipwhite skipnl
 syn match   sudoersUserNetgroup       contained '+\l[-a-z0-9_]*\>'  nextgroup=@sudoersParameter       skipwhite skipnl
 syn match   sudoersUserAliasRef       contained '\<\u[A-Z0-9_]*\>'  nextgroup=@sudoersParameter       skipwhite skipnl
+syn keyword sudoersRunasAll           contained ALL                 nextgroup=@sudoersParameter       skipwhite skipnl
 
 syn match   sudoersUserNameInSpec     contained '\<\l[-a-z0-9_]*\>' nextgroup=@sudoersUserSpec        skipwhite skipnl
 syn match   sudoersUIDInSpec          contained '#\d\+\>'           nextgroup=@sudoersUserSpec        skipwhite skipnl
@@ -131,7 +132,7 @@ syn cluster sudoersUserInList       contains=sudoersUserNegationInList,sudoersUs
 syn cluster sudoersHostInList       contains=sudoersHostNegationInList,sudoersHostNameInList,sudoersIPAddrInList,sudoersNetworkInList,sudoersHostNetgroupInList,sudoersHostAliasInList
 syn cluster sudoersCmndInList       contains=sudoersCmndNegationInList,sudoersCmndNameInList,sudoersCmndAliasInList
 
-syn cluster sudoersUser             contains=sudoersUserNegation,sudoersUserName,sudoersUID,sudoersGroup,sudoersGID,sudoersUserNetgroup,sudoersUserAliasRef
+syn cluster sudoersUser             contains=sudoersUserNegation,sudoersUserName,sudoersUID,sudoersGroup,sudoersGID,sudoersUserNetgroup,sudoersUserAliasRef,sudoersRunasAll
 syn cluster sudoersHost             contains=sudoersHostNegation,sudoersHostName,sudoersIPAddr,sudoersNetwork,sudoersHostNetgroup,sudoersHostAll,sudoersHostAliasRef
 
 syn cluster sudoersUserInSpec       contains=sudoersUserNegationInSpec,sudoersUserNameInSpec,sudoersUIDInSpec,sudoersGroupInSpec,sudoersGIDInSpec,sudoersUserNetgroupInSpec,sudoersUserAliasInSpec
@@ -424,6 +425,7 @@ hi def link sudoersGroup                    PreProc
 hi def link sudoersGID                      Number
 hi def link sudoersUserNetgroup             PreProc
 hi def link sudoersUserAliasRef             PreProc
+hi def link sudoersRunasAll                 Special
 hi def link sudoersUserNameInSpec           String
 hi def link sudoersUIDInSpec                Number
 hi def link sudoersGroupInSpec              PreProc
