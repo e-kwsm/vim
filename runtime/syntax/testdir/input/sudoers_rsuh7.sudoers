@@ -79,6 +79,8 @@ user ALL = TIMEOUT=1D2h3M4s	/bin/cat
 user ALL = CWD=/ /bin/pwd, CWD=~ /bin/ls, CWD=~root /bin/paste, CWD=* /bin/echo
 #user ALL = CHROOT=/	/bin/pwd	# deprecated
 
+alice node1 = /bin/ls
+
 @includedir /etc/sudoers.d
 # the line below is not a comment
 #includedir /etc/sudoers.d
