@@ -10,6 +10,7 @@ Defaults@172.16.0.1/12 env_reset
 Defaults@!192.168.0.1/255.255.0.0 env_reset
 
 Host_Alias LOCALHOST = 192.168.0.1
+Host_Alias FOO = ::ffff:c0a8:102, 0:0:0:0:0:ffff:c0a8:0102, 0000:0000:0000:0000:0000:ffff:c0a8:0102
 
 # user (:) and runas (>)
 Defaults:alice		env_keep += "*EDITOR"
