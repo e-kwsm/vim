@@ -92,7 +92,7 @@ syn match   sudoersCmndNameInSpec     contained '[^[:space:],:=\\]\+\%(\\[[:spac
 syn match   sudoersCmndAliasInSpec    contained '\<\u[A-Z0-9_]*\>'  nextgroup=@sudoersCmndSpec        skipwhite skipnl
 
 " yyyymmddHHMMSS
-syn match   sudoersDate /\<[1-9][0-9]\{9}\%([0-9]\{2\}\)\{0,2\}\%(Z\|[+-][0-9]\{4\}\)\?\>/
+syn match   sudoersDate /\<[0-9]\{10}\%([0-9]\{2\}\)\{0,2\}\%(Z\|[+-][0-9]\{4\}\)\?\>/
 
 syn match   sudoersUserAliasEquals  contained '=' nextgroup=@sudoersUserInList  skipwhite skipnl
 syn match   sudoersUserListComma    contained ',' nextgroup=@sudoersUserInList  skipwhite skipnl
