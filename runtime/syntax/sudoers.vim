@@ -372,16 +372,10 @@ syn keyword sudoersResourceParameter contained
                                   \ rlimit_rss
                                   \ rlimit_stack
 
-syn keyword sudoersListParameter    contained
-                                  \ nextgroup=sudoersListParameterEquals
-                                  \ skipwhite skipnl
-                                  \ env_check
-                                  \ env_delete
-                                  \ env_keep
-                                  \ log_servers
-                                  \ passprompt_regex
+syn match   sudoersParameterListComma contained ',' nextgroup=@sudoersParameter skipwhite skipnl
+syn match   sudoersResourceParameterComma contained '\\,' nextgroup=@sudoersResourceValueSpecial,@sudoersResourceValue skipwhite skipnl
 
-syn cluster sudoersParameter        contains=sudoersBooleanParameter,sudoersIntegerParameter,sudoersIntegerOrBooleanParameter,sudoersModeParameter,sudoersModeOrBooleanParameter,sudoersTimespecParameter,sudoersStringParameter,sudoersListParameter,sudoersResourceParameter
+syn cluster sudoersParameter        contains=sudoersBooleanParameter,sudoersIntegerParameter,sudoersIntegerOrBooleanParameter,sudoersModeParameter,sudoersTimespecParameter,sudoersStringParameter,sudoersStringOrBooleanParameter,sudoersListParameter,sudoersResourceParameter
 
 syn match   sudoersIntegerParameterEquals contained       '=' nextgroup=sudoersIntegerValue skipwhite skipnl
 syn match   sudoersModeParameterEquals    contained       '=' nextgroup=sudoersModeValue    skipwhite skipnl
