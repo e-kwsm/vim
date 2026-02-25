@@ -386,6 +386,8 @@ syn keyword sudoersResourceParameter contained
                                   \ rlimit_rss
                                   \ rlimit_stack
 
+syn keyword sudoersDeprecatedParameter runchroot
+
 syn match   sudoersParameterListComma contained ',' nextgroup=@sudoersParameter skipwhite skipnl
 syn match   sudoersResourceParameterComma contained '\\,' nextgroup=@sudoersResourceValueSpecial,@sudoersResourceValue skipwhite skipnl
 
@@ -582,6 +584,7 @@ hi def link sudoersDirectorySpecParam       String
 hi def link sudoersTagSpec                  Special
 hi def link sudoersTagSpecColon             Delimiter
 hi def link sudoersInclude                  Statement
+hi def link sudoersDeprecatedParameter      ErrorMsg
 
 let b:current_syntax = "sudoers"
 
