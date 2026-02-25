@@ -24,6 +24,12 @@ Defaults:%#1001		!lecture
 Defaults:!!!ALL		!lecture
 Defaults>!!!!ALL	!lecture
 
+# T_CHPATH
+Defaults !runchroot
+Defaults admin_flag=/
+Defaults runchroot=~
+Defaults runcwd=*
+
 User_Alias ADMIN = !alice, bob, !#1000
 Runas_Alias ADMIN = !alice, bob, !#1000, ALL
 
