@@ -1,0 +1,4 @@
+# vi:ft=sudoers
+# root and users in group wheel can run anything on any machine as any user
+root		ALL = (ALL:ALL) ALL
+%wheel		ALL = (ALL:ALL) ALL
