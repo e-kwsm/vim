@@ -1,0 +1,355 @@
+# vi:ft=sudoers
+
+# T_BOOL|T_LOGFAC {{{1
+# Defaults syslog
+# authpriv, auth, daemon, user, local0, local1, local2, local3, local4, local5, local6, local7
+Defaults syslog=auth
+Defaults !syslog
+
+# T_BOOL|T_LOGPRI {{{1
+# alert, crit, debug, emerg, err, info, notice, warning, none
+Defaults syslog_badpri=alert
+Defaults syslog_goodpri=notice
+Defaults !syslog_badpri
+Defaults !syslog_goodpri
+
+# T_FLAG {{{1
+Defaults always_query_group_plugin
+Defaults always_set_home
+Defaults authenticate
+Defaults case_insensitive_group
+Defaults case_insensitive_user
+Defaults closefrom_override
+Defaults compress_io
+Defaults env_editor
+Defaults env_reset
+Defaults exec_background
+Defaults fast_glob
+Defaults fqdn
+Defaults ignore_audit_errors
+Defaults ignore_dot
+Defaults ignore_iolog_errors
+Defaults ignore_local_sudoers
+Defaults ignore_logfile_errors
+Defaults ignore_unknown_defaults
+Defaults insults
+Defaults intercept
+Defaults intercept_allow_setid
+Defaults intercept_authenticate
+Defaults intercept_verify
+Defaults iolog_flush
+Defaults log_allowed
+Defaults log_denied
+Defaults log_exit_status
+Defaults log_host
+Defaults log_input
+Defaults log_output
+Defaults log_passwords
+Defaults log_server_keepalive
+Defaults log_server_verify
+Defaults log_stderr
+Defaults log_stdin
+Defaults log_stdout
+Defaults log_subcmds
+Defaults log_ttyin
+Defaults log_ttyout
+Defaults log_year
+Defaults long_otp_prompt
+Defaults mail_all_cmnds
+Defaults mail_always
+Defaults mail_badpass
+Defaults mail_no_host
+Defaults mail_no_perms
+Defaults mail_no_user
+Defaults match_group_by_gid
+Defaults netgroup_tuple
+Defaults noexec
+Defaults noninteractive_auth
+Defaults pam_acct_mgmt
+Defaults pam_rhost
+Defaults pam_ruser
+Defaults pam_session
+Defaults pam_setcred
+Defaults pam_silent
+Defaults passprompt_override
+Defaults path_info
+Defaults preserve_groups
+Defaults pwfeedback
+Defaults requiretty
+Defaults root_sudo
+Defaults rootpw
+Defaults runas_allow_unknown_id
+Defaults runas_check_shell
+Defaults runaspw
+Defaults selinux
+Defaults set_home
+Defaults set_logname
+Defaults set_utmp
+Defaults setenv
+Defaults shell_noargs
+Defaults stay_setuid
+Defaults sudoedit_checkdir
+Defaults sudoedit_follow
+Defaults syslog_pid
+Defaults targetpw
+Defaults tty_tickets
+Defaults umask_override
+Defaults use_loginclass
+Defaults use_netgroups
+Defaults use_pty
+Defaults user_command_timeouts
+Defaults utmp_runas
+Defaults visiblepw
+Defaults !always_query_group_plugin
+Defaults !always_set_home
+Defaults !authenticate
+Defaults !case_insensitive_group
+Defaults !case_insensitive_user
+Defaults !closefrom_override
+Defaults !compress_io
+Defaults !env_editor
+Defaults !env_reset
+Defaults !exec_background
+Defaults !fast_glob
+Defaults !fqdn
+Defaults !ignore_audit_errors
+Defaults !ignore_dot
+Defaults !ignore_iolog_errors
+Defaults !ignore_local_sudoers
+Defaults !ignore_logfile_errors
+Defaults !ignore_unknown_defaults
+Defaults !insults
+Defaults !intercept
+Defaults !intercept_allow_setid
+Defaults !intercept_authenticate
+Defaults !intercept_verify
+Defaults !iolog_flush
+Defaults !log_allowed
+Defaults !log_denied
+Defaults !log_exit_status
+Defaults !log_host
+Defaults !log_input
+Defaults !log_output
+Defaults !log_passwords
+Defaults !log_server_keepalive
+Defaults !log_server_verify
+Defaults !log_stderr
+Defaults !log_stdin
+Defaults !log_stdout
+Defaults !log_subcmds
+Defaults !log_ttyin
+Defaults !log_ttyout
+Defaults !log_year
+Defaults !long_otp_prompt
+Defaults !mail_all_cmnds
+Defaults !mail_always
+Defaults !mail_badpass
+Defaults !mail_no_host
+Defaults !mail_no_perms
+Defaults !mail_no_user
+Defaults !match_group_by_gid
+Defaults !netgroup_tuple
+Defaults !noexec
+Defaults !noninteractive_auth
+Defaults !pam_acct_mgmt
+Defaults !pam_rhost
+Defaults !pam_ruser
+Defaults !pam_session
+Defaults !pam_setcred
+Defaults !pam_silent
+Defaults !passprompt_override
+Defaults !path_info
+Defaults !preserve_groups
+Defaults !pwfeedback
+Defaults !requiretty
+Defaults !root_sudo
+Defaults !rootpw
+Defaults !runas_allow_unknown_id
+Defaults !runas_check_shell
+Defaults !runaspw
+Defaults !selinux
+Defaults !set_home
+Defaults !set_logname
+Defaults !set_utmp
+Defaults !setenv
+Defaults !shell_noargs
+Defaults !stay_setuid
+Defaults !sudoedit_checkdir
+Defaults !sudoedit_follow
+Defaults !syslog_pid
+Defaults !targetpw
+Defaults !tty_tickets
+Defaults !umask_override
+Defaults !use_loginclass
+Defaults !use_netgroups
+Defaults !use_pty
+Defaults !user_command_timeouts
+Defaults !utmp_runas
+Defaults !visiblepw
+
+# T_BOOL|T_TUPLE {{{1
+Defaults fdexec
+Defaults lecture
+Defaults listpw
+Defaults verifypw
+# always, never, digest_only
+Defaults fdexec=digest_only
+# always, never, once
+Defaults lecture=once
+# all, always, any, never
+Defaults listpw=any
+# all, always, any, never
+Defaults verifypw=all
+Defaults !fdexec
+Defaults !lecture
+Defaults !listpw
+Defaults !verifypw
+
+# T_BOOL|T_PATH|T_STR {{{1
+Defaults env_file=/etc/environment
+Defaults lecture_file=/etc/sudo.lecture
+Defaults log_server_cabundle=/etc/ssl/cacert.pem
+Defaults log_server_peer_cert=/etc/ssl/localhost.crt
+Defaults log_server_peer_key=/etc/ssl/private/localhost.key
+Defaults logfile=/var/log/sudo.log
+Defaults mailerpath=/usr/bin/mail
+Defaults restricted_env_file=/etc/environment.sudo
+Defaults !env_file
+Defaults !lecture_file
+Defaults !log_server_cabundle
+Defaults !log_server_peer_cert
+Defaults !log_server_peer_key
+Defaults !logfile
+Defaults !mailerpath
+Defaults !restricted_env_file
+
+# T_BOOL|T_UINT {{{1
+Defaults loglinelen=80
+Defaults !loglinelen
+
+# T_BOOL|T_TIMESPEC {{{1
+Defaults passwd_timeout=5
+Defaults timestamp_timeout=5
+Defaults !passwd_timeout
+Defaults !timestamp_timeout
+
+# T_UINT {{{1
+Defaults passwd_tries=3
+Defaults syslog_maxlen=1024
+
+# T_BOOL|T_MODE {{{1
+Defaults umask=0022
+Defaults !umask
+
+# T_BOOL|T_STR {{{1
+Defaults exempt_group=/
+Defaults iolog_group=/
+Defaults iolog_user=/
+Defaults mailerflags=-t
+Defaults mailfrom=/
+Defaults mailto=/
+Defaults secure_path="/usr/sbin:/usr/local/sbin"
+Defaults !exempt_group
+Defaults !iolog_group
+Defaults !iolog_user
+Defaults !mailerflags
+Defaults !mailfrom
+Defaults !mailto
+Defaults !secure_path
+
+# T_STR {{{1
+Defaults apparmor_profile=/
+Defaults authfail_message=/
+Defaults badpass_message=/
+Defaults cmddenial_message=/
+Defaults group_plugin=/
+Defaults iolog_file=/
+Defaults limitprivs=/
+Defaults mailsub=/
+Defaults maxseq=2176782336
+Defaults pam_askpass_service=/
+Defaults pam_login_service=/
+Defaults pam_service=/
+Defaults passprompt=/
+Defaults privs=/
+Defaults role=/
+Defaults runas_default=root
+Defaults sudoers_locale=C
+Defaults timestampowner=root
+Defaults type=/
+
+# T_PATH|T_STR {{{1
+Defaults editor="/usr/bin/vim:/bin/vi"
+Defaults iolog_dir=/var/log/sudo-io
+Defaults lecture_status_dir=/var/db/sudo/lectured
+Defaults timestampdir=/run/sudo/ts
+
+# T_INT {{{1
+Defaults closefrom=3
+
+# T_BOOL|T_LIST {{{1
+Defaults env_check=x
+Defaults env_delete=x
+Defaults env_keep=x
+Defaults log_servers=x
+Defaults !env_check
+Defaults !env_delete
+Defaults !env_keep
+Defaults !log_servers
+
+# T_MODE {{{1
+Defaults iolog_mode=0600
+
+# T_BOOL|T_TIMEOUT {{{1
+Defaults command_timeout=2
+Defaults log_server_timeout=30
+Defaults !command_timeout
+Defaults !log_server_timeout
+
+# T_TUPLE {{{1
+Defaults intercept_type=dso
+Defaults intercept_type=trace
+Defaults log_format=json
+Defaults log_format=json_compact
+Defaults log_format=json_pretty
+Defaults log_format=sudo
+Defaults timestamp_type=global
+Defaults timestamp_type=ppid
+Defaults timestamp_type=tty
+Defaults timestamp_type=kernel
+
+# T_BOOL|T_CHPATH|T_STR {{{1
+Defaults admin_flag=/path/to/file
+# Defaults runchroot=/
+Defaults runcwd=~
+Defaults !admin_flag
+# Defaults !runchroot
+Defaults !runcwd
+
+# T_BOOL|T_RLIMIT {{{1
+Defaults rlimit_as=infinity
+Defaults rlimit_core=infinity
+Defaults rlimit_cpu=infinity
+Defaults rlimit_data=infinity
+Defaults rlimit_fsize=infinity
+Defaults rlimit_locks=infinity
+Defaults rlimit_memlock=infinity
+Defaults rlimit_nofile=infinity
+Defaults rlimit_nproc=infinity
+Defaults rlimit_rss=infinity
+Defaults rlimit_stack=infinity
+Defaults !rlimit_as
+Defaults !rlimit_core
+Defaults !rlimit_cpu
+Defaults !rlimit_data
+Defaults !rlimit_fsize
+Defaults !rlimit_locks
+Defaults !rlimit_memlock
+Defaults !rlimit_nofile
+Defaults !rlimit_nproc
+Defaults !rlimit_rss
+Defaults !rlimit_stack
+
+# T_BOOL|T_LIST|T_SPACE {{{1
+# Defaults passprompt_regex="passwd"
+Defaults !passprompt_regex
