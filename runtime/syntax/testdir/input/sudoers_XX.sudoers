@@ -1,7 +1,7 @@
 # vi:ft=sudoers
 
 # T_BOOL|T_LOGFAC {{{1
-# Defaults syslog
+Defaults syslog	# LOGFAC
 # authpriv, auth, daemon, user, local0, local1, local2, local3, local4, local5, local6, local7
 Defaults syslog=auth
 Defaults !syslog
@@ -224,10 +224,13 @@ Defaults !mailerpath
 Defaults !restricted_env_file
 
 # T_BOOL|T_UINT {{{1
+Defaults loglinelen=0
 Defaults loglinelen=80
 Defaults !loglinelen
 
 # T_BOOL|T_TIMESPEC {{{1
+Defaults passwd_timeout=-0.3
+Defaults passwd_timeout=0
 Defaults passwd_timeout=5
 Defaults timestamp_timeout=5
 Defaults !passwd_timeout
@@ -242,12 +245,12 @@ Defaults umask=0022
 Defaults !umask
 
 # T_BOOL|T_STR {{{1
-Defaults exempt_group=/
-Defaults iolog_group=/
-Defaults iolog_user=/
+# Defaults exempt_group=/
+# Defaults iolog_group=/
+# Defaults iolog_user=/
 Defaults mailerflags=-t
-Defaults mailfrom=/
-Defaults mailto=/
+# Defaults mailfrom=/
+# Defaults mailto=/
 Defaults secure_path="/usr/sbin:/usr/local/sbin"
 Defaults !exempt_group
 Defaults !iolog_group
@@ -258,25 +261,25 @@ Defaults !mailto
 Defaults !secure_path
 
 # T_STR {{{1
-Defaults apparmor_profile=/
-Defaults authfail_message=/
-Defaults badpass_message=/
-Defaults cmddenial_message=/
-Defaults group_plugin=/
-Defaults iolog_file=/
-Defaults limitprivs=/
-Defaults mailsub=/
+# Defaults apparmor_profile=/
+# Defaults authfail_message=/
+# Defaults badpass_message=/
+# Defaults cmddenial_message=/
+# Defaults group_plugin=/
+# Defaults iolog_file=/
+# Defaults limitprivs=/
+# Defaults mailsub=/
 Defaults maxseq=2176782336
-Defaults pam_askpass_service=/
-Defaults pam_login_service=/
-Defaults pam_service=/
-Defaults passprompt=/
-Defaults privs=/
-Defaults role=/
+# Defaults pam_askpass_service=/
+# Defaults pam_login_service=/
+# Defaults pam_service=/
+# Defaults passprompt=/
+# Defaults privs=/
+# Defaults role=/
 Defaults runas_default=root
 Defaults sudoers_locale=C
 Defaults timestampowner=root
-Defaults type=/
+# Defaults type=/
 
 # T_PATH|T_STR {{{1
 Defaults editor="/usr/bin/vim:/bin/vi"
@@ -288,10 +291,12 @@ Defaults timestampdir=/run/sudo/ts
 Defaults closefrom=3
 
 # T_BOOL|T_LIST {{{1
-Defaults env_check=x
-Defaults env_delete=x
-Defaults env_keep=x
-Defaults log_servers=x
+Defaults env_check="LANG LC_*"
+Defaults env_delete=TZ
+Defaults env_keep="DISPLAY HOME"
+Defaults log_servers="logger:30344"
+Defaults env_delete-="DISPLAY XTERM"
+Defaults env_keep+="DISPLAY XTERM"
 Defaults !env_check
 Defaults !env_delete
 Defaults !env_keep
@@ -319,8 +324,8 @@ Defaults timestamp_type=tty
 Defaults timestamp_type=kernel
 
 # T_BOOL|T_CHPATH|T_STR {{{1
-Defaults admin_flag=/path/to/file
-# Defaults runchroot=/
+# Defaults admin_flag=/path/to/file
+# # Defaults runchroot
 Defaults runcwd=~
 Defaults !admin_flag
 # Defaults !runchroot
