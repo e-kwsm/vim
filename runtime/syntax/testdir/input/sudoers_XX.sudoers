@@ -307,6 +307,7 @@ Defaults iolog_mode=0600
 
 # T_BOOL|T_TIMEOUT {{{1
 Defaults command_timeout=2
+Defaults command_timeout=2s
 Defaults log_server_timeout=30
 Defaults !command_timeout
 Defaults !log_server_timeout
