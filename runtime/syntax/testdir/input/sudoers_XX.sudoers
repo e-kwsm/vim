@@ -14,6 +14,8 @@ Defaults !syslog
 # alert, crit, debug, emerg, err, info, notice, warning, none
 Defaults syslog_badpri=alert
 Defaults syslog_goodpri=notice
+# Defaults syslog_badpri+=alert
+# Defaults syslog_badpri-=alert
 Defaults !syslog_badpri
 Defaults !syslog_goodpri
 
