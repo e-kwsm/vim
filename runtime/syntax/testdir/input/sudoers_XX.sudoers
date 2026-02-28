@@ -376,6 +376,17 @@ Defaults !admin_flag
 Defaults !runcwd
 
 # T_BOOL|T_RLIMIT {{{1
+# Defaults rlimit_as
+# Defaults rlimit_core
+# Defaults rlimit_cpu
+# Defaults rlimit_data
+# Defaults rlimit_fsize
+# Defaults rlimit_locks
+# Defaults rlimit_memlock
+# Defaults rlimit_nofile
+# Defaults rlimit_nproc
+# Defaults rlimit_rss
+# Defaults rlimit_stack
 Defaults rlimit_as=infinity
 Defaults rlimit_core=infinity
 Defaults rlimit_cpu=infinity
