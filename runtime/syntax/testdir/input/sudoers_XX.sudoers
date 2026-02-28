@@ -324,8 +324,8 @@ Defaults timestamp_type=tty
 Defaults timestamp_type=kernel
 
 # T_BOOL|T_CHPATH|T_STR {{{1
-# Defaults admin_flag=/path/to/file
 # # Defaults runchroot
+# Defaults admin_flag=/path/to/file
 Defaults runcwd=~
 Defaults !admin_flag
 # Defaults !runchroot
@@ -356,5 +356,7 @@ Defaults !rlimit_rss
 Defaults !rlimit_stack
 
 # T_BOOL|T_LIST|T_SPACE {{{1
-# Defaults passprompt_regex="passwd"
+Defaults passprompt_regex="(?i)password"
+Defaults passprompt_regex-="(?i)password"
+Defaults passprompt_regex+="(?i)password"
 Defaults !passprompt_regex
