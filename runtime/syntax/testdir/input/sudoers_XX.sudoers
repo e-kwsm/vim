@@ -224,13 +224,18 @@ Defaults !mailerpath
 Defaults !restricted_env_file
 
 # T_BOOL|T_UINT {{{1
+# Defaults loglinelen
 Defaults loglinelen=0
 Defaults loglinelen=80
 Defaults !loglinelen
 
 # T_BOOL|T_TIMESPEC {{{1
+# Defaults passwd_timeout
+# Defaults timestamp_timeout
 Defaults passwd_timeout=-0.3
+Defaults passwd_timeout=-1
 Defaults passwd_timeout=0
+Defaults passwd_timeout=2.5
 Defaults passwd_timeout=5
 Defaults timestamp_timeout=5
 Defaults !passwd_timeout
@@ -262,18 +267,18 @@ Defaults !secure_path
 
 # T_STR {{{1
 # Defaults apparmor_profile=/
-# Defaults authfail_message=/
-# Defaults badpass_message=/
-# Defaults cmddenial_message=/
+Defaults authfail_message="Learn to type!"
+Defaults badpass_message="Take off, eh!"
+Defaults cmddenial_message="That's not allowed!"
 # Defaults group_plugin=/
 # Defaults iolog_file=/
 # Defaults limitprivs=/
-# Defaults mailsub=/
+Defaults mailsub="*** SECURITY information for %h ***"
 Defaults maxseq=2176782336
 # Defaults pam_askpass_service=/
 # Defaults pam_login_service=/
 # Defaults pam_service=/
-# Defaults passprompt=/
+Defaults passprompt="[sudo] password for %p: "
 # Defaults privs=/
 # Defaults role=/
 Defaults runas_default=root
@@ -344,6 +349,17 @@ Defaults rlimit_nofile=infinity
 Defaults rlimit_nproc=infinity
 Defaults rlimit_rss=infinity
 Defaults rlimit_stack=infinity
+Defaults rlimit_stack=0
+Defaults rlimit_stack="0,0"
+Defaults rlimit_stack="infinity,0"
+Defaults rlimit_stack="0,infinity"
+Defaults rlimit_stack="infinity,infinity"
+Defaults rlimit_stack=0\,0
+Defaults rlimit_stack=infinity\,0
+Defaults rlimit_stack=0\,infinity
+Defaults rlimit_stack=infinity\,infinity
+Defaults rlimit_stack=default
+Defaults rlimit_stack=user
 Defaults !rlimit_as
 Defaults !rlimit_core
 Defaults !rlimit_cpu
