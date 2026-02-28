@@ -176,7 +176,7 @@ syn match sudoersSHA384 /\<sha384:[A-Za-z0-9+/]\{64\}\>/
 syn match sudoersSHA512 /\<sha512:[A-Za-z0-9+/]\{86\}==/
 
 " TODO: could also deal with special characters here
-syn match   sudoersBooleanParameter contained '!' nextgroup=sudoersBooleanParameter,sudoersModeOrBooleanParameter,sudoersStringOrBooleanParameter,sudoersTimespecOrBooleanParameter skipwhite skipnl
+syn match   sudoersBooleanParameter contained '!' nextgroup=sudoersBooleanParameter,sudoersIntegerOrBooleanParameter,sudoersModeOrBooleanParameter,sudoersStringOrBooleanParameter,sudoersTimespecOrBooleanParameter skipwhite skipnl
 syn keyword sudoersBooleanParameter contained skipwhite skipnl
                                   \ always_query_group_plugin
                                   \ always_set_home
@@ -379,7 +379,7 @@ syn keyword sudoersDeprecatedParameter runchroot
 syn match   sudoersParameterListComma contained ',' nextgroup=@sudoersParameter skipwhite skipnl
 syn match   sudoersResourceParameterComma contained '\\,' nextgroup=@sudoersResourceValueSpecial,@sudoersResourceValue skipwhite skipnl
 
-syn cluster sudoersParameter        contains=sudoersBooleanParameter,sudoersIntegerParameter,sudoersModeParameter,sudoersModeOrBooleanParameter,sudoersTimespecOrBooleanParameter,sudoersStringParameter,sudoersStringOrBooleanParameter,sudoersListParameter,sudoersResourceParameter
+syn cluster sudoersParameter        contains=sudoersBooleanParameter,sudoersIntegerParameter,sudoersIntegerOrBooleanParameter,sudoersModeParameter,sudoersModeOrBooleanParameter,sudoersTimespecOrBooleanParameter,sudoersStringParameter,sudoersStringOrBooleanParameter,sudoersListParameter,sudoersResourceParameter
 
 syn match   sudoersIntegerParameterEquals contained       '=' nextgroup=sudoersIntegerValue skipwhite skipnl
 syn match   sudoersModeParameterEquals    contained       '=' nextgroup=sudoersModeValue    skipwhite skipnl
