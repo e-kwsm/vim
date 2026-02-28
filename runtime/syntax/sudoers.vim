@@ -289,11 +289,11 @@ syn match   sudoersParameterListComma contained ',' nextgroup=@sudoersParameter 
 
 syn cluster sudoersParameter        contains=sudoersBooleanParameter,sudoersIntegerParameter,sudoersStringParameter,sudoersListParameter
 
-syn match   sudoersIntegerParameterEquals contained '[+-]\==' nextgroup=sudoersIntegerValue skipwhite skipnl
+syn match   sudoersIntegerParameterEquals contained       '=' nextgroup=sudoersIntegerValue skipwhite skipnl
 syn match   sudoersStringParameterEquals  contained '[+-]\==' nextgroup=sudoersStringValue  skipwhite skipnl
 syn match   sudoersListParameterEquals    contained '[+-]\==' nextgroup=sudoersListValue    skipwhite skipnl
 
-syn match   sudoersIntegerValue contained '\d\+' nextgroup=sudoersParameterListComma skipwhite skipnl
+syn match   sudoersIntegerValue contained '\<\d\+\>' nextgroup=sudoersParameterListComma skipwhite skipnl
 syn match   sudoersStringValue  contained '[^[:space:],:=\\]*\%(\\[[:space:],:=\\][^[:space:],:=\\]*\)*' nextgroup=sudoersParameterListComma skipwhite skipnl
 syn region  sudoersStringValue  contained start=+"+ skip=+\\"+ end=+"+ nextgroup=sudoersParameterListComma skipwhite skipnl
 syn match   sudoersListValue    contained '[^[:space:],:=\\]*\%(\\[[:space:],:=\\][^[:space:],:=\\]*\)*' nextgroup=sudoersParameterListComma skipwhite skipnl
