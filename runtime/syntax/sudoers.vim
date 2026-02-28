@@ -391,7 +391,7 @@ syn match   sudoersResourceParameterEquals contained      '=' nextgroup=sudoersR
 
 syn match   sudoersIntegerValue contained '\<\d\+\>' nextgroup=sudoersParameterListComma skipwhite skipnl
 syn match   sudoersModeValue    contained '\<\o\+\>' nextgroup=sudoersParameterListComma skipwhite skipnl
-syn match   sudoersTimespecValue contained '-\?\%(\<\d\+\>\|\<\d\+\%(\.\%(\d\+\>\)\?\)\?\|\.\d\+\>\)' nextgroup=sudoersParameterListComma skipwhite skipnl
+syn match   sudoersTimespecValue contained '-\?\%(\d\+\>\|\d\+\%(\.\%(\d\+\>\)\?\)\?\|\.\d\+\>\)' nextgroup=sudoersParameterListComma skipwhite skipnl
 syn match   sudoersTimeoutValue contained '\<\d\+\>' nextgroup=sudoersTimeoutListComma skipwhite skipnl
 syn match   sudoersTimeoutValue contained '\%(\d\+[dD]\)\?\%(\%(\d\+[hH]\)\?\%(\d\+[mM]\)\?\%(\d\+[sS]\)\?\)\?' nextgroup=sudoersTimeoutListComma skipwhite skipnl
 syn match   sudoersTimeoutValue contained '\%(\d\+[hH]\)\?\%(\%(\d\+[mM]\)\?\%(\d\+[sS]\)\?\)\?' nextgroup=sudoersTimeoutListComma skipwhite skipnl
@@ -498,10 +498,10 @@ hi def link sudoersIntegerOrBooleanParameter Identifier
 hi def link sudoersModeParameter            Identifier
 hi def link sudoersModeOrBooleanParameter   Identifier
 hi def link sudoersTimespecOrBooleanParameter Identifier
-hi def link sudoersTimeoutParameter         Identifier
+hi def link sudoersTimeoutOrBooleanParameter  Identifier
 hi def link sudoersStringParameter          Identifier
 hi def link sudoersStringOrBooleanParameter Identifier
-hi def link sudoersListParameter            Identifier
+hi def link sudoersListOrBooleanParameter   Identifier
 hi def link sudoersResourceParameter        Identifier
 hi def link sudoersParameterListComma       Delimiter
 hi def link sudoersResourceParameterComma   Delimiter
