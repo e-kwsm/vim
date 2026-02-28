@@ -7,6 +7,8 @@ Defaults syslog=auth
 Defaults !syslog
 
 # T_BOOL|T_LOGPRI {{{1
+# Defaults syslog_badpri
+# Defaults syslog_goodpri
 # alert, crit, debug, emerg, err, info, notice, warning, none
 Defaults syslog_badpri=alert
 Defaults syslog_goodpri=notice
@@ -246,16 +248,24 @@ Defaults passwd_tries=3
 Defaults syslog_maxlen=1024
 
 # T_BOOL|T_MODE {{{1
+# Defaults umask
 Defaults umask=0022
 Defaults !umask
 
 # T_BOOL|T_STR {{{1
-# Defaults exempt_group=/
-# Defaults iolog_group=/
-# Defaults iolog_user=/
+# Defaults exempt_group
+# Defaults iolog_group
+# Defaults iolog_user
+# Defaults mailerflags
+# Defaults mailfrom
+# Defaults mailto
+# Defaults secure_path
+Defaults exempt_group=wheel
+Defaults iolog_group=wheel
+Defaults iolog_user=alice
 Defaults mailerflags=-t
-# Defaults mailfrom=/
-# Defaults mailto=/
+Defaults mailfrom="root@example.com"
+Defaults mailto="notify@example.com"
 Defaults secure_path="/usr/sbin:/usr/local/sbin"
 Defaults !exempt_group
 Defaults !iolog_group
@@ -296,6 +306,10 @@ Defaults timestampdir=/run/sudo/ts
 Defaults closefrom=3
 
 # T_BOOL|T_LIST {{{1
+# Defaults env_check
+# Defaults env_delete
+# Defaults env_keep
+# Defaults log_servers
 Defaults env_check="LANG LC_*"
 Defaults env_delete=TZ
 Defaults env_keep="DISPLAY HOME"
@@ -311,8 +325,14 @@ Defaults !log_servers
 Defaults iolog_mode=0600
 
 # T_BOOL|T_TIMEOUT {{{1
+# Defaults command_timeout
+# Defaults log_server_timeout
 Defaults command_timeout=2
 Defaults command_timeout=2s
+Defaults command_timeout=2m
+Defaults command_timeout=2h
+Defaults command_timeout=2d
+Defaults command_timeout=1D2H3M4S
 Defaults log_server_timeout=30
 Defaults !command_timeout
 Defaults !log_server_timeout
@@ -330,8 +350,11 @@ Defaults timestamp_type=tty
 Defaults timestamp_type=kernel
 
 # T_BOOL|T_CHPATH|T_STR {{{1
+# Defaults admin_flag
 # # Defaults runchroot
+# Defaults runcwd
 # Defaults admin_flag=/path/to/file
+# Defaults runchroot=/
 Defaults runcwd=~
 Defaults !admin_flag
 # Defaults !runchroot
@@ -373,6 +396,7 @@ Defaults !rlimit_rss
 Defaults !rlimit_stack
 
 # T_BOOL|T_LIST|T_SPACE {{{1
+# Defaults passprompt_regex
 Defaults passprompt_regex="(?i)password"
 Defaults passprompt_regex-="(?i)password"
 Defaults passprompt_regex+="(?i)password"
