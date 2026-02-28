@@ -309,6 +309,7 @@ Defaults timestampowner=root
 # T_PATH|T_STR {{{1
 Defaults editor="/usr/bin/vim:/bin/vi"
 Defaults iolog_dir=/var/log/sudo-io
+Defaults iolog_dir="/var/log/sudo-io/%{user}"
 Defaults lecture_status_dir=/var/db/sudo/lectured
 Defaults timestampdir=/run/sudo/ts
 
