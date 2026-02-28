@@ -391,7 +391,7 @@ syn match   sudoersResourceParameterEquals contained      '=' nextgroup=sudoersR
 
 syn match   sudoersIntegerValue contained '\<\d\+\>' nextgroup=sudoersParameterListComma skipwhite skipnl
 syn match   sudoersModeValue    contained '\<\o\+\>' nextgroup=sudoersParameterListComma skipwhite skipnl
-syn match   sudoersTimespecValue contained '\<\d\+\>\|\<\d\+\%(\.\%(\d\+\>\)\?\)\?\|\.\d\+\>' nextgroup=sudoersParameterListComma skipwhite skipnl
+syn match   sudoersTimespecValue contained '-\?\%(\<\d\+\>\|\<\d\+\%(\.\%(\d\+\>\)\?\)\?\|\.\d\+\>\)' nextgroup=sudoersParameterListComma skipwhite skipnl
 syn match   sudoersTimeoutValue contained '\<\d\+\>' nextgroup=sudoersTimeoutListComma skipwhite skipnl
 syn match   sudoersTimeoutValue contained '\%(\d\+[dD]\)\?\%(\%(\d\+[hH]\)\?\%(\d\+[mM]\)\?\%(\d\+[sS]\)\?\)\?' nextgroup=sudoersTimeoutListComma skipwhite skipnl
 syn match   sudoersTimeoutValue contained '\%(\d\+[hH]\)\?\%(\%(\d\+[mM]\)\?\%(\d\+[sS]\)\?\)\?' nextgroup=sudoersTimeoutListComma skipwhite skipnl
