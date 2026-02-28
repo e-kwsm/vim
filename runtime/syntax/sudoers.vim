@@ -176,7 +176,7 @@ syn match sudoersSHA384 /\<sha384:[A-Za-z0-9+/]\{64\}\>/
 syn match sudoersSHA512 /\<sha512:[A-Za-z0-9+/]\{86\}==/
 
 " TODO: could also deal with special characters here
-syn match   sudoersBooleanParameter contained '!' nextgroup=sudoersBooleanParameter,sudoersIntegerOrBooleanParameter,sudoersModeOrBooleanParameter,sudoersStringOrBooleanParameter,sudoersTimespecOrBooleanParameter skipwhite skipnl
+syn match   sudoersBooleanParameter contained '!' nextgroup=sudoersBooleanParameter,sudoersIntegerOrBooleanParameter,sudoersModeOrBooleanParameter,sudoersStringOrBooleanParameter,sudoersTimespecOrBooleanParameter,sudoersTimeoutOrBooleanParameter skipwhite skipnl
 syn keyword sudoersBooleanParameter contained skipwhite skipnl
                                   \ always_query_group_plugin
                                   \ always_set_home
@@ -294,7 +294,7 @@ syn keyword sudoersModeOrBooleanParameter contained
                                   \ skipwhite skipnl
                                   \ umask
 
-syn keyword sudoersTimeoutParameter contained
+syn keyword sudoersTimeoutOrBooleanParameter contained
                                   \ nextgroup=sudoersTimeoutParameterEquals
                                   \ skipwhite skipnl
                                   \ command_timeout
@@ -379,7 +379,7 @@ syn keyword sudoersDeprecatedParameter runchroot
 syn match   sudoersParameterListComma contained ',' nextgroup=@sudoersParameter skipwhite skipnl
 syn match   sudoersResourceParameterComma contained '\\,' nextgroup=@sudoersResourceValueSpecial,@sudoersResourceValue skipwhite skipnl
 
-syn cluster sudoersParameter        contains=sudoersBooleanParameter,sudoersIntegerParameter,sudoersIntegerOrBooleanParameter,sudoersModeParameter,sudoersModeOrBooleanParameter,sudoersTimespecOrBooleanParameter,sudoersStringParameter,sudoersStringOrBooleanParameter,sudoersListParameter,sudoersResourceParameter
+syn cluster sudoersParameter        contains=sudoersBooleanParameter,sudoersIntegerParameter,sudoersIntegerOrBooleanParameter,sudoersModeParameter,sudoersModeOrBoolParameter,sudoersTimespecOrBoolParameter,sudoersTimeoutParameter,sudoersStringParameter,sudoersStringOrBoolParameter,sudoersListParameter,sudoersResourceParameter
 
 syn match   sudoersIntegerParameterEquals contained       '=' nextgroup=sudoersIntegerValue skipwhite skipnl
 syn match   sudoersModeParameterEquals    contained       '=' nextgroup=sudoersModeValue    skipwhite skipnl
@@ -393,8 +393,8 @@ syn match   sudoersIntegerValue contained '\<\d\+\>' nextgroup=sudoersParameterL
 syn match   sudoersModeValue    contained '\<\o\+\>' nextgroup=sudoersParameterListComma skipwhite skipnl
 syn match   sudoersTimespecValue contained '-\?\%(\d\+\>\|\d\+\%(\.\%(\d\+\>\)\?\)\?\|\.\d\+\>\)' nextgroup=sudoersParameterListComma skipwhite skipnl
 syn match   sudoersTimeoutValue contained '\<\d\+\>' nextgroup=sudoersTimeoutListComma skipwhite skipnl
-syn match   sudoersTimeoutValue contained '\%(\d\+[dD]\)\?\%(\%(\d\+[hH]\)\?\%(\d\+[mM]\)\?\%(\d\+[sS]\)\?\)\?' nextgroup=sudoersTimeoutListComma skipwhite skipnl
-syn match   sudoersTimeoutValue contained '\%(\d\+[hH]\)\?\%(\%(\d\+[mM]\)\?\%(\d\+[sS]\)\?\)\?' nextgroup=sudoersTimeoutListComma skipwhite skipnl
+syn match   sudoersTimeoutValue contained '\<\%(\d\+[dD]\)\?\%(\%(\d\+[hH]\)\?\%(\d\+[mM]\)\?\%(\d\+[sS]\)\?\)\?\>' nextgroup=sudoersTimeoutListComma skipwhite skipnl
+"syn match   sudoersTimeoutValue contained '\%(\d\+h\)\?\%(\%(\d\+m\)\?\%(\d\+s\)\?\)\?' nextgroup=sudoersTimeoutListComma skipwhite skipnl
 syn match   sudoersStringValue  contained '[^[:space:],:=\\]*\%(\\[[:space:],:=\\][^[:space:],:=\\]*\)*' nextgroup=sudoersParameterListComma skipwhite skipnl
 syn region  sudoersStringValue  contained start=+"+ skip=+\\"+ end=+"+ nextgroup=sudoersParameterListComma skipwhite skipnl
 syn match   sudoersListValue    contained '[^[:space:],:=\\]*\%(\\[[:space:],:=\\][^[:space:],:=\\]*\)*' nextgroup=sudoersParameterListComma skipwhite skipnl
