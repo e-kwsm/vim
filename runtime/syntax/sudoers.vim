@@ -176,7 +176,7 @@ syn match sudoersSHA384 /\<sha384:[A-Za-z0-9+/]\{64\}\>/
 syn match sudoersSHA512 /\<sha512:[A-Za-z0-9+/]\{86\}==/
 
 " TODO: could also deal with special characters here
-syn match   sudoersBooleanParameter contained '!' nextgroup=sudoersBooleanParameter,sudoersIntegerOrBooleanParameter,sudoersModeOrBooleanParameter,sudoersStringOrBooleanParameter,sudoersListOrBooleanParameter,sudoersTimespecOrBooleanParameter,sudoersTimeoutOrBooleanParameter skipwhite skipnl
+syn match   sudoersBooleanParameter contained '!' nextgroup=sudoersBooleanParameter,sudoersIntegerOrBooleanParameter,sudoersModeOrBooleanParameter,sudoersStringOrBooleanParameter,sudoersListOrBooleanParameter,sudoersTimespecOrBooleanParameter,sudoersTimeoutOrBooleanParameter,sudoersResourceParameter skipwhite skipnl
 syn keyword sudoersBooleanParameter contained skipwhite skipnl
                                   \ always_query_group_plugin
                                   \ always_set_home
@@ -374,12 +374,21 @@ syn keyword sudoersResourceParameter contained
                                   \ rlimit_rss
                                   \ rlimit_stack
 
+syn keyword sudoersListParameter    contained
+                                  \ nextgroup=sudoersListParameterEquals
+                                  \ skipwhite skipnl
+                                  \ env_check
+                                  \ env_delete
+                                  \ env_keep
+                                  \ log_servers
+                                  \ passprompt_regex
+
 syn keyword sudoersDeprecatedParameter runchroot
 
 syn match   sudoersParameterListComma contained ',' nextgroup=@sudoersParameter skipwhite skipnl
 syn match   sudoersResourceParameterComma contained '\\,' nextgroup=@sudoersResourceValueSpecial,@sudoersResourceValue skipwhite skipnl
 
-syn cluster sudoersParameter        contains=sudoersBooleanParameter,sudoersIntegerParameter,sudoersIntegerOrBooleanParameter,sudoersModeParameter,sudoersModeOrBooleanParameter,sudoersTimespecOrBooleanParameter,sudoersTimeoutParameter,sudoersStringParameter,sudoersStringOrBooleanParameter,sudoersListParameter,sudoersResourceParameter
+syn cluster sudoersParameter        contains=sudoersBooleanParameter,sudoersIntegerParameter,sudoersIntegerOrBooleanParameter,sudoersModeParameter,sudoersModeOrBooleanParameter,sudoersTimespecOrBooleanParameter,sudoersTimeoutOrBooleanParameter,sudoersStringParameter,sudoersStringOrBooleanParameter,sudoersListOrBooleanParameter,sudoersResourceParameter
 
 syn match   sudoersIntegerParameterEquals contained       '=' nextgroup=sudoersIntegerValue skipwhite skipnl
 syn match   sudoersModeParameterEquals    contained       '=' nextgroup=sudoersModeValue    skipwhite skipnl
