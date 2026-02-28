@@ -4,6 +4,8 @@
 Defaults syslog	# LOGFAC
 # authpriv, auth, daemon, user, local0, local1, local2, local3, local4, local5, local6, local7
 Defaults syslog=auth
+# Defaults syslog+=auth
+# Defaults syslog-=auth
 Defaults !syslog
 
 # T_BOOL|T_LOGPRI {{{1
