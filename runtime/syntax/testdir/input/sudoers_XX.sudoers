@@ -206,6 +206,8 @@ Defaults lecture=once
 Defaults listpw=any
 # all, always, any, never
 Defaults verifypw=all
+# Defaults verifypw-=never
+# Defaults verifypw+=never
 Defaults !fdexec
 Defaults !lecture
 Defaults !listpw
@@ -228,6 +230,8 @@ Defaults log_server_peer_key=/etc/ssl/private/localhost.key
 Defaults logfile=/var/log/sudo.log
 Defaults mailerpath=/usr/bin/mail
 Defaults restricted_env_file=/etc/environment.sudo
+# Defaults restricted_env_file+=/etc/environment.sudo
+# Defaults restricted_env_file-=/etc/environment.sudo
 Defaults !env_file
 Defaults !lecture_file
 Defaults !log_server_cabundle
@@ -242,6 +246,8 @@ Defaults !restricted_env_file
 # Defaults loglinelen=-1
 Defaults loglinelen=0
 Defaults loglinelen=80
+# Defaults loglinelen-=80
+# Defaults loglinelen+=80
 Defaults !loglinelen
 
 # T_BOOL|T_TIMESPEC {{{1
@@ -253,6 +259,8 @@ Defaults passwd_timeout=0
 Defaults passwd_timeout=2.5
 Defaults passwd_timeout=5
 Defaults timestamp_timeout=5
+# Defaults timestamp_timeout-=2.5
+# Defaults timestamp_timeout+=2.5
 Defaults !passwd_timeout
 Defaults !timestamp_timeout
 
@@ -260,10 +268,14 @@ Defaults !timestamp_timeout
 # Defaults passwd_tries=-3
 Defaults passwd_tries=3
 Defaults syslog_maxlen=1024
+# Defaults syslog_maxlen-=1024
+# Defaults syslog_maxlen+=1024
 
 # T_BOOL|T_MODE {{{1
 # Defaults umask
 Defaults umask=0022
+# Defaults umask-=0022
+# Defaults umask+=0022
 Defaults !umask
 
 # T_BOOL|T_STR {{{1
@@ -309,6 +321,8 @@ Defaults runas_default=root
 Defaults sudoers_locale=C
 Defaults timestampowner=root
 # Defaults type=/
+# Defaults maxseq-=1000
+# Defaults maxseq+=1000
 
 # T_PATH|T_STR {{{1
 Defaults editor="/usr/bin/vim:/bin/vi"
@@ -319,6 +333,8 @@ Defaults timestampdir=/run/sudo/ts
 
 # T_INT {{{1
 Defaults closefrom=3
+# Defaults closefrom-=3
+# Defaults closefrom+=3
 
 # T_BOOL|T_LIST {{{1
 # Defaults env_check
@@ -367,6 +383,10 @@ Defaults timestamp_type=global
 Defaults timestamp_type=ppid
 Defaults timestamp_type=tty
 Defaults timestamp_type=kernel
+# Defaults intercept_type-=dso
+# Defaults intercept_type+=dso
+# Defaults log_format-=json
+# Defaults log_format+=json
 
 # T_BOOL|T_CHPATH|T_STR {{{1
 # Defaults admin_flag
