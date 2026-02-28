@@ -208,6 +208,14 @@ Defaults !listpw
 Defaults !verifypw
 
 # T_BOOL|T_PATH|T_STR {{{1
+# Defaults env_file
+# Defaults lecture_file
+# Defaults log_server_cabundle
+# Defaults log_server_peer_cert
+# Defaults log_server_peer_key
+# Defaults logfile
+# Defaults mailerpath
+# Defaults restricted_env_file
 Defaults env_file=/etc/environment
 Defaults lecture_file=/etc/sudo.lecture
 Defaults log_server_cabundle=/etc/ssl/cacert.pem
@@ -227,6 +235,7 @@ Defaults !restricted_env_file
 
 # T_BOOL|T_UINT {{{1
 # Defaults loglinelen
+# Defaults loglinelen=-1
 Defaults loglinelen=0
 Defaults loglinelen=80
 Defaults !loglinelen
@@ -244,6 +253,7 @@ Defaults !passwd_timeout
 Defaults !timestamp_timeout
 
 # T_UINT {{{1
+# Defaults passwd_tries=-3
 Defaults passwd_tries=3
 Defaults syslog_maxlen=1024
 
