@@ -334,6 +334,10 @@ Defaults command_timeout=2h
 Defaults command_timeout=2d
 Defaults command_timeout=1D2H3M4S
 Defaults log_server_timeout=30
+# Defaults command_timeout-=2
+# Defaults command_timeout+=2
+# Defaults log_server_timeout+=30
+# Defaults log_server_timeout-=30
 Defaults !command_timeout
 Defaults !log_server_timeout
 
