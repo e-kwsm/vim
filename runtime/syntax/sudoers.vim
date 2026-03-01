@@ -374,7 +374,7 @@ syn keyword sudoersResourceParameter contained
                                   \ rlimit_rss
                                   \ rlimit_stack
 
-syn keyword sudoersListParameter    contained
+syn keyword sudoersListOrBooleanParameter contained
                                   \ nextgroup=sudoersListParameterEquals
                                   \ skipwhite skipnl
                                   \ env_check
