@@ -160,7 +160,7 @@ syn match   sudoersDefaultTypeColon       contained ':' nextgroup=@sudoersUser s
 syn match   sudoersDefaultTypeGreaterThan contained '>' nextgroup=@sudoersUser skipwhite skipnl
 
 " TODO: could also deal with special characters here
-syn match   sudoersBooleanParameter contained '!' nextgroup=sudoersBooleanParameter skipwhite skipnl
+syn match   sudoersBooleanParameter contained '!' nextgroup=sudoersBooleanParameter,sudoersStringOrBooleanParameter skipwhite skipnl
 syn keyword sudoersBooleanParameter contained skipwhite skipnl
                                   \ always_query_group_plugin
                                   \ always_set_home
@@ -275,28 +275,45 @@ syn keyword sudoersModeParameter contained
 syn keyword sudoersStringParameter  contained
                                   \ nextgroup=sudoersStringParameterEquals
                                   \ skipwhite skipnl
-                                  \ admin_flag
                                   \ apparmor_profile
                                   \ askpass
                                   \ authfail_message
                                   \ badpass_message
                                   \ cmddenial_message
+                                  \ group_plugin
+                                  \ intercept_type
+                                  \ iolog_file
+                                  \ limitprivs
+                                  \ log_format
+                                  \ mailsub
+                                  \ noexec_file
+                                  \ pam_askpass_service
+                                  \ pam_login_service
+                                  \ pam_service
+                                  \ passprompt
+                                  \ privs
+                                  \ role
+                                  \ runas_default
+                                  \ sudoers_locale
+                                  \ timestamp_type
+                                  \ timestampowner
+                                  \ type
+
+syn keyword sudoersStringOrBooleanParameter contained
+                                  \ nextgroup=sudoersStringParameterEquals
+                                  \ skipwhite skipnl
+                                  \ admin_flag
                                   \ editor
                                   \ env_file
                                   \ exempt_group
                                   \ fdexec
-                                  \ group_plugin
-                                  \ intercept_type
                                   \ iolog_dir
-                                  \ iolog_file
                                   \ iolog_group
                                   \ iolog_user
                                   \ lecture
                                   \ lecture_file
                                   \ lecture_status_dir
-                                  \ limitprivs
                                   \ listpw
-                                  \ log_format
                                   \ log_server_cabundle
                                   \ log_server_peer_cert
                                   \ log_server_peer_key
@@ -304,14 +321,7 @@ syn keyword sudoersStringParameter  contained
                                   \ mailerflags
                                   \ mailerpath
                                   \ mailfrom
-                                  \ mailsub
                                   \ mailto
-                                  \ noexec_file
-                                  \ pam_askpass_service
-                                  \ pam_login_service
-                                  \ pam_service
-                                  \ passprompt
-                                  \ privs
                                   \ restricted_env_file
                                   \ rlimit_as
                                   \ rlimit_core
@@ -324,18 +334,12 @@ syn keyword sudoersStringParameter  contained
                                   \ rlimit_nproc
                                   \ rlimit_rss
                                   \ rlimit_stack
-                                  \ role
-                                  \ runas_default
                                   \ runcwd
                                   \ secure_path
-                                  \ sudoers_locale
                                   \ syslog
                                   \ syslog_badpri
                                   \ syslog_goodpri
-                                  \ timestamp_type
                                   \ timestampdir
-                                  \ timestampowner
-                                  \ type
                                   \ verifypw
 
 syn keyword sudoersListParameter    contained
@@ -349,7 +353,7 @@ syn keyword sudoersListParameter    contained
 
 syn match   sudoersParameterListComma contained ',' nextgroup=@sudoersParameter skipwhite skipnl
 
-syn cluster sudoersParameter        contains=sudoersBooleanParameter,sudoersIntegerParameter,sudoersModeParameter,sudoersTimespecParameter,sudoersStringParameter,sudoersListParameter
+syn cluster sudoersParameter        contains=sudoersBooleanParameter,sudoersIntegerParameter,sudoersModeParameter,sudoersTimespecParameter,sudoersStringParameter,sudoersStringOrBooleanParameter,sudoersListParameter
 
 syn match   sudoersIntegerParameterEquals contained       '=' nextgroup=sudoersIntegerValue skipwhite skipnl
 syn match   sudoersModeParameterEquals    contained       '=' nextgroup=sudoersModeValue    skipwhite skipnl
@@ -455,6 +459,7 @@ hi def link sudoersIntegerParameter         Identifier
 hi def link sudoersModeParameter            Identifier
 hi def link sudoersTimespecParameter        Identifier
 hi def link sudoersStringParameter          Identifier
+hi def link sudoersStringOrBooleanParameter Identifier
 hi def link sudoersListParameter            Identifier
 hi def link sudoersParameterListComma       Delimiter
 hi def link sudoersIntegerParameterEquals   Operator
