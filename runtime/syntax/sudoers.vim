@@ -255,10 +255,14 @@ syn keyword sudoersIntegerParameter contained
                                   \ closefrom
                                   \ command_timeout
                                   \ log_server_timeout
-                                  \ loglinelen
                                   \ maxseq
                                   \ passwd_tries
                                   \ syslog_maxlen
+
+syn keyword sudoersIntegerOrBooleanParameter contained
+                                  \ nextgroup=sudoersIntegerParameterEquals
+                                  \ skipwhite skipnl
+                                  \ loglinelen
 
 syn keyword sudoersTimespecParameter contained
                                   \ nextgroup=sudoersTimespecParameterEquals
@@ -357,7 +361,7 @@ syn keyword sudoersListParameter    contained
 
 syn match   sudoersParameterListComma contained ',' nextgroup=@sudoersParameter skipwhite skipnl
 
-syn cluster sudoersParameter        contains=sudoersBooleanParameter,sudoersIntegerParameter,sudoersModeParameter,sudoersModeOrBooleanParameter,sudoersTimespecParameter,sudoersStringParameter,sudoersStringOrBooleanParameter,sudoersListParameter
+syn cluster sudoersParameter        contains=sudoersBooleanParameter,sudoersIntegerParameter,sudoersIntegerOrBooleanParameter,sudoersModeParameter,sudoersModeOrBooleanParameter,sudoersTimespecParameter,sudoersStringParameter,sudoersStringOrBooleanParameter,sudoersListParameter
 
 syn match   sudoersIntegerParameterEquals contained       '=' nextgroup=sudoersIntegerValue skipwhite skipnl
 syn match   sudoersModeParameterEquals    contained       '=' nextgroup=sudoersModeValue    skipwhite skipnl
@@ -460,6 +464,7 @@ hi def link sudoersDefaultTypeColon         Special
 hi def link sudoersDefaultTypeGreaterThan   Special
 hi def link sudoersBooleanParameter         Identifier
 hi def link sudoersIntegerParameter         Identifier
+hi def link sudoersIntegerOrBooleanParameter Identifier
 hi def link sudoersModeParameter            Identifier
 hi def link sudoersModeOrBooleanParameter   Identifier
 hi def link sudoersTimespecParameter        Identifier
