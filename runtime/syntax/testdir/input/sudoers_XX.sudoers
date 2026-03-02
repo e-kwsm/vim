@@ -409,6 +409,9 @@ Defaults !runcwd
 # Defaults rlimit_nproc
 # Defaults rlimit_rss
 # Defaults rlimit_stack
+
+Defaults rlimit_core="0,0"
+
 Defaults rlimit_as=infinity
 Defaults rlimit_core=infinity
 Defaults rlimit_cpu=infinity
