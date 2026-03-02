@@ -1,0 +1,28 @@
+# vi:ft=sudoers
+User_Alias  UA = alice, !#1000, %wheel, %#1000
+Runas_Alias RA = alice, #1000, !%wheel, %#1000
+
+# user (:) and runas (>)
+Defaults:alice		lecture
+Defaults>!#1000		lecture
+Defaults:!!%wheel	lecture
+Defaults>!!!%#1001	lecture
+Defaults:UA		lecture
+Defaults>RA		lecture
+Defaults: alice, !#1000, %wheel, !%#1000	lecture
+Defaults> !alice, #1000, !%wheel, %#1000	lecture
+
+root   ALL   = (ALL:ALL) ALL
+UA     ALL   =           ALL
+user   host0 = (ALL:ALL) ALL
+#1000  host1 = (ALL:ALL) ALL
+%group host2 = (ALL:ALL) ALL
+%#1000 host3 = (ALL:ALL) ALL
+
+alice ALL = (       ) NOSETENV: ALL
+alice ALL = (ALL    ) NOSETENV: ALL
+alice ALL = (   :   ) NOSETENV: ALL
+alice ALL = (   :ALL) NOSETENV: ALL
+alice ALL = (ALL:ALL) NOSETENV: ALL
+
+alice ALL = (user1, !#1000 : !grp1, #1000) ALL
