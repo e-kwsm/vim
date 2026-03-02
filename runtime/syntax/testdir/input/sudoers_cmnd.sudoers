@@ -1,0 +1,6 @@
+# vi:ft=sudoers
+Cmnd_Alias EDIT = sudoedit
+
+Cmnd_Alias HASHED = sha224:d14a028c2a3a2bc9476102bb288234c415a2b01f828ea62ac5b3e42f /bin/sh
+Cmnd_Alias BASE64ENCODED = sha256:47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU= /bin/sh
+
