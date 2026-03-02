@@ -2,10 +2,8 @@
 root ALL = (ALL:ALL) ALL
 UA ALL = (ALL) ALL
 
-# User_Alias UA = alice, #1000, "%wheel", %#1000
-# Runas_Alias RA = "alice", #1000, %wheel, %#1000
-User_Alias  UA = alice, #1000, %wheel, %#1000
-Runas_Alias RA = alice, #1000, %wheel, %#1000
+User_Alias	UA = alice, #1000, "%wheel", %#1000
+Runas_Alias	RA = "alice", #1000, %wheel, %#1000
 
 # user (:) and runas (>)
 Defaults:alice		lecture
