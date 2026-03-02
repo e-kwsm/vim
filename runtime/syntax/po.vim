@@ -81,7 +81,7 @@ syn match     poFlagFormat /\<\%(no-\)\?ycp-format\>/ contained
 syn match     poCommentTranslator "^# .*$" contains=poCopyrightUnset
 syn match     poCommentAutomatic "^#\..*$"
 syn match     poCommentSources	"^#:.*$"
-syn match     poCommentFlags "^#,.*$" contains=poFlagFuzzy,poFlagFormat
+syn match     poCommentFlags "^#[,=].*$" contains=poFlagFuzzy,poFlagFormat
 syn match     poCommentPrevious "^#|.*$"
 
 " Translations (also includes header fields as they appear in a translation msgstr)
