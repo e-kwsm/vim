@@ -37,8 +37,10 @@ syn keyword sudoersAlias              Cmnd_Alias nextgroup=sudoersCmndAlias skip
 
 syn match   sudoersUserAlias          contained '\<\u[A-Z0-9_]*\>'  nextgroup=sudoersUserAliasEquals  skipwhite skipnl
 syn match   sudoersUserNameInList     contained '\<\l[-a-z0-9_]*\>' nextgroup=@sudoersUserList        skipwhite skipnl
+syn match   sudoersUserNameInList     contained '"\l[-a-z0-9_]*"'   nextgroup=@sudoersUserList        skipwhite skipnl
 syn match   sudoersUIDInList          contained '#\d\+\>'           nextgroup=@sudoersUserList        skipwhite skipnl
 syn match   sudoersGroupInList        contained '%\l[-a-z0-9_]*\>'  nextgroup=@sudoersUserList        skipwhite skipnl
+syn match   sudoersGroupInList        contained '"%\l[-a-z0-9_]*"'  nextgroup=@sudoersUserList        skipwhite skipnl
 syn match   sudoersGIDInList          contained '%#\d\+\>'          nextgroup=@sudoersUserList        skipwhite skipnl
 syn match   sudoersUserNetgroupInList contained '+\l[-a-z0-9_]*\>'  nextgroup=@sudoersUserList        skipwhite skipnl
 syn match   sudoersUserAliasInList    contained '\<\u[A-Z0-9_]*\>'  nextgroup=@sudoersUserList        skipwhite skipnl
