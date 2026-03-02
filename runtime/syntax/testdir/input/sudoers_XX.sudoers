@@ -253,12 +253,12 @@ Defaults !loglinelen
 # T_BOOL|T_TIMESPEC {{{1
 # Defaults passwd_timeout
 # Defaults timestamp_timeout
-Defaults passwd_timeout=-0.3
-Defaults passwd_timeout=-1
-Defaults passwd_timeout=0
-Defaults passwd_timeout=2.5
 Defaults passwd_timeout=5
 Defaults timestamp_timeout=5
+Defaults timestamp_timeout=-0.3
+Defaults timestamp_timeout=-1
+Defaults timestamp_timeout=0
+Defaults timestamp_timeout=2.5
 # Defaults timestamp_timeout-=2.5
 # Defaults timestamp_timeout+=2.5
 Defaults !passwd_timeout
