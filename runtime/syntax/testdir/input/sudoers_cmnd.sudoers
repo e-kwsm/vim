@@ -4,7 +4,7 @@ Cmnd_Alias BASE64ENCODED = sha256:47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU= /
 
 Defaults!/bin/ls		env_reset
 Defaults!!/bin/pwd,/usr/bin/pwd	env_reset
-Defaults!!!/usr/local/bin/	lecture
+Defaults!!!/usr/local/bin/	lecture=always
 
 alice ALL = sudoedit ^/etc/motd$
 bob   ALL = ^/usr/bin/[ef]?grep$
