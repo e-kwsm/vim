@@ -8,6 +8,6 @@ Defaults!!!/usr/local/bin/		lecture=always
 Defaults!HASHED,BASE64ENCODED		always_set_home
 Defaults!ALL				passwd_tries=1
 
-alice   ALL = sudoedit ^/etc/motd$
+alice   ALL = NOFOLLOW : sudoedit ^/etc/motd$
 bob     ALL = ^/usr/bin/[ef]?grep$
-charlie ALL = /bin/pwd ""
+charlie ALL = NOMAIL: /bin/pwd ""
