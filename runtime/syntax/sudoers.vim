@@ -33,8 +33,10 @@ syn keyword sudoersAlias              Cmnd_Alias nextgroup=sudoersCmndAlias skip
 
 syn match   sudoersUserAlias          contained '\<\u[A-Z0-9_]*\>'  nextgroup=sudoersUserAliasEquals  skipwhite skipnl
 syn match   sudoersUserNameInList     contained '\<\l[-a-z0-9_]*\>' nextgroup=@sudoersUserList        skipwhite skipnl
+syn match   sudoersUserNameInList     contained '"\l[-a-z0-9_]*"'   nextgroup=@sudoersUserList        skipwhite skipnl
 syn match   sudoersUIDInList          contained '#\d\+\>'           nextgroup=@sudoersUserList        skipwhite skipnl
 syn match   sudoersGroupInList        contained '%\l[-a-z0-9_]*\>'  nextgroup=@sudoersUserList        skipwhite skipnl
+syn match   sudoersGroupInList        contained '"%\l[-a-z0-9_]*"'  nextgroup=@sudoersUserList        skipwhite skipnl
 syn match   sudoersGIDInList          contained '%#\d\+\>'          nextgroup=@sudoersUserList        skipwhite skipnl
 syn match   sudoersUserNetgroupInList contained '+\l[-a-z0-9_]*\>'  nextgroup=@sudoersUserList        skipwhite skipnl
 syn match   sudoersUserAliasInList    contained '\<\u[A-Z0-9_]*\>'  nextgroup=@sudoersUserList        skipwhite skipnl
@@ -51,6 +53,7 @@ syn match   sudoersUserComma          contained ','                 nextgroup=su
 
 syn match   sudoersUserNameInSpec     contained '\<\l[-a-z0-9_]*\>' nextgroup=@sudoersUserSpec        skipwhite skipnl
 syn region  sudoersUIDInSpec          display oneline start='#\d\+\>' end='' nextgroup=@sudoersUserSpec skipwhite skipnl
+syn match   sudoersUIDInSpec          contained '^\s*\zs"#\d\+"'    nextgroup=@sudoersUserSpec        skipwhite skipnl
 syn match   sudoersGroupInSpec        contained '%\l[-a-z0-9_]*\>'  nextgroup=@sudoersUserSpec        skipwhite skipnl
 syn match   sudoersGIDInSpec          contained '%#\d\+\>'          nextgroup=@sudoersUserSpec        skipwhite skipnl
 syn match   sudoersUserNetgroupInSpec contained '+\l[-a-z0-9_]*\>'  nextgroup=@sudoersUserSpec        skipwhite skipnl
