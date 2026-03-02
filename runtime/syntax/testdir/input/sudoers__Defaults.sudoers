@@ -228,7 +228,7 @@ Defaults log_server_cabundle=/etc/ssl/cacert.pem
 Defaults log_server_peer_cert=/etc/ssl/localhost.crt
 Defaults log_server_peer_key=/etc/ssl/private/localhost.key
 Defaults logfile=/var/log/sudo.log
-Defaults mailerpath=/usr/bin/mail
+Defaults mailerpath=/usr/bin/sendmail
 Defaults restricted_env_file=/etc/environment.sudo
 # Defaults restricted_env_file+=/etc/environment.sudo
 # Defaults restricted_env_file-=/etc/environment.sudo
@@ -244,8 +244,8 @@ Defaults !restricted_env_file
 # T_BOOL|T_UINT {{{1
 # Defaults loglinelen
 # Defaults loglinelen=-1
-Defaults loglinelen=0
 Defaults loglinelen=80
+Defaults loglinelen=0
 # Defaults loglinelen-=80
 # Defaults loglinelen+=80
 Defaults !loglinelen
@@ -253,12 +253,12 @@ Defaults !loglinelen
 # T_BOOL|T_TIMESPEC {{{1
 # Defaults passwd_timeout
 # Defaults timestamp_timeout
-Defaults passwd_timeout=-0.3
-Defaults passwd_timeout=-1
-Defaults passwd_timeout=0
-Defaults passwd_timeout=2.5
 Defaults passwd_timeout=5
 Defaults timestamp_timeout=5
+Defaults timestamp_timeout=-0.3
+Defaults timestamp_timeout=-1
+Defaults timestamp_timeout=0
+Defaults timestamp_timeout=2.5
 # Defaults timestamp_timeout-=2.5
 # Defaults timestamp_timeout+=2.5
 Defaults !passwd_timeout
@@ -267,7 +267,7 @@ Defaults !timestamp_timeout
 # T_UINT {{{1
 # Defaults passwd_tries=-3
 Defaults passwd_tries=3
-Defaults syslog_maxlen=1024
+Defaults syslog_maxlen=960
 # Defaults syslog_maxlen-=1024
 # Defaults syslog_maxlen+=1024
 
@@ -286,12 +286,12 @@ Defaults !umask
 # Defaults mailfrom
 # Defaults mailto
 # Defaults secure_path
-Defaults exempt_group=wheel
-Defaults iolog_group=wheel
-Defaults iolog_user=alice
+Defaults exempt_group=sudo
+Defaults iolog_group=root
+Defaults iolog_user=root
 Defaults mailerflags=-t
 Defaults mailfrom="root@example.com"
-Defaults mailto="notify@example.com"
+Defaults mailto="root@localhost"
 Defaults secure_path="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
 Defaults !exempt_group
 Defaults !iolog_group
@@ -346,7 +346,7 @@ Defaults env_delete=TZ
 Defaults env_keep="DISPLAY HOME"
 Defaults log_servers="logger:30344"
 Defaults env_delete-="DISPLAY XTERM"
-Defaults env_keep+="DISPLAY XTERM"
+Defaults env_keep+="EDITOR"
 Defaults !env_check
 Defaults !env_delete
 Defaults !env_keep
@@ -358,7 +358,7 @@ Defaults iolog_mode=0600
 # T_BOOL|T_TIMEOUT {{{1
 # Defaults command_timeout
 # Defaults log_server_timeout
-Defaults command_timeout=2
+Defaults command_timeout=42
 Defaults command_timeout=2s
 Defaults command_timeout=2m
 Defaults command_timeout=2h
@@ -377,10 +377,8 @@ Defaults !log_server_timeout
 Defaults intercept_type=dso
 # json, json_compact, json_pretty, sudo
 Defaults log_format=sudo
-Defaults timestamp_type=global
-Defaults timestamp_type=ppid
+# global, ppid, tty, kernel
 Defaults timestamp_type=tty
-Defaults timestamp_type=kernel
 # Defaults intercept_type-=dso
 # Defaults intercept_type+=dso
 # Defaults log_format-=json
@@ -409,6 +407,9 @@ Defaults !runcwd
 # Defaults rlimit_nproc
 # Defaults rlimit_rss
 # Defaults rlimit_stack
+
+Defaults rlimit_core="0,0"
+
 Defaults rlimit_as=infinity
 Defaults rlimit_core=infinity
 Defaults rlimit_cpu=infinity
@@ -449,3 +450,6 @@ Defaults passprompt_regex="[Pp]assword[: ]*"
 Defaults passprompt_regex-="(?i)PASSWORD"
 Defaults passprompt_regex+="password"
 Defaults !passprompt_regex
+
+@includedir /etc/sudoers.d
+#include /etc/sudoers.d/%h
