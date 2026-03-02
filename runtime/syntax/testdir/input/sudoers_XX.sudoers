@@ -244,8 +244,8 @@ Defaults !restricted_env_file
 # T_BOOL|T_UINT {{{1
 # Defaults loglinelen
 # Defaults loglinelen=-1
-Defaults loglinelen=0
 Defaults loglinelen=80
+Defaults loglinelen=0
 # Defaults loglinelen-=80
 # Defaults loglinelen+=80
 Defaults !loglinelen
