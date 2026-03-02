@@ -13,5 +13,6 @@ Defaults>!!!%#1001	lecture
 Defaults:UA		lecture
 Defaults>RA		lecture
 
-root ALL = (ALL:ALL) ALL
-UA   ALL = (ALL) ALL
+root  ALL   = (ALL:ALL) ALL
+UA    ALL   = (ALL)     ALL
+alice hosta = (root)    ALL
