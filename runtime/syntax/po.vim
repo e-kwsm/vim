@@ -52,9 +52,11 @@ syn match     poFlagFormat /\<\%(no-\)\?boost-format\>/ contained
 syn match     poFlagFormat /\<\%(no-\)\?c++-format\>/ contained
 syn match     poFlagFormat /\<\%(no-\)\?c-format\>/ contained
 syn match     poFlagFormat /\<\%(no-\)\?csharp-format\>/ contained
+syn match     poFlagFormat /\<\%(no-\)\?d-format\>/ contained
 syn match     poFlagFormat /\<\%(no-\)\?elisp-format\>/ contained
 syn match     poFlagFormat /\<\%(no-\)\?gcc-internal-format\>/ contained
 syn match     poFlagFormat /\<\%(no-\)\?gfc-internal-format\>/ contained
+syn match     poFlagFormat /\<\%(no-\)\?go-format\>/ contained
 syn match     poFlagFormat /\<\%(no-\)\?java-format\>/ contained
 syn match     poFlagFormat /\<\%(no-\)\?java-printf-format\>/ contained
 syn match     poFlagFormat /\<\%(no-\)\?javascript-format\>/ contained
@@ -62,6 +64,7 @@ syn match     poFlagFormat /\<\%(no-\)\?kde-format\>/ contained
 syn match     poFlagFormat /\<\%(no-\)\?librep-format\>/ contained
 syn match     poFlagFormat /\<\%(no-\)\?lisp-format\>/ contained
 syn match     poFlagFormat /\<\%(no-\)\?lua-format\>/ contained
+syn match     poFlagFormat /\<\%(no-\)\?modula2-format\>/ contained
 syn match     poFlagFormat /\<\%(no-\)\?objc-format\>/ contained
 syn match     poFlagFormat /\<\%(no-\)\?object-pascal-format\>/ contained
 syn match     poFlagFormat /\<\%(no-\)\?perl-brace-format\>/ contained
@@ -72,11 +75,14 @@ syn match     poFlagFormat /\<\%(no-\)\?python-format\>/ contained
 syn match     poFlagFormat /\<\%(no-\)\?qt-format\>/ contained
 syn match     poFlagFormat /\<\%(no-\)\?qt-plural-format\>/ contained
 syn match     poFlagFormat /\<\%(no-\)\?ruby-format\>/ contained
+syn match     poFlagFormat /\<\%(no-\)\?rust-format\>/ contained
 syn match     poFlagFormat /\<\%(no-\)\?scheme-format\>/ contained
 syn match     poFlagFormat /\<\%(no-\)\?sh-format\>/ contained
+syn match     poFlagFormat /\<\%(no-\)\?sh-printf-format\>/ contained
 syn match     poFlagFormat /\<\%(no-\)\?smalltalk-format\>/ contained
 syn match     poFlagFormat /\<\%(no-\)\?tcl-format\>/ contained
 syn match     poFlagFormat /\<\%(no-\)\?ycp-format\>/ contained
+syn match     poFlagFormat /\<no-wrap\>/ contained
 
 syn match     poCommentTranslator "^# .*$" contains=poCopyrightUnset
 syn match     poCommentAutomatic "^#\..*$"
