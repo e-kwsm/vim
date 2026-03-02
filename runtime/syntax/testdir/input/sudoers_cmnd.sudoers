@@ -10,4 +10,4 @@ Defaults!ALL				passwd_tries=1
 
 alice   ALL = NOFOLLOW : sudoedit ^/etc/motd$
 bob     ALL = ^/usr/bin/[ef]?grep$, !/bin/kill
-charlie ALL = NOMAIL: /bin/pwd ""
+charlie ALL = NOMAIL: NOSETENV: /bin/pwd ""
