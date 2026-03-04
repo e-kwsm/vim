@@ -1,15 +1,10 @@
 # vi:ft=sudoers
-#1000 ALL = EXEC : /bin/sh
-#1001 ALL = NOEXEC : /bin/sh
-#1002 ALL = FOLLOW : /bin/sh
-#1003 ALL = NOFOLLOW : /bin/sh
-#1004 ALL = LOG_INPUT : /bin/sh
-#1005 ALL = NOLOG_INPUT : /bin/sh
-#1006 ALL = MAIL : /bin/sh
-#1007 ALL = NOMAIL : /bin/sh
-#1008 ALL = INTERCEPT : /bin/sh
-#1009 ALL = NOINTERCEPT : /bin/sh
-#1010 ALL = PASSWD : /bin/sh
-#1011 ALL = NOPASSWD : /bin/sh
-#1012 ALL = SETENV : /bin/sh
-#1013 ALL = NOSETENV : /bin/sh
+#1000 ALL =                 EXEC	: /bin/sh, (       ) CWD=~ NOEXEC	: /bin/bash
+#1001 ALL = (       )       FOLLOW	: /bin/sh,                 NOFOLLOW	: /bin/bash
+#1002 ALL =           CWD=* LOG_INPUT	: /bin/sh, (   :ALL)       NOLOG_INPUT	: /bin/bash
+#1003 ALL = (   :ALL)       MAIL	: /bin/sh,           CWD=~ NOMAIL	: /bin/bash
+#1004 ALL =                 INTERCEPT	: /bin/sh, (ALL:ALL)       NOINTERCEPT	: /bin/bash
+#1005 ALL = (ALL:ALL) CWD=* PASSWD	: /bin/sh,                 NOPASSWD	: /bin/bash
+#1006 ALL =                 SETENV	: /bin/sh,           CWD=~ NOSETENV	: /bin/bash
+
+#65535 ALL = (ALL) EXEC:NOEXEC:FOLLOW:NOFOLLOW:LOG_INPUT:NOLOG_INPUT:MAIL:NOMAIL:INTERCEPT:NOINTERCEPT:PASSWD:NOPASSWD:SETENV:NOSETENV: /bin/id
