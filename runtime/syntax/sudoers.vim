@@ -443,10 +443,6 @@ syn match sudoersDateSpecEquals        contained '=' nextgroup=sudoersDateSpecPa
 syn match sudoersTimeoutSpecEquals     contained '=' nextgroup=sudoersTimeoutSpecParam skipwhite skipnl
 syn match sudoersDirectorySpecEquals   contained '=' nextgroup=sudoersDirectorySpecParam skipwhite skipnl
 
-syn match sudoersDateSpecParam    contained /\<\d\{10\}\%(\d\d\)\{0,2\}\%(Z\|[+-]\d\{4\}\)\?\>/ nextgroup=sudoersOptionSpec,sudoersOptionSpecDeprecated,sudoersTagSpec,@sudoersCmndInSpec skipwhite skipnl
-syn match sudoersTimeoutSpecParam contained /\<\d\+\>\|\<\%(\d\+[dDhHmMsS]\)\+\>/ nextgroup=sudoersOptionSpec,sudoersOptionSpecDeprecated,sudoersTagSpec,@sudoersCmndInSpec skipwhite skipnl
-syn match sudoersDirectorySpecParam contained '/\S*\|\~\S*\|\*' nextgroup=sudoersOptionSpec,sudoersOptionSpecDeprecated,sudoersTagSpec,@sudoersCmndInSpec skipwhite skipnl
-
 syn match sudoersSELinuxSpecParam contained /\<[A-Za-z0-9_]\+\>/ nextgroup=sudoersOptionSpec,sudoersTagSpec,@sudoersCmndInSpec skipwhite skipnl
 syn match sudoersAppArmorSpecParam contained /\<[A-Za-z0-9_.]\+\>/ nextgroup=sudoersOptionSpec,sudoersTagSpec,@sudoersCmndInSpec skipwhite skipnl
 syn match sudoersSolarisPrivSpecParam contained /\S\+/ nextgroup=sudoersOptionSpec,sudoersTagSpec,@sudoersCmndInSpec skipwhite skipnl
@@ -576,6 +572,7 @@ hi def link sudoersTimeoutParameterEquals   Operator
 hi def link sudoersStringParameterEquals    Operator
 hi def link sudoersListParameterEquals      Operator
 hi def link sudoersOptionSpec               Special
+hi def link sudoersOptionSpecDeprecated     ErrorMsg
 hi def link sudoersSELinuxSpecEquals        Operator
 hi def link sudoersAppArmorSpecEquals       Operator
 hi def link sudoersSolarisPrivSpecEquals    Operator
@@ -588,6 +585,8 @@ hi def link sudoersSolarisPrivSpecParam     String
 hi def link sudoersDateSpecParam            Number
 hi def link sudoersTimeoutSpecParam         Number
 hi def link sudoersDirectorySpecParam       String
+hi def link sudoersDirectorySpecParamError  Error
+hi def link sudoersTimeoutParameterEquals   Operator
 hi def link sudoersResourceParameterEquals  Operator
 hi def link sudoersIntegerValue             Number
 hi def link sudoersModeValue                Number
