@@ -452,4 +452,4 @@ Defaults passprompt_regex+="password"
 Defaults !passprompt_regex
 
 @includedir /etc/sudoers.d
-#includedir /etc/sudoers.d
+#include /etc/sudoers.d/%h
