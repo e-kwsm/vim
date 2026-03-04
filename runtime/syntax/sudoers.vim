@@ -57,6 +57,7 @@ syn match   sudoersUserComma          contained ','                 nextgroup=su
 
 syn match   sudoersUserNameInSpec     contained '\<\l[-a-z0-9_]*\>' nextgroup=@sudoersUserSpec        skipwhite skipnl
 syn region  sudoersUIDInSpec          display oneline start='^\s*\zs#\d\+\>' end='\s'he=e-1 nextgroup=@sudoersUserSpec skipwhite skipnl
+syn match   sudoersUIDInSpec          contained '^\s*\zs"#\d\+"'    nextgroup=@sudoersUserSpec skipwhite skipnl
 syn match   sudoersGroupInSpec        contained '%\l[-a-z0-9_]*\>'  nextgroup=@sudoersUserSpec        skipwhite skipnl
 syn match   sudoersGIDInSpec          contained '%#\d\+\>'          nextgroup=@sudoersUserSpec        skipwhite skipnl
 syn match   sudoersUserNetgroupInSpec contained '+\l[-a-z0-9_]*\>'  nextgroup=@sudoersUserSpec        skipwhite skipnl
@@ -570,15 +571,6 @@ hi def link sudoersTimespecParameterEquals  Operator
 hi def link sudoersTimeoutParameterEquals   Operator
 hi def link sudoersStringParameterEquals    Operator
 hi def link sudoersListParameterEquals      Operator
-hi def link sudoersResourceParameterEquals  Operator
-hi def link sudoersIntegerValue             Number
-hi def link sudoersModeValue                Number
-hi def link sudoersTimespecValue            Float
-hi def link sudoersTimeoutValue             Number
-hi def link sudoersStringValue              String
-hi def link sudoersListValue                String
-hi def link sudoersResourceValueSpecial     Special
-hi def link sudoersResourceValue            Number
 hi def link sudoersOptionSpec               Special
 hi def link sudoersSELinuxSpecEquals        Operator
 hi def link sudoersAppArmorSpecEquals       Operator
@@ -592,6 +584,15 @@ hi def link sudoersSolarisPrivSpecParam     String
 hi def link sudoersDateSpecParam            Number
 hi def link sudoersTimeoutSpecParam         Number
 hi def link sudoersDirectorySpecParam       String
+hi def link sudoersResourceParameterEquals  Operator
+hi def link sudoersIntegerValue             Number
+hi def link sudoersModeValue                Number
+hi def link sudoersTimespecValue            Float
+hi def link sudoersTimeoutValue             Number
+hi def link sudoersStringValue              String
+hi def link sudoersListValue                String
+hi def link sudoersResourceValueSpecial     Special
+hi def link sudoersResourceValue            Number
 hi def link sudoersTagSpec                  Special
 hi def link sudoersTagSpecColon             Delimiter
 hi def link sudoersInclude                  Statement
