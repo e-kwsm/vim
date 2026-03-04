@@ -434,14 +434,18 @@ syn keyword sudoersOptionSpec contained APPARMOR_PROFILE nextgroup=sudoersAppArm
 syn keyword sudoersOptionSpec contained PRIVS LIMITPRIVS nextgroup=sudoersSolarisPrivSpecEquals skipwhite
 syn keyword sudoersOptionSpec contained NOTBEFORE NOTAFTER nextgroup=sudoersDateSpecEquals skipwhite
 syn keyword sudoersOptionSpec contained TIMEOUT nextgroup=sudoersTimeoutSpecEquals skipwhite
-syn keyword sudoersOptionSpec contained CWD CHROOT nextgroup=sudoersDirectorySpecEquals skipwhite
+syn keyword sudoersOptionSpec contained CWD nextgroup=sudoersDirectorySpecEquals skipwhite
 
 syn match sudoersSELinuxSpecEquals     contained '=' nextgroup=sudoersSELinuxSpecParam skipwhite skipnl
 syn match sudoersAppArmorSpecEquals    contained '=' nextgroup=sudoersAppArmorSpecParam skipwhite skipnl
 syn match sudoersSolarisPrivSpecEquals contained '=' nextgroup=sudoersSolarisPrivSpecParam skipwhite skipnl
 syn match sudoersDateSpecEquals        contained '=' nextgroup=sudoersDateSpecParam skipwhite skipnl
 syn match sudoersTimeoutSpecEquals     contained '=' nextgroup=sudoersTimeoutSpecParam skipwhite skipnl
-syn match sudoersDirectorySpecEquals   contained '=' nextgroup=sudoersDirectorySpecParam,sudoersDirectorySpecParamError skipwhite skipnl
+syn match sudoersDirectorySpecEquals   contained '=' nextgroup=sudoersDirectorySpecParam skipwhite skipnl
+
+syn match sudoersDateSpecParam    contained /\<\d\{10\}\%(\d\d\)\{0,2\}\%(Z\|[+-]\d\{4\}\)\?\>/ nextgroup=sudoersOptionSpec,sudoersOptionSpecDeprecated,sudoersTagSpec,@sudoersCmndInSpec skipwhite skipnl
+syn match sudoersTimeoutSpecParam contained /\<\d\+\>\|\<\%(\d\+[dDhHmMsS]\)\+\>/ nextgroup=sudoersOptionSpec,sudoersOptionSpecDeprecated,sudoersTagSpec,@sudoersCmndInSpec skipwhite skipnl
+syn match sudoersDirectorySpecParam contained '/\S*\|\~\S*\|\*' nextgroup=sudoersOptionSpec,sudoersOptionSpecDeprecated,sudoersTagSpec,@sudoersCmndInSpec skipwhite skipnl
 
 syn match sudoersSELinuxSpecParam contained /\<[A-Za-z0-9_]\+\>/ nextgroup=sudoersOptionSpec,sudoersTagSpec,@sudoersCmndInSpec skipwhite skipnl
 syn match sudoersAppArmorSpecParam contained /\<[A-Za-z0-9_.]\+\>/ nextgroup=sudoersOptionSpec,sudoersTagSpec,@sudoersCmndInSpec skipwhite skipnl
