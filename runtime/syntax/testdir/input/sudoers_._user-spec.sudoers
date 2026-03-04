@@ -1,0 +1,29 @@
+# vi:ft=sudoers
+user0 ALL =        APPARMOR_PROFILE=unconfined /bin/pwd
+user1 ALL = (root) APPARMOR_PROFILE=prof_a//&prof_b NOEXEC : /bin/ping
+
+user0 ALL = PRIVS="proc_info,proc_session" /bin/kill
+
+#1000 ALL =       NOTBEFORE= 2026013123					/bin/crontab
+#1001 ALL =       NOTAFTER = 2026013123Z		NOSETENV :	/bin/crontab
+#1002 ALL = ()    NOTBEFORE= 2026013123-1200				/bin/crontab
+#1003 ALL = ()    NOTAFTER = 202601312359		NOSETENV :	/bin/crontab
+#1004 ALL =       NOTBEFORE= 202601312359Z				/bin/crontab
+#1005 ALL =       NOTAFTER = 202601312359+0545		NOSETENV :	/bin/crontab
+#1006 ALL = (:)   NOTBEFORE= 20260131235959				/bin/crontab
+#1007 ALL = (:)   NOTAFTER = 20260131235959Z		NOSETENV :	/bin/crontab
+#1008 ALL = (ALL) NOTBEFORE= 20260131235959+1400	NOSETENV :	/bin/crontab
+
+%group0 ALL = TIMEOUT = 1		/bin/more
+%group1 ALL = TIMEOUT = 2s		/bin/more, (ALL:ALL) TIMEOUT=2S		NOFOLLOW: /bin/less
+%group2 ALL = TIMEOUT = 3m		/bin/more, (ALL:ALL) TIMEOUT=3M		NOFOLLOW: /bin/less
+%group3 ALL = TIMEOUT = 4h		/bin/more, (ALL:ALL) TIMEOUT=4H		NOFOLLOW: /bin/less
+%group4 ALL = TIMEOUT = 5d		/bin/more, (ALL:ALL) TIMEOUT=5D		NOFOLLOW: /bin/less
+%group5 ALL = TIMEOUT = 1D2h3M4s	/bin/more, (ALL:ALL) TIMEOUT=1d2H3m4S	NOFOLLOW: /bin/less
+
+%#1000 ALL =        CWD=/ 		/bin/pwd
+%#1001 ALL = (    ) CWD=~ 		/bin/pwd
+%#1002 ALL = (:ALL) CWD=* NOEXEC :	/bin/pwd
+
+#65535  ALL = (ALL) NOEXEC:NOFOLLOW:NOLOG_INPUT:NOMAIL:NOINTERCEPT:NOPASSWD:NOSETENV: /bin/id
+%#65535 ALL = (ALL) EXEC:FOLLOW:LOG_INPUT:MAIL:INTERCEPT:PASSWD:SETENV: /bin/id
