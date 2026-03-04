@@ -8,3 +8,10 @@ user5 ALL = NOTAFTER =202601312359+0545		/bin/crontab
 user6 ALL = NOTBEFORE=20260131235959		/bin/crontab
 user7 ALL = NOTAFTER =20260131235959Z		/bin/crontab
 user8 ALL = NOTBEFORE=20260131235959+1400	/bin/crontab
+
+user0 ALL = TIMEOUT=1		/bin/more
+user1 ALL = TIMEOUT=2s		/bin/more, TIMEOUT=2S		/bin/less
+user2 ALL = TIMEOUT=3m		/bin/more, TIMEOUT=3M		/bin/less
+user3 ALL = TIMEOUT=4h		/bin/more, TIMEOUT=4H		/bin/less
+user4 ALL = TIMEOUT=5d		/bin/more, TIMEOUT=5D		/bin/less
+user5 ALL = TIMEOUT=1D2h3M4s	/bin/more, TIMEOUT=1d2H3m4S	/bin/less
