@@ -1,0 +1,15 @@
+# vi:ft=sudoers
+usera ALL = EXEC : /bin/sh
+userb ALL = NOEXEC : /bin/sh
+userc ALL = FOLLOW : /bin/sh
+userd ALL = NOFOLLOW : /bin/sh
+usere ALL = LOG_INPUT : /bin/sh
+userf ALL = NOLOG_INPUT : /bin/sh
+userg ALL = MAIL : /bin/sh
+userh ALL = NOMAIL : /bin/sh
+useri ALL = INTERCEPT : /bin/sh
+userj ALL = NOINTERCEPT : /bin/sh
+userk ALL = PASSWD : /bin/sh
+userl ALL = NOPASSWD : /bin/sh
+userm ALL = SETENV : /bin/sh
+usern ALL = NOSETENV : /bin/sh
