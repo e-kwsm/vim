@@ -21,6 +21,6 @@ user1 ALL = CWD=~ /bin/pwd
 user2 ALL = CWD=* /bin/pwd
 
 # CHROOT is deprecated
-# user0 ALL = CHROOT=/ /bin/id
-# user1 ALL = CHROOT=~ /bin/id
-# user2 ALL = CHROOT=* /bin/id
+user0 ALL = CHROOT=/ /bin/id
+user1 ALL = CHROOT=~ /bin/id
+user2 ALL = CHROOT=* /bin/id

@@ -24,7 +24,7 @@ syn match   sudoersUserSpec '^' nextgroup=@sudoersUserInSpec skipwhite
 
 syn match   sudoersSpecEquals         contained '=' nextgroup=@sudoersCmndSpecList skipwhite
 
-syn cluster sudoersCmndSpecList       contains=sudoersUserRunasBegin,sudoersOptionSpec,sudoersTagSpec,@sudoersCmndInSpec
+syn cluster sudoersCmndSpecList       contains=sudoersUserRunasBegin,sudoersOptionSpec,sudoersOptionSpecDeprecated,sudoersTagSpec,@sudoersCmndInSpec
 
 syn keyword sudoersTodo               contained TODO FIXME XXX NOTE
 
@@ -435,6 +435,7 @@ syn keyword sudoersOptionSpec contained PRIVS LIMITPRIVS nextgroup=sudoersSolari
 syn keyword sudoersOptionSpec contained NOTBEFORE NOTAFTER nextgroup=sudoersDateSpecEquals skipwhite
 syn keyword sudoersOptionSpec contained TIMEOUT nextgroup=sudoersTimeoutSpecEquals skipwhite
 syn keyword sudoersOptionSpec contained CWD nextgroup=sudoersDirectorySpecEquals skipwhite
+syn keyword sudoersOptionSpecDeprecated contained CHROOT nextgroup=sudoersDirectorySpecEquals skipwhite
 
 syn match sudoersSELinuxSpecEquals     contained '=' nextgroup=sudoersSELinuxSpecParam skipwhite skipnl
 syn match sudoersAppArmorSpecEquals    contained '=' nextgroup=sudoersAppArmorSpecParam skipwhite skipnl
