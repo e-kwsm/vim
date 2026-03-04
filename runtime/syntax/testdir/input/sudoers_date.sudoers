@@ -1,0 +1,10 @@
+# vi:ft=sudoers
+user0 ALL = NOTBEFORE=2026013123		/bin/crontab
+user1 ALL = NOTAFTER =2026013123Z		/bin/crontab
+user2 ALL = NOTBEFORE=2026013123-1200		/bin/crontab
+user3 ALL = NOTAFTER =202601312359		/bin/crontab
+user4 ALL = NOTBEFORE=202601312359Z		/bin/crontab
+user5 ALL = NOTAFTER =202601312359+0545		/bin/crontab
+user6 ALL = NOTBEFORE=20260131235959		/bin/crontab
+user7 ALL = NOTAFTER =20260131235959Z		/bin/crontab
+user8 ALL = NOTBEFORE=20260131235959+1400	/bin/crontab
