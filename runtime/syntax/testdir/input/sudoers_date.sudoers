@@ -15,3 +15,12 @@ user2 ALL = TIMEOUT=3m		/bin/more, TIMEOUT=3M		/bin/less
 user3 ALL = TIMEOUT=4h		/bin/more, TIMEOUT=4H		/bin/less
 user4 ALL = TIMEOUT=5d		/bin/more, TIMEOUT=5D		/bin/less
 user5 ALL = TIMEOUT=1D2h3M4s	/bin/more, TIMEOUT=1d2H3m4S	/bin/less
+
+user0 ALL = CWD=/ /bin/pwd
+user1 ALL = CWD=~ /bin/pwd
+user2 ALL = CWD=* /bin/pwd
+
+# CHROOT is deprecated
+# user0 ALL = CHROOT=/ /bin/id
+# user1 ALL = CHROOT=~ /bin/id
+# user2 ALL = CHROOT=* /bin/id
