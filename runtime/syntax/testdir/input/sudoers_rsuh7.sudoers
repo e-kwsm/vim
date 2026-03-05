@@ -30,8 +30,3 @@ Defaults rlimit_cpu=1\,1
 Defaults rlimit_data=default
 Defaults rlimit_fsize=user
 Defaults rlimit_locks=infinity
-
-user ALL = CWD=/ /bin/pwd, CWD=~ /bin/ls, CWD=~root /bin/paste, CWD=* /bin/echo
-#user ALL = CHROOT=/	/bin/pwd	# deprecated
-
-alice node1 = /bin/ls
