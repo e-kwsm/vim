@@ -16,9 +16,9 @@ user8 ALL = NOTBEFORE= 20260131235959+1400	/bin/crontab
 #1004 ALL = TIMEOUT = 5d	/bin/more, (ALL:ALL) TIMEOUT=5D		/bin/less
 #1005 ALL = TIMEOUT = 1D2h3M4s	/bin/more, (ALL:ALL) TIMEOUT=1d2H3m4S	/bin/less
 
-%group0 ALL = CWD=/ /bin/pwd
-%group1 ALL = CWD=~ /bin/pwd
-%group2 ALL = CWD=* /bin/pwd
+%group0 ALL =           CWD=/ /bin/pwd
+%group1 ALL = (       ) CWD=~ /bin/pwd
+%group2 ALL = (ALL:ALL) CWD=* /bin/pwd
 
 # CHROOT is deprecated
 %#1000 ALL = CHROOT=/ /bin/id
