@@ -6,6 +6,8 @@ Defaults!/bin/ls			env_reset
 Defaults!!/bin/less,/usr/bin/less	env_reset
 Defaults!!!/usr/local/bin/		lecture=always
 Defaults!HASHED,BASE64ENCODED		always_set_home
+Defaults!list				passwd_tries=1
+Defaults!sudoedit			passwd_tries=1
 Defaults!ALL				passwd_tries=1
 
 alice   ALL = FOLLOW : sudoedit ^/etc/motd$
