@@ -2,17 +2,6 @@
 Defaults authenticate
 Defaults secure_path="/sbin:/bin"
 
-# host
-
-# user (:) and runas (>)
-Defaults:alice		env_keep += "*EDITOR"
-Defaults>!bob		env_keep += "EDITOR SUDO_EDITOR"
-Defaults:#1000		!lecture
-Defaults>!!%wheel	lecture
-Defaults:%#1001		!lecture
-Defaults:!!!ALL		!lecture
-Defaults>!!!!ALL	!lecture
-
 # T_CHPATH
 # Defaults !runchroot
 Defaults admin_flag=/
