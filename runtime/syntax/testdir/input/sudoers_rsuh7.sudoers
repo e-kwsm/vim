@@ -30,9 +30,6 @@ Defaults admin_flag=/
 # Defaults runchroot=~
 Defaults runcwd=*
 
-User_Alias ADMIN = !alice, bob, !#1000
-Runas_Alias ADMIN = !alice, bob, !#1000, ALL
-
 # command
 Defaults!/bin/pwd,/usr/bin/pwd root_sudo
 Defaults!!/usr/local/bin/ root_sudo
