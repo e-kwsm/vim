@@ -376,7 +376,7 @@ syn match   sudoersModeValue    contained '\<\o\+\>' nextgroup=sudoersParameterL
 syn match   sudoersTimespecValue contained '\<\d\+\>\|\<\d\+\%(\.\%(\d\+\>\)\?\)\?\|\.\d\+\>' nextgroup=sudoersParameterListComma skipwhite skipnl
 syn match   sudoersStringValue  contained '[^[:space:],:=\\]*\%(\\[[:space:],:=\\][^[:space:],:=\\]*\)*' nextgroup=sudoersParameterListComma skipwhite skipnl
 syn region  sudoersStringValue  contained start=+"+ skip=+\\"+ end=+"+ nextgroup=sudoersParameterListComma skipwhite skipnl
-syn match   sudoersListValue    contained '[^[:space:],:=\\]*\%(\\[[:space:],:=\\][^[:space:],:=\\]*\)*' nextgroup=sudoersParameterListComma skipwhite skipnl
+syn match   sudoersListValue    contained '\s*\zs[^[:space:],:=\\]*\%(\\[[:space:],:=\\][^[:space:],:=\\]*\)*' nextgroup=sudoersParameterListComma skipwhite skipnl
 syn region  sudoersListValue    contained start=+"+ skip=+\\"+ end=+"+ nextgroup=sudoersParameterListComma skipwhite skipnl
 
 syn keyword sudoersOptionSpec contained ROLE TYPE nextgroup=sudoersSELinuxSpecEquals skipwhite
