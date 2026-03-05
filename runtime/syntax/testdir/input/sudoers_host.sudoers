@@ -1,6 +1,6 @@
 # vi:ft=sudoers
 Defaults@ALL env_reset
-Defaults@node1,node2 env_reset
+Defaults@node1,!node2 env_reset
 Defaults@!10.0.0.1 env_reset
 Defaults@!!!172.16.0.1/12 env_reset
 Defaults@!192.168.0.1/255.255.0.0 env_reset
