@@ -1,20 +1,20 @@
 # vi:ft=sudoers
-user0 ALL = NOTBEFORE=2026013123		/bin/crontab
-user1 ALL = NOTAFTER =2026013123Z		/bin/crontab
-user2 ALL = NOTBEFORE=2026013123-1200		/bin/crontab
-user3 ALL = NOTAFTER =202601312359		/bin/crontab
-user4 ALL = NOTBEFORE=202601312359Z		/bin/crontab
-user5 ALL = NOTAFTER =202601312359+0545		/bin/crontab
-user6 ALL = NOTBEFORE=20260131235959		/bin/crontab
-user7 ALL = NOTAFTER =20260131235959Z		/bin/crontab
-user8 ALL = NOTBEFORE=20260131235959+1400	/bin/crontab
+user0 ALL = NOTBEFORE= 2026013123		/bin/crontab
+user1 ALL = NOTAFTER = 2026013123Z		/bin/crontab
+user2 ALL = NOTBEFORE= 2026013123-1200		/bin/crontab
+user3 ALL = NOTAFTER = 202601312359		/bin/crontab
+user4 ALL = NOTBEFORE= 202601312359Z		/bin/crontab
+user5 ALL = NOTAFTER = 202601312359+0545	/bin/crontab
+user6 ALL = NOTBEFORE= 20260131235959		/bin/crontab
+user7 ALL = NOTAFTER = 20260131235959Z		/bin/crontab
+user8 ALL = NOTBEFORE= 20260131235959+1400	/bin/crontab
 
-#1000 ALL = TIMEOUT=1		/bin/more
-#1001 ALL = TIMEOUT=2s		/bin/more, (ALL:ALL) TIMEOUT=2S		/bin/less
-#1002 ALL = TIMEOUT=3m		/bin/more, (ALL:ALL) TIMEOUT=3M		/bin/less
-#1003 ALL = TIMEOUT=4h		/bin/more, (ALL:ALL) TIMEOUT=4H		/bin/less
-#1004 ALL = TIMEOUT=5d		/bin/more, (ALL:ALL) TIMEOUT=5D		/bin/less
-#1005 ALL = TIMEOUT=1D2h3M4s	/bin/more, (ALL:ALL) TIMEOUT=1d2H3m4S	/bin/less
+#1000 ALL = TIMEOUT = 1		/bin/more
+#1001 ALL = TIMEOUT = 2s	/bin/more, (ALL:ALL) TIMEOUT=2S		/bin/less
+#1002 ALL = TIMEOUT = 3m	/bin/more, (ALL:ALL) TIMEOUT=3M		/bin/less
+#1003 ALL = TIMEOUT = 4h	/bin/more, (ALL:ALL) TIMEOUT=4H		/bin/less
+#1004 ALL = TIMEOUT = 5d	/bin/more, (ALL:ALL) TIMEOUT=5D		/bin/less
+#1005 ALL = TIMEOUT = 1D2h3M4s	/bin/more, (ALL:ALL) TIMEOUT=1d2H3m4S	/bin/less
 
 %group0 ALL = CWD=/ /bin/pwd
 %group1 ALL = CWD=~ /bin/pwd
