@@ -98,6 +98,12 @@ syn match   sudoersCmndAliasInList    contained '\<\u[A-Z0-9_]*\>'  nextgroup=@s
 syn match   sudoersCmndNameInSpec     contained '[^[:space:],:=\\]\+\%(\\[[:space:],:=\\][^[:space:],:=\\]*\)*' nextgroup=@sudoersCmndSpec,sudoersCommandEmptyInSpec,sudoersCommandArgsInSpec skipwhite
 syn match   sudoersCmndAliasInSpec    contained '\<\u[A-Z0-9_]*\>'  nextgroup=@sudoersCmndSpec        skipwhite skipnl
 
+syn keyword sudoersCmndDigestInList   contained sha224 sha256 sha384 sha512 nextgroup=sudoersCmndDigestColon  skipwhite skipnl
+syn match   sudoersCmndDigestColon    contained ':' nextgroup=sudoersDigestHex,sudoersDigestBase64 skipwhite skipnl
+syn match   sudoersDigestHex          contained '\<\x\+\>'            nextgroup=sudoersCmndDigestComma,sudoersCmndNegationInList,sudoersCmndNameInList,sudoersCmndAliasInList skipwhite skipnl
+syn match   sudoersDigestBase64       contained '\<[A-Za-z0-9+/]\+=*' nextgroup=sudoersCmndDigestComma,sudoersCmndNegationInList,sudoersCmndNameInList,sudoersCmndAliasInList skipwhite skipnl
+syn match   sudoersCmndDigestComma    contained ',' nextgroup=sudoersCmndDigestInList skipwhite skipnl
+
 syn match   sudoersUserAliasEquals  contained '=' nextgroup=@sudoersUserInList  skipwhite skipnl
 syn match   sudoersUserListComma    contained ',' nextgroup=@sudoersUserInList  skipwhite skipnl
 syn match   sudoersUserListColon    contained ':' nextgroup=sudoersUserAlias    skipwhite skipnl
@@ -133,7 +139,7 @@ syn cluster sudoersCmndSpec         contains=sudoersCmndSpecComma,sudoersCmndSpe
 
 syn cluster sudoersUserInList       contains=sudoersUserNegationInList,sudoersUserNameInList,sudoersUIDInList,sudoersGroupInList,sudoersGIDInList,sudoersUserNetgroupInList,sudoersUserAliasInList
 syn cluster sudoersHostInList       contains=sudoersHostNegationInList,sudoersHostNameInList,sudoersIPAddrInList,sudoersNetworkInList,sudoersHostNetgroupInList,sudoersHostAliasInList
-syn cluster sudoersCmndInList       contains=sudoersCmndNegationInList,sudoersCmndNameInList,sudoersCmndAliasInList
+syn cluster sudoersCmndInList       contains=sudoersCmndDigestInList,sudoersCmndNegationInList,sudoersCmndNameInList,sudoersCmndAliasInList
 
 syn cluster sudoersUser             contains=sudoersUserNegation,sudoersUserName,sudoersUID,sudoersGroup,sudoersGID,sudoersUserNetgroup,sudoersUserAliasRef
 syn cluster sudoersHost             contains=sudoersHostNegation,sudoersHostName,sudoersIPAddr,sudoersNetwork,sudoersHostNetgroup,sudoersHostAll,sudoersHostAliasRef
@@ -470,6 +476,11 @@ hi def link sudoersCmndNameInList           String
 hi def link sudoersCmndAliasInList          PreProc
 hi def link sudoersCmndNameInSpec           String
 hi def link sudoersCmndAliasInSpec          PreProc
+hi def link sudoersCmndDigestInList         Type
+hi def link sudoersCmndDigestColon          Operator
+hi def link sudoersDigestHex                Number
+hi def link sudoersDigestBase64             Number
+hi def link sudoersCmndDigestComma          Delimiter
 hi def link sudoersUserAliasEquals          Operator
 hi def link sudoersUserListComma            Delimiter
 hi def link sudoersUserListColon            Delimiter
