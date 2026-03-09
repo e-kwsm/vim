@@ -17,6 +17,11 @@ Defaults runcwd=*
 # sha384:OLBgp1GsljhM2TJ+sbHjaiH9txEUvgdDTAzHv2P24donTt6/529l+9Ua0vFImLlb
 # sha512:z4PhNX7vuL3xVChQ1m2AB9Yg5AULVxXcg/SpIdNs6c5H0NE8XYXysP+DGNKHfuwvY7kxvUdBeoGlODJ6+SfaPg==
 
+# Defaults@::ffff:c0a8:102 env_reset
+# Defaults@0:0:0:0:0:ffff:c0a8:0102 env_reset
+# Defaults@0000:0000:0000:0000:0000:ffff:c0a8:0102 env_reset
+# Host_Alias FOO = ::ffff:c0a8:102, 0:0:0:0:0:ffff:c0a8:0102, 0000:0000:0000:0000:0000:ffff:c0a8:0102
+
 # resource limits
 Defaults rlimit_as=1
 Defaults rlimit_core="1,1"
