@@ -31,7 +31,6 @@ catch vfork
 clear
 cl
 commands
-end
 condition
 delete
 del
@@ -190,6 +189,7 @@ set arm unwind-secure-frames
 set auto-connect-native-target
 set auto-load
 set auto-load gdb-scripts
+set auto-load guile-scripts
 set auto-load libthread-db
 set auto-load local-gdbinit
 set auto-load python-scripts
@@ -972,23 +972,16 @@ compare-sections
 compile
 expression
 compile code
-end
 compile file
-end
 compile print
-end
 complete
 guile
-end
 gu
-end
 guile-repl
 gr
 monitor
 python
-end
 py
-end
 python-interactive
 pi
 record
@@ -1121,6 +1114,7 @@ info all-registers
 info args
 info auto-load
 info auto-load gdb-scripts
+info auto-load guile-scripts
 info auto-load libthread-db
 info auto-load local-gdbinit
 info auto-load python-scripts
@@ -1247,6 +1241,7 @@ show arm unwind-secure-frames
 show auto-connect-native-target
 show auto-load
 show auto-load gdb-scripts
+show auto-load guile-scripts
 show auto-load libthread-db
 show auto-load local-gdbinit
 show auto-load python-scripts
@@ -1779,11 +1774,9 @@ adi x
 alias
 apropos
 define
-end
 define-prefix
 demangle
 document
-end
 dont-repeat
 down-silently
 echo
