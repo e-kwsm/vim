@@ -8,12 +8,6 @@ Defaults admin_flag=/
 # Defaults runchroot=~
 Defaults runcwd=*
 
-# command
-Defaults!/bin/pwd,/usr/bin/pwd root_sudo
-Defaults!!/usr/local/bin/ root_sudo
-Defaults!!sudoedit root_sudo
-Defaults!HASHED,BASE64ENCODED lecture
-
 # sha224:d14a028c2a3a2bc9476102bb288234c415a2b01f828ea62ac5b3e42f
 # sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
 # sha384:38b060a751ac96384cd9327eb1b1e36a21fdb71114be07434c0cc7bf63f6e1da274edebfe76f65fbd51ad2f14898b95b
