@@ -58,10 +58,10 @@ syn keyword gdbCommand contained del[ete] del d nextgroup=@gdbBreakpointNumbers,
   syn keyword gdbDeleteArgs contained bookmark checkpoint display mem tvariable
 syn keyword gdbCommand contained dis[able] disa dis nextgroup=@gdbBreakpointNumbers,gdbDisableArgs skipwhite
   syn keyword gdbDisableArgs contained breakpoints nextgroup=@gdbBreakpointNumbers skipwhite
-  syn keyword gdbDisableArgs contained display frame-filter mem pretty-printer probes type-printer unwinder xmethod
+  syn keyword gdbDisableArgs contained display frame-filter mem missing-debug-handler missing-objfile-handler pretty-printer probes type-printer unwinder xmethod
 syn keyword gdbCommand contained dp[rintf]
 syn keyword gdbCommand contained e[nable] en nextgroup=gdbEnableArgs skipwhite
-  syn keyword gdbEnableArgs contained display frame-filter mem pretty-printer probes type-printer unwinder xmethod
+  syn keyword gdbEnableArgs contained display frame-filter mem missing-debug-handler missing-objfile-handler pretty-printer probes type-printer unwinder xmethod
   syn keyword gdbEnableArgs contained delete once nextgroup=@gdbBreakpointNumbers skipwhite
   syn keyword gdbEnableArgs contained count nextgroup=gdbBreakpointCount skipwhite
   syn keyword gdbEnableArgs contained breakpoints nextgroup=gdbEnableBreakpointArgs,@gdbBreakpointNumbers skipwhite
