@@ -291,8 +291,8 @@ Defaults iolog_group=root
 Defaults iolog_user=root
 Defaults mailerflags=-t
 Defaults mailfrom="root@example.com"
-Defaults mailto="root@localhost"
-Defaults secure_path="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+Defaults mailto=  "root@localhost"
+Defaults secure_path=  "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
 Defaults !exempt_group
 Defaults !iolog_group
 Defaults !iolog_user
