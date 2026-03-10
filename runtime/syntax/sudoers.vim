@@ -179,7 +179,7 @@ syn match   sudoersDefaultTypeBang        contained '!' nextgroup=@sudoersCmnd s
 syn match   sudoersDefaultTypeAny         contained '\s' nextgroup=@sudoersParameter skipwhite skipnl
 
 " TODO: could also deal with special characters here
-syn match   sudoersParameterNegation contained '!\+' nextgroup=sudoersBooleanParameter,sudoersIntegerOrBooleanParameter,sudoersModeOrBooleanParameter,sudoersFloatOrBooleanParameter,sudoersTimeoutOrBooleanParameter,sudoersStringOrBooleanParameter,sudoersListParameter skipwhite skipnl
+syn match   sudoersParameterNegation contained '!\+' nextgroup=sudoersBooleanParameter,sudoersIntegerOrBooleanParameter,sudoersModeOrBooleanParameter,sudoersFloatOrBooleanParameter,sudoersTimeoutOrBooleanParameter,sudoersStringOrBooleanParameter,sudoersResourceParameter,sudoersListParameter skipwhite skipnl
 syn keyword sudoersBooleanParameter contained skipwhite skipnl
                                   \ nextgroup=sudoersParameterListComma
                                   \ always_query_group_plugin
@@ -355,6 +355,17 @@ syn keyword sudoersStringOrBooleanParameter contained
                                   \ mailfrom
                                   \ mailto
                                   \ restricted_env_file
+                                  \ runcwd
+                                  \ secure_path
+                                  \ syslog
+                                  \ syslog_badpri
+                                  \ syslog_goodpri
+                                  \ timestampdir
+                                  \ verifypw
+
+syn keyword sudoersResourceParameter contained
+                                  \ nextgroup=sudoersResourceParameterEquals,sudoersParameterListComma
+                                  \ skipwhite skipnl
                                   \ rlimit_as
                                   \ rlimit_core
                                   \ rlimit_cpu
@@ -366,13 +377,6 @@ syn keyword sudoersStringOrBooleanParameter contained
                                   \ rlimit_nproc
                                   \ rlimit_rss
                                   \ rlimit_stack
-                                  \ runcwd
-                                  \ secure_path
-                                  \ syslog
-                                  \ syslog_badpri
-                                  \ syslog_goodpri
-                                  \ timestampdir
-                                  \ verifypw
 
 syn keyword sudoersListParameter    contained
                                   \ nextgroup=sudoersListParameterEquals,sudoersParameterListComma
@@ -385,13 +389,14 @@ syn keyword sudoersListParameter    contained
 
 syn match   sudoersParameterListComma contained ',' nextgroup=@sudoersParameter skipwhite skipnl
 
-syn cluster sudoersParameter        contains=sudoersParameterNegation,sudoersBooleanParameter,sudoersIntegerParameter,sudoersIntegerOrBooleanParameter,sudoersModeParameter,sudoersModeOrBooleanParameter,sudoersFloatOrBooleanParameter,sudoersTimeoutOrBooleanParameter,sudoersStringParameter,sudoersStringOrBooleanParameter,sudoersListParameter
+syn cluster sudoersParameter        contains=sudoersParameterNegation,sudoersBooleanParameter,sudoersIntegerParameter,sudoersIntegerOrBooleanParameter,sudoersModeParameter,sudoersModeOrBooleanParameter,sudoersFloatOrBooleanParameter,sudoersTimeoutOrBooleanParameter,sudoersStringParameter,sudoersStringOrBooleanParameter,sudoersResourceParameter,sudoersListParameter
 
 syn match   sudoersIntegerParameterEquals contained       '=' nextgroup=sudoersIntegerValue skipwhite skipnl
 syn match   sudoersModeParameterEquals    contained       '=' nextgroup=sudoersModeValue    skipwhite skipnl
 syn match   sudoersFloatParameterEquals   contained       '=' nextgroup=sudoersFloatValue   skipwhite skipnl
 syn match   sudoersTimeoutParameterEquals contained       '=' nextgroup=sudoersTimeoutValue skipwhite skipnl
 syn match   sudoersStringParameterEquals  contained       '=' nextgroup=sudoersStringValue  skipwhite skipnl
+syn match   sudoersResourceParameterEquals contained      '=' nextgroup=sudoersResourceValueSpecial,sudoersResourceValue skipwhite skipnl
 syn match   sudoersListParameterEquals    contained '[+-]\==' nextgroup=sudoersListValue    skipwhite skipnl
 
 syn match   sudoersIntegerValue contained '\<\d\+\>' nextgroup=sudoersParameterListComma skipwhite skipnl
@@ -401,6 +406,10 @@ syn match   sudoersTimeoutValue contained '\<\d\+\>' nextgroup=sudoersParameterL
 syn match   sudoersTimeoutValue contained '\<\%(\d\+[dDhHmMsS]\)\+\>' nextgroup=sudoersParameterListComma skipwhite skipnl
 syn match   sudoersStringValue  contained '\s*\zs[^[:space:],:=\\]*\%(\\[[:space:],:=\\][^[:space:],:=\\]*\)*' nextgroup=sudoersParameterListComma skipwhite skipnl
 syn region  sudoersStringValue  contained start=+\s*\zs"+ skip=+\\"+ end=+"+ nextgroup=sudoersParameterListComma skipwhite skipnl
+syn keyword sudoersResourceValueSpecial contained default user
+syn match sudoersResourceValue contained /\<\d\+\>/ nextgroup=sudoersResourceParameterComma
+syn match sudoersResourceValue contained /"\<\%(\d\+\|infinity\)\>\%(,\%(\d\+\|infinity\)\>\)\?"/ nextgroup=sudoersResourceParameterComma
+syn match sudoersResourceValue contained /\<\%(\d\+\|infinity\)\>\\,\%(\d\+\|infinity\)\>\?/ nextgroup=sudoersResourceParameterComma
 syn match   sudoersListValue    contained '\s*\zs[^[:space:],:=\\]*\%(\\[[:space:],:=\\][^[:space:],:=\\]*\)*' nextgroup=sudoersParameterListComma skipwhite skipnl
 syn region  sudoersListValue    contained start=+\s*\zs"+ skip=+\\"+ end=+"+ nextgroup=sudoersParameterListComma skipwhite skipnl
 
@@ -541,19 +550,24 @@ hi def link sudoersFloatOrBooleanParameter  Identifier
 hi def link sudoersTimeoutOrBooleanParameter Identifier
 hi def link sudoersStringParameter          Identifier
 hi def link sudoersStringOrBooleanParameter Identifier
+hi def link sudoersResourceParameter        Identifier
 hi def link sudoersListParameter            Identifier
+hi def link sudoersResourceParameterComma   Delimiter
 hi def link sudoersParameterListComma       Delimiter
 hi def link sudoersIntegerParameterEquals   Operator
 hi def link sudoersModeParameterEquals      Operator
 hi def link sudoersFloatParameterEquals     Operator
 hi def link sudoersTimeoutParameterEquals   Operator
 hi def link sudoersStringParameterEquals    Operator
+hi def link sudoersResourceParameterEquals  Operator
 hi def link sudoersListParameterEquals      Operator
 hi def link sudoersIntegerValue             Number
 hi def link sudoersModeValue                Number
 hi def link sudoersFloatValue               Float
 hi def link sudoersTimeoutValue             Number
 hi def link sudoersStringValue              String
+hi def link sudoersResourceValue            Number
+hi def link sudoersResourceValueSpecial     Special
 hi def link sudoersListValue                String
 hi def link sudoersOptionSpec               Special
 hi def link sudoersSELinuxSpecEquals        Operator
