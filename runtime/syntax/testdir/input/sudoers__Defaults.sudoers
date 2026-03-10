@@ -286,7 +286,7 @@ Defaults !umask
 # Defaults mailfrom
 # Defaults mailto
 # Defaults secure_path
-Defaults exempt_group=sudo
+Defaults exempt_group=  sudo
 Defaults iolog_group=root
 Defaults iolog_user=root
 Defaults mailerflags=-t
