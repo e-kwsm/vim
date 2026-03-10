@@ -443,13 +443,14 @@ syn match sudoersDateSpecEquals        contained '=' nextgroup=sudoersDateSpecPa
 syn match sudoersTimeoutSpecEquals     contained '=' nextgroup=sudoersTimeoutSpecParam skipwhite skipnl
 syn match sudoersDirectorySpecEquals   contained '=' nextgroup=sudoersDirectorySpecParam,sudoersDirectorySpecParamError skipwhite skipnl
 
-syn match sudoersSELinuxSpecParam contained /\<[A-Za-z0-9_]\+\>/ nextgroup=sudoersOptionSpec,sudoersTagSpec,@sudoersCmndInSpec skipwhite skipnl
-syn match sudoersAppArmorSpecParam contained /\S\+/ nextgroup=sudoersOptionSpec,sudoersTagSpec,@sudoersCmndInSpec skipwhite skipnl
-syn match sudoersSolarisPrivSpecParam contained /\S\+/ nextgroup=sudoersOptionSpec,sudoersTagSpec,@sudoersCmndInSpec skipwhite skipnl
-syn match sudoersDateSpecParam    contained /\<\d\{10\}\%(\d\d\)\{0,2\}\%(Z\|[+-]\d\{4\}\)\?\>/ nextgroup=sudoersOptionSpec,sudoersTagSpec,@sudoersCmndInSpec skipwhite skipnl
-syn match sudoersTimeoutSpecParam contained /\<\d\+\>\|\<\%(\d\+[dDhHmMsS]\)\+\>/ nextgroup=sudoersOptionSpec,sudoersTagSpec,@sudoersCmndInSpec skipwhite skipnl
-syn match sudoersDirectorySpecParam contained '[/~]\f*\|\*' nextgroup=sudoersOptionSpec,sudoersTagSpec,@sudoersCmndInSpec skipwhite skipnl
-syn match sudoersDirectorySpecParam contained '"\%([/~]\f\{-}\|\*\)"' nextgroup=sudoersOptionSpec,sudoersTagSpec,@sudoersCmndInSpec skipwhite skipnl
+syn match sudoersSELinuxSpecParam contained /\<[A-Za-z0-9_]\+\>/ nextgroup=sudoersOptionSpec,sudoersOptionSpecDeprecated,sudoersTagSpec,@sudoersCmndInSpec skipwhite skipnl
+syn match sudoersAppArmorSpecParam contained /\S\+/ nextgroup=sudoersOptionSpec,sudoersOptionSpecDeprecated,sudoersTagSpec,@sudoersCmndInSpec skipwhite skipnl
+syn match sudoersSolarisPrivSpecParam contained /\S\+/ nextgroup=sudoersOptionSpec,sudoersOptionSpecDeprecated,sudoersTagSpec,@sudoersCmndInSpec skipwhite skipnl
+syn match sudoersDateSpecParam    contained /\<\d\{10\}\%(\d\d\)\{0,2\}\%(Z\|[+-]\d\{4\}\)\?\>/ nextgroup=sudoersOptionSpec,sudoersOptionSpecDeprecated,sudoersTagSpec,@sudoersCmndInSpec skipwhite skipnl
+syn match sudoersTimeoutSpecParam contained /\<\d\+\>\|\<\%(\d\+[dDhHmMsS]\)\+\>/ nextgroup=sudoersOptionSpec,sudoersOptionSpecDeprecated,sudoersTagSpec,@sudoersCmndInSpec skipwhite skipnl
+syn match sudoersDirectorySpecParam contained '[/~]\f*\|\*' nextgroup=sudoersOptionSpec,sudoersOptionSpecDeprecated,sudoersTagSpec,@sudoersCmndInSpec skipwhite skipnl
+syn match sudoersDirectorySpecParam contained '"\%([/~]\f\{-}\|\*\)"' nextgroup=sudoersOptionSpec,sudoersOptionSpecDeprecated,sudoersTagSpec,@sudoersCmndInSpec skipwhite skipnl
+syn match sudoersDirectorySpecParamError contained '"\?\*\S\+'
 
 syn keyword sudoersTagSpec contained EXEC NOEXEC FOLLOW NOFOLLOW LOG_INPUT NOLOG_INPUT LOG_OUTPUT NOLOG_OUTPUT MAIL NOMAIL INTERCEPT NOINTERCEPT PASSWD NOPASSWD SETENV NOSETENV nextgroup=sudoersTagSpecColon skipwhite
 syn match sudoersTagSpecColon contained /:/ nextgroup=sudoersTagSpec,@sudoersCmndInSpec skipwhite
@@ -599,6 +600,7 @@ hi def link sudoersSolarisPrivSpecParam     String
 hi def link sudoersDateSpecParam            Number
 hi def link sudoersTimeoutSpecParam         Number
 hi def link sudoersDirectorySpecParam       String
+hi def link sudoersDirectorySpecParamError  Error
 hi def link sudoersTagSpec                  Special
 hi def link sudoersTagSpecColon             Delimiter
 hi def link sudoersInclude                  Statement
