@@ -13,3 +13,4 @@ Defaults!ALL				passwd_tries=1
 user0 ALL = 				/bin/pwd ""
 user1 ALL = 		FOLLOW :	sudoedit ^/etc/motd$
 user2 ALL = (ALL:ALL)			^/usr/bin/[ef]?grep$, !/bin/kill
+user3 ALL = (ALL:ALL)	EXEC :		HASHED , BASE64ENCODED
