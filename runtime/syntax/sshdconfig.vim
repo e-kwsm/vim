@@ -149,6 +149,12 @@ syn match sshdconfigHostPort "\<\([-a-zA-Z0-9]\+\.\)\+[-a-zA-Z0-9]\{2,}\(:\d\+\)
 syn match sshdconfigHostPort "\<\(\x\{,4}:\)\+\x\{,4}:\d\+\>"
 syn match sshdconfigTime "\<\(\d\+[sSmMhHdDwW]\)\+\>"
 
+"+webauthn-sk-ecdsa-sha2-nistp256-cert-v01@openssh.com,
+"+webauthn-sk-ecdsa-sha2-nistp256@openssh.com,
+"+webauthn-sk-ecdsa-sha2-nistp256-cert-v01@openssh.com,
+"+webauthn-sk-ecdsa-sha2-nistp256@openssh.com,
+"+webauthn-sk-ecdsa-sha2-nistp256-cert-v01@openssh.com,
+"+webauthn-sk-ecdsa-sha2-nistp256@openssh.com,
 
 " case off
 syn case ignore

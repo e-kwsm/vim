@@ -94,6 +94,13 @@ syn match sshconfigHostKeyAlgo "\<ecdsa-sha2-nistp384-cert-v01@openssh\.com\>"
 syn match sshconfigHostKeyAlgo "\<ecdsa-sha2-nistp521-cert-v01@openssh\.com\>"
 syn match sshconfigHostKeyAlgo "\<sk-ecdsa-sha2-nistp256-cert-v01@openssh\.com\>"
 
+" webauthn-sk-ecdsa-sha2-nistp256-cert-v01@openssh.com
+" webauthn-sk-ecdsa-sha2-nistp256@openssh.com
+" webauthn-sk-ecdsa-sha2-nistp256-cert-v01@openssh.com
+" webauthn-sk-ecdsa-sha2-nistp256@openssh.com
+" webauthn-sk-ecdsa-sha2-nistp256-cert-v01@openssh.com
+" webauthn-sk-ecdsa-sha2-nistp256@openssh.com
+
 syn keyword sshconfigPreferredAuth hostbased publickey password gssapi-with-mic
 syn keyword sshconfigPreferredAuth keyboard-interactive
 
