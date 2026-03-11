@@ -159,9 +159,9 @@ syn match   sudoersUserNegationInList contained '!\+' nextgroup=@sudoersUserInLi
 syn match   sudoersHostNegationInList contained '!\+' nextgroup=@sudoersHostInList  skipwhite skipnl
 syn match   sudoersCmndNegationInList contained '!\+' nextgroup=@sudoersCmndInList  skipwhite skipnl
 
-syn match   sudoersUserNegation       contained '!\+' nextgroup=@sudoersUser        skipwhite skipnl
-syn match   sudoersHostNegation       contained '!\+' nextgroup=@sudoersHost        skipwhite skipnl
-syn match   sudoersCmndNegation       contained '!\+' nextgroup=@sudoersCmnd        skipwhite skipnl
+syn match   sudoersUserNegation       contained '!\+' nextgroup=@sudoersUser
+syn match   sudoersHostNegation       contained '!\+' nextgroup=@sudoersHost
+syn match   sudoersCmndNegation       contained '!\+' nextgroup=@sudoersCmnd
 
 syn match   sudoersUserNegationInSpec contained '!\+' nextgroup=@sudoersUserInSpec  skipwhite skipnl
 syn match   sudoersHostNegationInSpec contained '!\+' nextgroup=@sudoersHostInSpec  skipwhite skipnl
