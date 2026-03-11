@@ -37,7 +37,3 @@ Defaults>ALL !!!!! env_keep
 Defaults passprompt_regex  = "[Pp]assword[: ]*"
 Defaults passprompt_regex -= "(?i)PASSWORD"
 Defaults passprompt_regex += "password"
-
-# Directives
-@includedir /etc/sudoers.d
-#include /etc/sudoers.d/%h
