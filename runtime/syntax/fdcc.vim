@@ -27,7 +27,7 @@ syn keyword fdccKeywordCtype copy space translit_start include translit_end outd
 syn keyword fdccKeywordCollate copy script order_start order_end collating-symbol reorder-after reorder-end collating-element symbol-equivalence
 syn keyword fdccKeywordMonetary copy int_curr_symbol currency_symbol mon_decimal_point mon_thousands_sep mon_grouping positive_sign negative_sign int_frac_digits frac_digits p_cs_precedes p_sep_by_space n_cs_precedes n_sep_by_space p_sign_posn n_sign_posn int_p_cs_precedes int_p_sep_by_space int_n_cs_precedes int_n_sep_by_space  int_p_sign_posn int_n_sign_posn
 syn keyword fdccKeywordNumeric copy decimal_point thousands_sep grouping
-syn keyword fdccKeywordTime copy abday day abmon mon alt_mon d_t_fmt d_fmt t_fmt am_pm t_fmt_ampm date_fmt era_d_fmt first_weekday first_workday week cal_direction time_zone era alt_digits era_d_t_fmt
+syn keyword fdccKeywordTime copy abday day abmon mon alt_mon d_t_fmt d_fmt t_fmt am_pm am_str pm_str t_fmt_ampm date_fmt era_d_fmt first_weekday first_workday week cal_direction time_zone era alt_digits era_d_t_fmt era_t_fmt
 syn keyword fdccKeywordMessages copy yesexpr noexpr yesstr nostr
 syn keyword fdccKeywordPaper copy height width
 syn keyword fdccKeywordTelephone copy tel_int_fmt int_prefix tel_dom_fmt int_select
