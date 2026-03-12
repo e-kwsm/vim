@@ -10,7 +10,7 @@ endif
 let s:cpo_save = &cpo
 set cpo&vim
 
-setlocal iskeyword+=-
+syn iskeyword @,45,48-57,_,192-255
 
 syn keyword archTodo    TODO FIXME XXX NOTE
 

@@ -30,7 +30,7 @@ syn case	ignore
 syn match	aptconfRegexpOpt	'[-[:alnum:]/.+_]\+\(:[-[:alnum:]/.+_]\+\)*' contained display
 
 " Keywords:
-setlocal iskeyword+=/,-,.,_,+
+syn iskeyword @,43,45-57,_,192-255
 "setlocal iskeyword+=: is problematic, because of the '::' separator
 
 " Incomplete keywords will be treated differently than completely bad strings:

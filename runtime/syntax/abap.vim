@@ -39,7 +39,7 @@ syn match   abapStringEscape contained "``"
 syn match   abapNumber  "\-\=\<\d\+\>"
 syn region  abapHex     matchgroup=abapHex start="X'" end="'"
 
-setlocal iskeyword=48-57,_,A-Z,a-z,/
+syn iskeyword 48-57,_,A-Z,a-z,/
 
 syn match   abapNamespace        "\</\w\+/"
 
