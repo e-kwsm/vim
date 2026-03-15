@@ -16,9 +16,8 @@ setlocal iskeyword+=-
 syn match fdccNumber /[0-9]*/ contained
 
 " Unicode codings and strings
-syn match fdccUnicodeInValid /<[^<]*>/ contained
 syn match fdccUnicodeValid /<U[0-9A-F][0-9A-F][0-9A-F][0-9A-F]>/ contained
-syn region fdccString start=/"/ end=/"/ contains=fdccUnicodeInValid,fdccUnicodeValid
+syn region fdccString start=/"/ end=/"/ contains=fdccUnicodeValid
 
 " Valid LC_ Keywords
 syn keyword fdccKeyword escape_char comment_char
@@ -42,8 +41,8 @@ syn match fdccComment /[#%].*/ contains=fdccTodo,fdccVariable
 
 " LC_ Groups
 syn region fdccBlank matchgroup=fdccLCIdentification start=/^LC_IDENTIFICATION$/ end=/^END LC_IDENTIFICATION$/ contains=fdccKeywordIdentification,fdccString,fdccComment
-syn region fdccBlank matchgroup=fdccLCCtype start=/^LC_CTYPE$/ end=/^END LC_CTYPE$/ contains=fdccKeywordCtype,fdccString,fdccComment,fdccUnicodeInValid,fdccUnicodeValid
-syn region fdccBlank matchgroup=fdccLCCollate start=/^LC_COLLATE$/ end=/^END LC_COLLATE$/ contains=fdccKeywordCollate,fdccString,fdccComment,fdccUnicodeInValid,fdccUnicodeValid
+syn region fdccBlank matchgroup=fdccLCCtype start=/^LC_CTYPE$/ end=/^END LC_CTYPE$/ contains=fdccKeywordCtype,fdccString,fdccComment,fdccUnicodeValid
+syn region fdccBlank matchgroup=fdccLCCollate start=/^LC_COLLATE$/ end=/^END LC_COLLATE$/ contains=fdccKeywordCollate,fdccString,fdccComment,fdccUnicodeValid
 syn region fdccBlank matchgroup=fdccLCMonetary start=/^LC_MONETARY$/ end=/^END LC_MONETARY$/ contains=fdccKeywordMonetary,fdccString,fdccComment,fdccNumber
 syn region fdccBlank matchgroup=fdccLCNumeric start=/^LC_NUMERIC$/ end=/^END LC_NUMERIC$/ contains=fdccKeywordNumeric,fdccString,fdccComment,fdccNumber
 syn region fdccBlank matchgroup=fdccLCTime start=/^LC_TIME$/ end=/^END LC_TIME$/ contains=fdccKeywordTime,fdccString,fdccComment,fdccNumber
@@ -76,7 +75,6 @@ hi def link fdccLCMeasurement	 Statement
 hi def link fdccLCName		 Statement
 hi def link fdccLCAddress		 Statement
 
-hi def link fdccUnicodeInValid	 Error
 hi def link fdccUnicodeValid	 String
 hi def link fdccString		 String
 hi def link fdccNumber		 Blank
