@@ -2002,7 +2002,6 @@ msgstr "???ブロックが空です"
 msgid "???LINES MISSING"
 msgstr "???行が失われています"
 
-
 msgid "???BLOCK MISSING"
 msgstr "???ブロックがありません"
 
@@ -2348,8 +2347,6 @@ msgstr " (割込まれました)"
 
 msgid "Beep!"
 msgstr "ビーッ!"
-
-#, fuzzy, c-format
 
 #, c-format
 msgid "Calling shell to execute: \"%s\""
@@ -8328,8 +8325,6 @@ msgstr "E1291: 無効な引数です: %ld"
 msgid "E1292: Command-line window is already open"
 msgstr "E1292: コマンドラインウィンドウは既に開かれています"
 
-#, fuzzy
-
 msgid "E1294: Can only use text_align when column is zero"
 msgstr "E1294: 桁がゼロのときのみ text_align を使えます"
 
@@ -9105,13 +9100,6 @@ msgid "E1571: Must specify at least one callback for redraw_listener_add"
 msgstr ""
 "E1571: redraw_listener_add には少なくとも1つのコールバックを指定してください"
 
-
-#, fuzzy
-
-#, fuzzy
-
-#, fuzzy
-
 msgid "--No lines in buffer--"
 msgstr "--バッファに行がありません--"
 
@@ -9700,9 +9688,6 @@ msgstr "CTRL-F と CTRL-B でスクロールする行数"
 msgid "don't redraw while executing macros"
 msgstr "マクロを実行中に再描画しない"
 
-
-#, fuzzy
-
 msgid "timeout for 'hlsearch' and :match highlighting in msec"
 msgstr "'hlsearch' と :match のハイライト処理のタイムアウト (ミリ秒)"
 
@@ -9764,8 +9749,6 @@ msgstr "最後の検索パターンに対する全てのマッチをハイライ
 msgid "highlight group to use for the window"
 msgstr "このウィンドウに使うハイライトグループ"
 
-#, fuzzy
-
 msgid "use GUI colors for the terminal"
 msgstr "端末で GUI カラーを使う"
 
@@ -9810,8 +9793,6 @@ msgstr "0, 1 または 2; 最後のウィンドウのステータス行がいつ
 
 msgid "alternate format to be used for a status line"
 msgstr "ステータス行に使われる書式"
-
-#, fuzzy
 
 msgid "make all windows the same size when adding/removing windows"
 msgstr "ウィンドウを追加/削除するときに全ウィンドウのサイズを等しくする"
@@ -10977,22 +10958,6 @@ msgstr "タブパネル内のカスタムのタブページ行"
 
 msgid "options for using tabpanel"
 msgstr "タブパネルを使うためのオプション"
-
-
-#, fuzzy
-
-#, fuzzy
-
-#, fuzzy
-
-
-#, fuzzy
-
-
-#, fuzzy
-
-#, fuzzy
-
 
 msgid "You discovered the command-line window! You can close it with \":q\"."
 msgstr "コマンドラインウィンドウを見つけましたね! \":q\" でクローズできます。"
