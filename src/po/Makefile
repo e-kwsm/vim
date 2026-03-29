@@ -300,7 +300,7 @@ update-po: $(MOFILES:.mo=)
 # Don't add a dependency here, we only want to update the .po files manually.
 $(LANGUAGES):
 	@$(MAKE) $(PACKAGE).pot
-	if test ! -f $@.po.orig; then cp $@.po $@.po.orig; fi
+	cp -n $@.po $@.po.orig
 	mv $@.po $@.po.old
 	if $(MSGMERGE) $@.po.old $(PACKAGE).pot -o $@.po; then \
 	    rm -f $@.po.old; \
