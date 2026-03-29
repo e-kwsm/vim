@@ -1359,8 +1359,6 @@ msgstr " Suggestion d'orthographe (^S^N^P)"
 msgid " Keyword Local completion (^N^P)"
 msgstr " Complètement local de mot-clé (^N/^P)"
 
-# AB - Remplacer "complétion" par "complètement" ? Voir l'éthymologie
-
 msgid "'dictionary' option is empty"
 msgstr "L'option 'dictionary' est vide"
 
@@ -4278,7 +4276,6 @@ msgid "E113: Unknown option: %s"
 msgstr "E113: Option inconnue : %s"
 
 # AB - La version française est meilleure que la version anglaise, qui est
-#      erronée, d'ailleurs : il s'agit d'une "double quote" et non d'une
 
 #, c-format
 msgid "E116: Invalid arguments for function %s"
@@ -5751,7 +5748,6 @@ msgid "E537: 'commentstring' must be empty or contain %s"
 msgstr "E537: 'commentstring' doit être vide ou contenir %s"
 
 # AB - Ce message est utilisé lorsque :vglobal ne trouve rien. Lorsque :global
-#      ne trouve rien, c'est "Pattern not found: %s" / "Motif introuvable: %s"
 
 #, c-format
 msgid "E539: Illegal character <%s>"
@@ -6058,22 +6054,6 @@ msgstr "E630: %s() : écriture sans être connecté"
 #, c-format
 msgid "E631: %s(): Write failed"
 msgstr "E631: %s() : erreur d'écriture"
-
-# AB - Vu le code source, la version française est meilleure que la
-
-# AB - Vu le code source, la version française est meilleure que la
-
-# AB - Vu le code source, la version française est meilleure que la
-
-# AB - Vu le code source, la version française est meilleure que la
-
-# AB - Vu le code source, la version française est meilleure que la
-
-# AB - Vu le code source, la version française est meilleure que la
-
-# AB - Vu le code source, la version française est meilleure que la
-
-# AB - Vu le code source, la version française est meilleure que la
 
 # TODO: Capitalise first word of message?
 #, c-format
@@ -7522,7 +7502,6 @@ msgid "E1146: Command not recognized: %s"
 msgstr "E1146: Commande non reconnue : %s"
 
 # AB - La version française est meilleure que la version anglaise, qui est
-#      erronée, d'ailleurs : il s'agit d'une "double quote" et non d'une
 
 #, c-format
 msgid "E1148: Cannot index a %s"
@@ -7537,9 +7516,6 @@ msgstr ""
 
 # AB - J'espère que la plupart des utilisateurs aura l'idée d'aller vérifier
 #      ses droits d'accès.
-# AB - Le mot "viminfo" a été retiré pour que le message ne dépasse pas 80
-
-# AB - La version anglaise est très mauvaise, ce qui m'oblige a inventer une
 
 # DB - todo : ou encore : msgstr "--Aucune ligne dans le tampon--"
 msgid "--No lines in buffer--"
@@ -7880,7 +7856,6 @@ msgid "(global or local to buffer)"
 msgstr "(global ou local au tampon)"
 
 # AB - Ce message est utilisé lorsque :vglobal ne trouve rien. Lorsque :global
-#      ne trouve rien, c'est "Pattern not found: %s" / "Motif introuvable: %s"
 
 msgid "number of lines used for the command-line"
 msgstr "nombre de lignes utilisée pour la ligne de commande"
@@ -7914,8 +7889,6 @@ msgstr "liste des répertoires du fichier d'échange"
 
 msgid "command line editing"
 msgstr "édition de ligne de commande"
-
-# AB - La version française est meilleure que la version anglaise.
 
 msgid "multi-byte characters"
 msgstr "caractères multi-octets"
