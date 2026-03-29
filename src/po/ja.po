@@ -2002,8 +2002,6 @@ msgstr "???ブロックが空です"
 msgid "???LINES MISSING"
 msgstr "???行が失われています"
 
-#~ msgid "???ILLEGAL BLOCK NUMBER"
-#~ msgstr ""
 
 msgid "???BLOCK MISSING"
 msgstr "???ブロックがありません"
@@ -2352,8 +2350,6 @@ msgid "Beep!"
 msgstr "ビーッ!"
 
 #, fuzzy, c-format
-#~ msgid "Executing directly: \"%s\""
-#~ msgstr "実行中: %s"
 
 #, c-format
 msgid "Calling shell to execute: \"%s\""
@@ -8333,10 +8329,6 @@ msgid "E1292: Command-line window is already open"
 msgstr "E1292: コマンドラインウィンドウは既に開かれています"
 
 #, fuzzy
-#~ msgid "E1293: Cannot use a negative id for a text property"
-#~ msgstr ""
-#~ "E1293: テキスト付きのテキストプロパティを付加したあと負の id を使うことはでき"
-#~ "ません"
 
 msgid "E1294: Can only use text_align when column is zero"
 msgstr "E1294: 桁がゼロのときのみ text_align を使えます"
@@ -9113,22 +9105,12 @@ msgid "E1571: Must specify at least one callback for redraw_listener_add"
 msgstr ""
 "E1571: redraw_listener_add には少なくとも1つのコールバックを指定してください"
 
-#~ msgid "E1572: 'listchars' field \"leadtab\" requires \"tab\" to be specified"
-#~ msgstr ""
 
 #, fuzzy
-#~ msgid "E1573: Cannot listen on port"
-#~ msgstr "E1533: タプルはスライスできません"
 
 #, fuzzy
-#~ msgid "E1574: gethostbyname(): cannot resolve hostname in channel_listen()"
-#~ msgstr "E901: channel_open() 内の gethostbyname() が失敗しました"
 
 #, fuzzy
-#~ msgid "E1575: Cannot create pipes"
-#~ msgstr ""
-#~ "\n"
-#~ "パイプを作成できません\n"
 
 msgid "--No lines in buffer--"
 msgstr "--バッファに行がありません--"
@@ -9718,12 +9700,8 @@ msgstr "CTRL-F と CTRL-B でスクロールする行数"
 msgid "don't redraw while executing macros"
 msgstr "マクロを実行中に再描画しない"
 
-#~ msgid "configure method of receiving terminal size changes"
-#~ msgstr ""
 
 #, fuzzy
-#~ msgid "enable terminal sync mode"
-#~ msgstr "lisp モードを有効化"
 
 msgid "timeout for 'hlsearch' and :match highlighting in msec"
 msgstr "'hlsearch' と :match のハイライト処理のタイムアウト (ミリ秒)"
@@ -9787,8 +9765,6 @@ msgid "highlight group to use for the window"
 msgstr "このウィンドウに使うハイライトグループ"
 
 #, fuzzy
-#~ msgid "highlight group mappings for the window"
-#~ msgstr "このウィンドウに使うハイライトグループ"
 
 msgid "use GUI colors for the terminal"
 msgstr "端末で GUI カラーを使う"
@@ -9836,8 +9812,6 @@ msgid "alternate format to be used for a status line"
 msgstr "ステータス行に使われる書式"
 
 #, fuzzy
-#~ msgid "optional settings for the status line"
-#~ msgstr "同義語補完で使われる関数"
 
 msgid "make all windows the same size when adding/removing windows"
 msgstr "ウィンドウを追加/削除するときに全ウィンドウのサイズを等しくする"
@@ -11004,52 +10978,21 @@ msgstr "タブパネル内のカスタムのタブページ行"
 msgid "options for using tabpanel"
 msgstr "タブパネルを使うためのオプション"
 
-#~ msgid "Notice"
-#~ msgstr ""
-
-#~ msgid "Quickfix list not found, stopping the job"
-#~ msgstr ""
-
-#~ msgid "Success!"
-#~ msgstr ""
 
 #, fuzzy
-#~ msgid "Job terminated"
-#~ msgstr ""
-#~ "\n"
-#~ "コマンドを中断しました\n"
 
 #, fuzzy
-#~ msgid "There are errors."
-#~ msgstr "[読込エラー]"
 
 #, fuzzy
-#~ msgid "Could not create quickfix list"
-#~ msgstr "E566: cscopeパイプを作成できませんでした"
 
-#~ msgid "File not readable:"
-#~ msgstr ""
 
 #, fuzzy
-#~ msgid "Failed to start job"
-#~ msgstr "コードの実行に失敗しました"
 
-#~ msgid "Typesetting..."
-#~ msgstr ""
 
 #, fuzzy
-#~ msgid "Jobs still running:"
-#~ msgstr "E948: ジョブはまだ実行中です"
 
 #, fuzzy
-#~ msgid "Done."
-#~ msgstr "実行しました!"
 
-#~ msgid "Typeset"
-#~ msgstr ""
-
-#~ msgid "Please save the buffer first."
-#~ msgstr ""
 
 msgid "You discovered the command-line window! You can close it with \":q\"."
 msgstr "コマンドラインウィンドウを見つけましたね! \":q\" でクローズできます。"
