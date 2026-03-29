@@ -1088,7 +1088,6 @@ msgstr "# 이 파일이 저장되었을 때의 'encoding'의 값\n"
 msgid "Illegal starting char"
 msgstr "이상한 시작 글자"
 
-
 msgid "Write partial file?"
 msgstr "파일 일부만 저장할까요?"
 
@@ -1737,7 +1736,6 @@ msgstr "[피포]"
 msgid "[socket]"
 msgstr "[소켓]"
 
-
 msgid "[CR missing]"
 msgstr "[CR 없음]"
 
@@ -2045,7 +2043,6 @@ msgstr "맞는 자동명령이 없습니다"
 msgid "E218: Autocommand nesting too deep"
 msgstr "E218: 자동명령이 너무 깊게 중첩되었습니다"
 
-
 #, c-format
 msgid "Executing %s"
 msgstr "%s 실행중"
@@ -2164,7 +2161,6 @@ msgstr "E599: 'imactivatekey' 값이 이상합니다"
 msgid "E254: Cannot allocate color %s"
 msgstr "E254: 색 %s을(를) 할당할 수 없습니다"
 
-
 msgid "_Cancel"
 msgstr "취소(_C)"
 
@@ -2209,7 +2205,6 @@ msgstr "바꿀 문자열:"
 
 msgid "Match whole word only"
 msgstr "똑같은 낱말만"
-
 
 msgid "Direction"
 msgstr "방향"
@@ -2355,13 +2350,11 @@ msgstr "글꼴 규격이 이상합니다"
 msgid "&Dismiss"
 msgstr "취소(&D)"
 
-
 msgid "Vim - Font Selector"
 msgstr "Vim - 글꼴 선택기"
 
 msgid "Name:"
 msgstr "이름:"
-
 
 msgid "Encoding:"
 msgstr "인코딩:"
@@ -2475,7 +2468,6 @@ msgstr "인쇄작업이 끝났습니다."
 msgid "Add a new database"
 msgstr "새 데이터베이스 더하기"
 
-
 msgid "Show this message"
 msgstr "이 메시지 보이기"
 
@@ -2548,7 +2540,6 @@ msgstr "E623: cscope 프로세스를 spawn할 수 없습니다"
 # TODO: Capitalise first word of message?
 msgid "E567: No cscope connections"
 msgstr "E567: cscope 연결이 없습니다"
-
 
 msgid "cscope commands:\n"
 msgstr "cscope 명령:\n"
@@ -2681,7 +2672,6 @@ msgstr "줄을 끼워넣을 수 없습니다"
 msgid "string cannot contain newlines"
 msgstr "문자열은 newline을 포함할 수 없습니다"
 
-
 msgid "Vim error: ~a"
 msgstr "Vim 에러: ~a"
 
@@ -2747,7 +2737,6 @@ msgstr "E269: 뜻밖의 break"
 # TODO: Capitalise first word of message?
 msgid "E270: Unexpected redo"
 msgstr "E270: 뜻밖의 redo"
-
 
 # TODO: Capitalise first word of message?
 msgid "E272: Unhandled exception"
@@ -2942,7 +2931,6 @@ msgid ""
 msgstr ""
 "\n"
 "   혹은:"
-
 
 msgid ""
 "\n"
@@ -3144,7 +3132,6 @@ msgstr "--startuptime <file>\tstartup timing 메시지를 <file>에 저장"
 msgid "-i <viminfo>\t\tUse <viminfo> instead of .viminfo"
 msgstr "-i <viminfo>\t\t.viminfo 대신 <viminfo>를 사용"
 
-
 msgid "-h  or  --help\tPrint Help (this message) and exit"
 msgstr "-h 혹은 --help\t도움말(이 메시지)을 출력한 뒤 끝내기"
 
@@ -3248,7 +3235,6 @@ msgstr ": 보내기가 실패하였습니다.\n"
 msgid ": Send failed. Trying to execute locally\n"
 msgstr ": 보내기 실패. 로컬에서 실행됩니다\n"
 
-
 msgid "No display: Send expression failed.\n"
 msgstr "디스플레이 없음: 표현식 보내기가 실패했습니다.\n"
 
@@ -3275,7 +3261,6 @@ msgid ""
 msgstr ""
 "\n"
 " 점프 라인  col 파일/텍스트"
-
 
 msgid ""
 "\n"
@@ -3686,7 +3671,6 @@ msgstr "스택 크기 증가"
 msgid "E317: Pointer block id wrong 2"
 msgstr "E317: 잘못된 포인터 구역 id 2"
 
-
 msgid "E325: ATTENTION"
 msgstr "E325: 주목"
 
@@ -3936,7 +3920,6 @@ msgstr "삑!"
 msgid "ERROR: "
 msgstr "에러: "
 
-
 msgid "E340: Line is becoming too long"
 msgstr "E340: 줄이 너무 길어졌습니다"
 
@@ -3967,7 +3950,6 @@ msgstr "E548: 숫자가 필요합니다"
 
 msgid "E549: Illegal percentage"
 msgstr "E549: 이상한 백분율"
-
 
 #, c-format
 msgid ""
@@ -4035,7 +4017,6 @@ msgstr "E352: 현재의 'foldmethod'으로 접기를 지울 수 없습니다"
 msgid "E664: Changelist is empty"
 msgstr "E664: changelist가 비었습니다"
 
-
 msgid "Type  :qa!  and press <Enter> to abandon all changes and exit Vim"
 msgstr ":qa! 입력 후에 <엔터> 키를 누르시면 수정을 취소하고 빔을 종료합니다"
 
@@ -4065,7 +4046,6 @@ msgstr "1 line indented "
 #, c-format
 msgid "%ld lines indented "
 msgstr "%ld lines indented "
-
 
 msgid "cannot yank; delete anyway"
 msgstr "cannot yank; delete anyway"
@@ -4126,7 +4106,6 @@ msgstr ""
 msgid "E574: Unknown register type %d"
 msgstr "E574: 모르는 레지스터 형식 %d"
 
-
 #, c-format
 msgid "%ld Cols; "
 msgstr "%ld 열; "
@@ -4155,7 +4134,6 @@ msgstr ""
 "Col %s of %s; Line %ld of %ld; Word %lld of %lld; Char %lld of %lld; Byte "
 "%lld of %lld"
 
-
 msgid "Thanks for flying Vim"
 msgstr "빔을 날게 해 주셔서 고맙습니다"
 
@@ -4181,7 +4159,6 @@ msgstr "E522: termcap에서 찾을 수 없습니다"
 msgid "E539: Illegal character <%s>"
 msgstr "E539: 이상한 글자 <%s>"
 
-
 msgid "E529: Cannot set 'term' to empty string"
 msgstr "E529: 'term'을 빈 문자열로 설정할 수 없습니다"
 
@@ -4202,7 +4179,6 @@ msgstr "E835: 'fillchars' 값과 충돌이 발생합니다"
 
 msgid "E617: Cannot be changed in the GTK+ 2 GUI"
 msgstr "E617: GTK+ 2 GUI에서는 바뀔 수 없습니다"
-
 
 msgid "E524: Missing colon"
 msgstr "E524: 콜론이 없습니다"
@@ -4258,11 +4234,9 @@ msgstr "E538: 마우스를 지원하지 않습니다"
 msgid "E540: Unclosed expression sequence"
 msgstr "E540: 닫히지 않은 표현식 배열"
 
-
 # TODO: Capitalise first word of message?
 msgid "E542: Unbalanced groups"
 msgstr "E542: 균형이 안 잡힌 그룹"
-
 
 msgid "E590: A preview window already exists"
 msgstr "E590: 미리 보기 창이 이미 존재합니다"
@@ -4440,7 +4414,6 @@ msgstr ""
 "\n"
 "Could not set security context for "
 
-
 msgid ""
 "\n"
 "Cannot execute shell sh\n"
@@ -4608,7 +4581,6 @@ msgstr "E380: 퀵픽스 스택의 바닥입니다"
 msgid "E381: At top of quickfix stack"
 msgstr "E381: 퀵픽스 스택의 꼭대기입니다"
 
-
 msgid "Error file"
 msgstr "에러 파일"
 
@@ -4632,7 +4604,6 @@ msgstr "E369: %s%%[]에 잘못된 항목"
 #, c-format
 msgid "E769: Missing ] after %s["
 msgstr "E769: %s[ 뒤에 ]가 없습니다"
-
 
 #, c-format
 msgid "E53: Unmatched %s%%("
@@ -4722,7 +4693,6 @@ msgstr "외부 submatches:\n"
 msgid "E888: (NFA regexp) cannot repeat %s"
 msgstr "E888: (NFA 정규표현식) %s을(를) 반복할 수 없습니다"
 
-
 #, c-format
 msgid "E877: (NFA regexp) Invalid character class: %ld"
 msgstr "E877: (NFA 정규표현식) 비정상적인 문자 클래스: %ld"
@@ -4745,20 +4715,17 @@ msgstr "E868: Error building NFA with equivalence class!"
 msgid "E869: (NFA) Unknown operator '\\@%c'"
 msgstr "E869: (NFA) 모르는 오퍼레이터 '\\@%c'"
 
-
 msgid "E872: (NFA regexp) Too many '('"
 msgstr "E872: (NFA 정규표현식) '('가 너무 많습니다"
 
 msgid "E879: (NFA regexp) Too many \\z("
 msgstr "E879: (NFA 정규표현식) \\z(가 너무 많습니다"
 
-
 msgid "Could not open temporary log file for writing, displaying on stderr... "
 msgstr "쓰기위한 임시 로그 파일을 열 수 없습니다, 표준에러(stderr)에 표시합니다..."
 
 msgid "E874: (NFA) Could not pop the stack!"
 msgstr "E874: (NFA) 스택에서 꺼낼 수 없습니다!"
-
 
 msgid " VREPLACE"
 msgstr " 선택치환"
@@ -5264,7 +5231,6 @@ msgstr "구문 대소문자 구별않함"
 msgid "syntax case match"
 msgstr "구문 대소문자 구별"
 
-
 msgid "syntax iskeyword "
 msgstr "syntax iskeyword "
 
@@ -5402,7 +5368,6 @@ msgstr "E409: 모르는 그룹 이름: %s"
 #, c-format
 msgid "E410: Invalid :syntax subcommand: %s"
 msgstr "E410: 잘못된 :syntax 하위 명령: %s"
-
 
 # TODO: Capitalise first word of message?
 msgid "E679: Recursive loop loading syncolor.vim"
@@ -5742,7 +5707,6 @@ msgstr "after"
 msgid "Nothing to undo"
 msgstr "취소할 게 없습니다"
 
-
 #, c-format
 msgid "%ld seconds ago"
 msgstr "%ld seconds ago"
@@ -5927,7 +5891,6 @@ msgid ""
 msgstr ""
 "\n"
 "macOS 버젼"
-
 
 msgid ""
 "\n"
@@ -6191,7 +6154,6 @@ msgstr "E447: path에서 \"%s\" 파일을 찾을 수 없습니다"
 #, c-format
 msgid "E799: Invalid ID: %ld (must be greater than or equal to 1)"
 msgstr "E799: 비정상적인 ID: %ld (1보다 크거나 같아야 합니다)"
-
 
 msgid "E290: List or number required"
 msgstr "E290: List나 number가 필요합니다"
@@ -6577,7 +6539,6 @@ msgstr "E592: 'winwidth'는 'winminwidth'보다 커야 합니다"
 msgid "E80: Error while writing"
 msgstr "E80: 쓰는 중에 에러"
 
-
 msgid "E81: Using <SID> not in a script context"
 msgstr "E81: 스크립트 콘텍스트 밖에서 <SID> 사용"
 
@@ -6645,7 +6606,6 @@ msgstr "list가 잠겨있습니다"
 msgid "failed to add key '%s' to dictionary"
 msgstr "dictionary에 '%s' 키를 추가할 수 없습니다"
 
-
 msgid "value is too large to fit into C int type"
 msgstr "값이 C 정수 형식 대비하여 너무 큽니다"
 
@@ -6671,7 +6631,6 @@ msgstr "E264: 파이썬: I/O 객체 초기화중 에러가 생겼습니다"
 msgid "failed to change directory"
 msgstr "디렉토리를 바꿀 수 없습니다"
 
-
 msgid "cannot delete vim.Dictionary attributes"
 msgstr "vim.Dictionary 속성을 삭제할 수 없습니다"
 
@@ -6682,14 +6641,11 @@ msgstr "fixed dictionary를 수정할 수 없습니다"
 msgid "cannot set attribute %s"
 msgstr "속성 %s을(를) 설정할 수 없습니다"
 
-
 msgid "list index out of range"
 msgstr "list 색인이 범위를 벗어났습니다"
 
-
 msgid "cannot delete vim.List attributes"
 msgstr "vim.List 속성을 삭제할 수 없습니다"
-
 
 #, c-format
 msgid "unnamed function %s does not exist"
@@ -6705,7 +6661,6 @@ msgstr "함수 %s을(를) 실행할 수 없습니다"
 
 msgid "unable to get option value"
 msgstr "옵션 값을 얻을 수 없습니다"
-
 
 msgid "attempt to refer to deleted tab page"
 msgstr "지워진 탭 페이지를 참조하려고 하였습니다"
@@ -6731,11 +6686,9 @@ msgstr "지워진 버퍼를 참조하려고 하였습니다"
 msgid "failed to rename buffer"
 msgstr "버퍼 이름을 변경할 수 없습니다"
 
-
 #, c-format
 msgid "unable to convert %s to a Vim list"
 msgstr "%s을(를) vim list로 변경할 수 없습니다"
-
 
 msgid ""
 "Vim macro files (*.vim)\t*.vim\n"

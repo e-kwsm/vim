@@ -3639,7 +3639,6 @@ msgstr "E538: 不支援滑鼠"
 msgid "E540: Unclosed expression sequence"
 msgstr "E540: 沒有結束的運算式: "
 
-
 # TODO: Capitalise first word of message?
 msgid "E542: Unbalanced groups"
 msgstr "E542: 不對稱的 group"

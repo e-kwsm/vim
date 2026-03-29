@@ -3938,7 +3938,6 @@ msgstr "E538: Bez podpory myši"
 msgid "E540: Unclosed expression sequence"
 msgstr "E540: Neuzatvorené zoskupenie výrazov"
 
-
 # TODO: Capitalise first word of message?
 msgid "E542: Unbalanced groups"
 msgstr "E542: nevyvážené skupiny"

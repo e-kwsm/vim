@@ -2816,7 +2816,6 @@ msgstr "nieznane vimOption"
 msgid "keyboard interrupt"
 msgstr "przerwanie klawiatury"
 
-
 msgid "cannot create buffer/window command: object is being deleted"
 msgstr "nie mogê stworzyæ bufora/okna komendy: obiekt jest kasowany"
 
@@ -4376,7 +4375,6 @@ msgstr "E538: Brak wspomagania myszki"
 
 msgid "E540: Unclosed expression sequence"
 msgstr "E540: Niedomkniêty ci¹g wyra¿eñ"
-
 
 # TODO: Capitalise first word of message?
 msgid "E542: Unbalanced groups"

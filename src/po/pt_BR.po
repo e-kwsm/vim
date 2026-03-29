@@ -4391,7 +4391,6 @@ msgstr "E538: Não há suporte a mouse"
 msgid "E540: Unclosed expression sequence"
 msgstr "E540: Expressão não terminada com '}'"
 
-
 # TODO: Capitalise first word of message?
 msgid "E542: Unbalanced groups"
 msgstr "E542: parênteses desequilibrados"

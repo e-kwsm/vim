@@ -2122,7 +2122,6 @@ msgstr "không "
 msgid "connected"
 msgstr "được kết nối"
 
-
 msgid "invalid buffer number"
 msgstr "số của bộ đệm không đúng"
 
@@ -3573,7 +3572,6 @@ msgstr "E538: Chuột không được hỗ trợ"
 
 msgid "E540: Unclosed expression sequence"
 msgstr "E540: Dãy các biểu thức không đóng"
-
 
 # TODO: Capitalise first word of message?
 msgid "E542: Unbalanced groups"

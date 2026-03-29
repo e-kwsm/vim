@@ -4426,7 +4426,6 @@ msgstr "E538: Ingen understøttelse af mus"
 msgid "E540: Unclosed expression sequence"
 msgstr "E540: Ulukket udtryk-sekvens"
 
-
 # TODO: Capitalise first word of message?
 msgid "E542: Unbalanced groups"
 msgstr "E542: ubalancerede grupper"

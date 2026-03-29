@@ -3771,7 +3771,6 @@ msgstr "E538: geen muisondersteuning"
 msgid "E540: Unclosed expression sequence"
 msgstr "E540: ongepaarde expressie-volgorde"
 
-
 # TODO: Capitalise first word of message?
 msgid "E542: Unbalanced groups"
 msgstr "E542: ongepaarde groepen"
