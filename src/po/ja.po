@@ -53,7 +53,6 @@ msgstr "自動コマンド: %s <バッファ=%d> が自動的に削除されま�
 msgid "W19: Deleting augroup that is still in use"
 msgstr "W19: 使用中の augroup を消そうとしています"
 
-#. Highlight title
 msgid ""
 "\n"
 "--- Autocommands ---"
@@ -156,7 +155,6 @@ msgstr "末尾"
 msgid "Top"
 msgstr "先頭"
 
-#. localized percentage value
 #, c-format
 msgid "%d%%"
 msgstr "%d%%"
@@ -193,9 +191,6 @@ msgstr "[ポップアップ]"
 msgid "[Scratch]"
 msgstr "[下書き]"
 
-#. don't overwrite messages here
-#. must give this prompt
-#. don't use emsg() here, don't want to flush the buffers
 msgid "WARNING: The file has been changed since reading it!!!"
 msgstr "警告: 読込んだ後にファイルに変更がありました!!!"
 
@@ -252,11 +247,9 @@ msgstr "W10: 警告: 読込専用ファイルを変更します"
 msgid "No display"
 msgstr "ディスプレイが見つかりません"
 
-#. Failed to send, abort.
 msgid ": Send failed.\n"
 msgstr ": 送信に失敗しました.\n"
 
-#. Let vim start normally.
 msgid ": Send failed. Trying to execute locally\n"
 msgstr ": 送信に失敗しました。ローカルでの実行を試みています\n"
 
@@ -463,9 +456,6 @@ msgstr "片仮名"
 msgid "Bopomofo"
 msgstr "注音字母"
 
-#. row number, column number is appended
-#. l10n: leave as-is unless a space after the comma is preferred
-#. l10n: do not add any row/column label, due to the limited space
 #, c-format
 msgid "%ld,"
 msgstr "%ld,"
@@ -477,11 +467,6 @@ msgstr ""
 "\n"
 "\t最後にセットしたスクリプト: "
 
-#.
-#. * Yes this is ugly, I don't particularly like it either.  But doing it
-#. * this way has the compelling advantage that translations need not to
-#. * be touched at all.  See below what 'ok' and 'ync' are used for.
-#.
 msgid "&Ok"
 msgstr "&Ok"
 
@@ -676,7 +661,6 @@ msgstr "リダイレクトを保存します"
 msgid "Untitled"
 msgstr "無題"
 
-#. always scroll up, don't overwrite
 #, c-format
 msgid "Exception thrown: %s"
 msgstr "例外が発生しました: %s"
@@ -693,7 +677,6 @@ msgstr "例外が破棄されました: %s"
 msgid "%s, line %ld"
 msgstr "%s, 行 %ld"
 
-#. always scroll up, don't overwrite
 #, c-format
 msgid "Exception caught: %s"
 msgstr "例外が捕捉されました: %s"
@@ -719,7 +702,6 @@ msgstr "エラーと割込み"
 msgid "Error"
 msgstr "エラー"
 
-#. if (pending & CSTP_INTERRUPT)
 msgid "Interrupt"
 msgstr "割込み"
 
@@ -747,7 +729,6 @@ msgstr "[権限がありません]"
 msgid "Vim: Reading from stdin...\n"
 msgstr "Vim: 標準入力から読込み中...\n"
 
-#. make a copy, gui_write() may try to change it
 msgid "Reading from stdin..."
 msgstr "標準入力から読込み中..."
 
@@ -804,7 +785,6 @@ msgstr "[unix]"
 msgid "[unix format]"
 msgstr "[unixフォーマット]"
 
-#. l10n: L as in line, B as in byte
 #, c-format
 msgid "%s%ldL, %lldB"
 msgstr "%s%ldL, %lldB"
@@ -947,18 +927,15 @@ msgstr "検索文字列:"
 msgid "Replace with:"
 msgstr "置換文字列:"
 
-#. whole word only button
 msgid "Match whole word only"
 msgstr "正確に該当するものだけ"
 
-#. match case button
 msgid "Match case"
 msgstr "大文字/小文字を区別する"
 
 msgid "Direction"
 msgstr "方向"
 
-#. 'Up' and 'Down' buttons
 msgid "Up"
 msgstr "上"
 
@@ -1040,8 +1017,6 @@ msgstr "検索文字列"
 msgid "Find & Replace"
 msgstr "検索・置換"
 
-#. We fake this: Use a filter that doesn't select anything and a default
-#. file name that won't be used.
 msgid "Not Used"
 msgstr "使われません"
 
@@ -1083,7 +1058,6 @@ msgstr "Vim - フォント選択"
 msgid "Name:"
 msgstr "名前:"
 
-#. create toggle button
 msgid "Show size in Points"
 msgstr "サイズをポイントで表示する"
 
@@ -1291,7 +1265,6 @@ msgstr "無効なバッファ番号です"
 msgid "not implemented yet"
 msgstr "まだ実装されていません"
 
-#. ???
 msgid "cannot set line(s)"
 msgstr "行を設定できません"
 
@@ -1353,11 +1326,9 @@ msgstr[0] "%ld 行をインデントしました "
 msgid " Keyword completion (^N^P)"
 msgstr " キーワード補完 (^N^P)"
 
-#. CTRL_X_NORMAL, ^P/^N compl.
 msgid " ^X mode (^]^D^E^F^I^K^L^N^O^P^Rs^U^V^Y)"
 msgstr " ^X モード (^]^D^E^F^I^K^L^N^O^P^Rs^U^V^Y)"
 
-#. CTRL_X_SCROLL: depends on state
 msgid " Whole line completion (^L^N^P)"
 msgstr " 行(全体)補完 (^L^N^P)"
 
@@ -1373,14 +1344,12 @@ msgstr " パスパターン補完 (^N^P)"
 msgid " Definition completion (^D^N^P)"
 msgstr " 定義補完 (^D^N^P)"
 
-#. CTRL_X_FINISHED
 msgid " Dictionary completion (^K^N^P)"
 msgstr " 辞書補完 (^K^N^P)"
 
 msgid " Thesaurus completion (^T^N^P)"
 msgstr " シソーラス補完 (^T^N^P)"
 
-#. CTRL_X_EVAL doesn't use msg.
 msgid " Command-line completion (^V^N^P)"
 msgstr " コマンドライン補完 (^V^N^P)"
 
@@ -1415,12 +1384,10 @@ msgstr " (挿入) スクロール(^E/^Y)"
 msgid " (replace) Scroll (^E/^Y)"
 msgstr " (置換) スクロール (^E/^Y)"
 
-#. reset in msg_trunc_attr()
 #, c-format
 msgid "Scanning: %s"
 msgstr "スキャン中: %s"
 
-#. reset in msg_trunc_attr()
 msgid "Scanning tags."
 msgstr "タグをスキャン中。"
 
@@ -1543,7 +1510,6 @@ msgstr "Vim: 警告: 端末への出力ではありません\n"
 msgid "Vim: Warning: Input is not from a terminal\n"
 msgstr "Vim: 警告: 端末からの入力ではありません\n"
 
-#. just in case..
 msgid "pre-vimrc command line"
 msgstr "vimrc前のコマンドライン"
 
@@ -1928,7 +1894,6 @@ msgstr "マッピングは見つかりませんでした"
 msgid "No marks set"
 msgstr "マークが設定されていません"
 
-#. Highlight title
 msgid ""
 "\n"
 "mark line  col file/text"
@@ -1936,7 +1901,6 @@ msgstr ""
 "\n"
 "mark   行   列 ファイル/テキスト"
 
-#. Highlight title
 msgid ""
 "\n"
 " jump line  col file/text"
@@ -1944,7 +1908,6 @@ msgstr ""
 "\n"
 " jump   行   列 ファイル/テキスト"
 
-#. Highlight title
 msgid ""
 "\n"
 "change line  col text"
@@ -2039,8 +2002,8 @@ msgstr "???ブロックが空です"
 msgid "???LINES MISSING"
 msgstr "???行が失われています"
 
-msgid "???ILLEGAL BLOCK NUMBER"
-msgstr ""
+#~ msgid "???ILLEGAL BLOCK NUMBER"
+#~ msgstr ""
 
 msgid "???BLOCK MISSING"
 msgstr "???ブロックがありません"
@@ -2083,8 +2046,6 @@ msgstr ""
 "\n"
 "元の.swpファイルは削除しても構いません。"
 
-#. Warn there could be an active Vim on the same file, the user may
-#. want to kill it.
 msgid ""
 "\n"
 "Note: process STILL RUNNING: "
@@ -2095,7 +2056,6 @@ msgstr ""
 msgid "Using crypt key from swap file for the text file.\n"
 msgstr "スワップファイルから取得した暗号キーをテキストファイルに使います。\n"
 
-#. use msg() to start the scrolling properly
 msgid "Swap files found:"
 msgstr "スワップファイルが複数見つかりました:"
 
@@ -2220,8 +2180,6 @@ msgstr "      見つかりません"
 msgid "      NEWER than swap file!\n"
 msgstr "      スワップファイルよりも新しいです!\n"
 
-#. Some of these messages are long to allow translation to
-#. other languages.
 msgid ""
 "\n"
 "(1) Another program may be editing the same file.  If this is the case,\n"
@@ -2300,7 +2258,6 @@ msgstr ""
 "終了する(&Q)\n"
 "中止する(&A)"
 
-#. list the matching menu mappings
 msgid ""
 "\n"
 "--- Menus ---"
@@ -2323,8 +2280,6 @@ msgstr "%s の処理中にエラーが検出されました:"
 msgid "line %4ld:"
 msgstr "行 %4ld:"
 
-#. Translator: Please replace the name and email address
-#. with the appropriate text for your translation.
 msgid "Messages maintainer: The Vim Project"
 msgstr "日本語メッセージ翻訳/監修: 村岡 太郎 <koron.kaoriya@gmail.com>"
 
@@ -2397,8 +2352,8 @@ msgid "Beep!"
 msgstr "ビーッ!"
 
 #, fuzzy, c-format
-msgid "Executing directly: \"%s\""
-msgstr "実行中: %s"
+#~ msgid "Executing directly: \"%s\""
+#~ msgstr "実行中: %s"
 
 #, c-format
 msgid "Calling shell to execute: \"%s\""
@@ -2425,7 +2380,6 @@ msgid "%ld lines %sed %d time"
 msgid_plural "%ld lines %sed %d times"
 msgstr[0] "%ld 行が %s で %d 回処理されました"
 
-#. must display the prompt
 msgid "cannot yank; delete anyway"
 msgstr "ヤンクできません; とにかく消去"
 
@@ -2557,9 +2511,6 @@ msgstr "%s へ (%s 上の)"
 msgid "Printing '%s'"
 msgstr "印刷しています: '%s'"
 
-#. Default font name for current language on MS-Windows.
-#. If not translated, falls back to "Consolas".
-#. This must be a fixed-pitch font.
 msgid "DefaultFontNameForWindows"
 msgstr "MS_Gothic"
 
@@ -2760,7 +2711,6 @@ msgid "%ld line yanked%s"
 msgid_plural "%ld lines yanked%s"
 msgstr[0] "%ld 行が%sヤンクされました"
 
-#. Highlight title
 msgid ""
 "\n"
 "Type Name Content"
@@ -2890,7 +2840,6 @@ msgstr "W15: 警告: 行区切が不正です。^M がないのでしょう"
 msgid " (includes previously listed match)"
 msgstr " (前に列挙した該当箇所を含む)"
 
-#. cursor at status line
 msgid "--- Included files "
 msgstr "--- インクルードされたファイル "
 
@@ -2967,8 +2916,6 @@ msgid "Warning: Cannot find word list \"%s.%s.spl\" or \"%s.ascii.spl\""
 msgstr ""
 "警告: 単語リスト \"%s.%s.spl\" および \"%s.ascii.spl\" は見つかりません"
 
-#. This is probably an error.  Give a warning and
-#. accept the words anyway.
 #, c-format
 msgid "Warning: region %s not supported"
 msgstr "警告9: %s という範囲はサポートされていません"
@@ -3192,10 +3139,6 @@ msgstr "%s を圧縮: ノード %ld 個(全 %ld 個中); 残り %ld (%ld%%)"
 msgid "Reading back spell file..."
 msgstr "スペルファイルを逆読込み中"
 
-#.
-#. * Go through the trie of good words, soundfold each word and add it to
-#. * the soundfold trie.
-#.
 msgid "Performing soundfolding..."
 msgstr "音声畳込みを実行中..."
 
@@ -3243,8 +3186,6 @@ msgstr "残念ですが、修正候補はありません"
 msgid "Sorry, only %ld suggestions"
 msgstr "残念ですが、修正候補は %ld 個しかありません"
 
-#. for when 'cmdheight' > 1
-#. avoid more prompt
 #, c-format
 msgid "Change \"%.*s\" to:"
 msgstr "\"%.*s\" を次へ変換:"
@@ -3322,7 +3263,6 @@ msgstr ""
 msgid "File \"%s\" does not exist"
 msgstr "ファイル \"%s\" がありません"
 
-#. Give an indication of the number of matching tags
 #, c-format
 msgid "tag %d of %d%s"
 msgstr "タグ %d (全%d%s)"
@@ -3339,7 +3279,6 @@ msgstr "  # pri kind tag"
 msgid "file\n"
 msgstr "ファイル\n"
 
-#. Highlight title
 msgid ""
 "\n"
 "  # TO tag         FROM line  in file/text"
@@ -3368,7 +3307,6 @@ msgstr "' は未知です。現行の組込み端末は次のとおりです:"
 msgid "defaulting to '"
 msgstr "省略値を次のように設定します '"
 
-#. Highlight title
 msgid ""
 "\n"
 "--- Terminal keys ---"
@@ -3395,10 +3333,6 @@ msgstr "実行中"
 msgid "finished"
 msgstr "終了"
 
-#. Quoting "man strftime":
-#. > If the length of the result string (including the terminating
-#. > null byte) would exceed max bytes, then strftime() returns 0,
-#. > and the contents of the array are undefined.
 msgid "(Invalid)"
 msgstr "(無効)"
 
@@ -3417,7 +3351,6 @@ msgstr "新しいシェルを起動します\n"
 msgid "Vim: Error reading input, exiting...\n"
 msgstr "Vim: 入力を読込み中のエラーにより終了します...\n"
 
-#. must display the prompt
 msgid "No undo possible; continue anyway"
 msgstr "可能なアンドゥはありません: とりあえず続けます"
 
@@ -3920,7 +3853,6 @@ msgstr ""
 "\n"
 "# ファイルマーク:\n"
 
-#. Write the jumplist with -'
 msgid ""
 "\n"
 "# Jumplist (newest first):\n"
@@ -3928,7 +3860,6 @@ msgstr ""
 "\n"
 "# ジャンプリスト (新しいものが先):\n"
 
-#. Write the info:
 #, c-format
 msgid "# This viminfo file was generated by Vim %s.\n"
 msgstr "# この viminfo ファイルは Vim %s によって生成されました.\n"
@@ -8402,10 +8333,10 @@ msgid "E1292: Command-line window is already open"
 msgstr "E1292: コマンドラインウィンドウは既に開かれています"
 
 #, fuzzy
-msgid "E1293: Cannot use a negative id for a text property"
-msgstr ""
-"E1293: テキスト付きのテキストプロパティを付加したあと負の id を使うことはでき"
-"ません"
+#~ msgid "E1293: Cannot use a negative id for a text property"
+#~ msgstr ""
+#~ "E1293: テキスト付きのテキストプロパティを付加したあと負の id を使うことはでき"
+#~ "ません"
 
 msgid "E1294: Can only use text_align when column is zero"
 msgstr "E1294: 桁がゼロのときのみ text_align を使えます"
@@ -9182,27 +9113,23 @@ msgid "E1571: Must specify at least one callback for redraw_listener_add"
 msgstr ""
 "E1571: redraw_listener_add には少なくとも1つのコールバックを指定してください"
 
-msgid "E1572: 'listchars' field \"leadtab\" requires \"tab\" to be specified"
-msgstr ""
+#~ msgid "E1572: 'listchars' field \"leadtab\" requires \"tab\" to be specified"
+#~ msgstr ""
 
 #, fuzzy
-msgid "E1573: Cannot listen on port"
-msgstr "E1533: タプルはスライスできません"
+#~ msgid "E1573: Cannot listen on port"
+#~ msgstr "E1533: タプルはスライスできません"
 
 #, fuzzy
-msgid "E1574: gethostbyname(): cannot resolve hostname in channel_listen()"
-msgstr "E901: channel_open() 内の gethostbyname() が失敗しました"
+#~ msgid "E1574: gethostbyname(): cannot resolve hostname in channel_listen()"
+#~ msgstr "E901: channel_open() 内の gethostbyname() が失敗しました"
 
 #, fuzzy
-msgid "E1575: Cannot create pipes"
-msgstr ""
-"\n"
-"パイプを作成できません\n"
+#~ msgid "E1575: Cannot create pipes"
+#~ msgstr ""
+#~ "\n"
+#~ "パイプを作成できません\n"
 
-#. type of cmdline window or 0
-#. result of cmdline window or 0
-#. buffer of cmdline window or NULL
-#. window of cmdline window or NULL
 msgid "--No lines in buffer--"
 msgstr "--バッファに行がありません--"
 
@@ -9318,7 +9245,6 @@ msgstr "リストのコンストラクタはキーワード引数を受け付け
 msgid "list index out of range"
 msgstr "リスト範囲外のインデックスです"
 
-#. No more suitable format specifications in python-2.3
 #, c-format
 msgid "internal error: failed to get Vim list item %d"
 msgstr "内部エラー: Vimのリスト要素 %d の取得に失敗しました"
@@ -9529,23 +9455,18 @@ msgstr ""
 "C++ソース (*.cpp, *.hpp)\t*.cpp;*.hpp\n"
 "Vimファイル (*.vim, _vimrc, _gvimrc)\t*.vim;_vimrc;_gvimrc\n"
 
-#. Translators: This is the Application Name used in the GVim desktop file
 msgid "GVim"
 msgstr "GVim"
 
-#. Translators: This is the Generic Application Name used in the Vim desktop file
 msgid "Text Editor"
 msgstr "テキストエディタ"
 
-#. Translators: This is the comment used in the Vim desktop file
 msgid "Edit text files"
 msgstr "テキストファイルを編集します"
 
-#. Translators: Search terms to find this application. Do NOT change the semicolons! The list MUST also end with a semicolon!
 msgid "Text;editor;"
 msgstr "テキスト;エディタ;"
 
-#. Translators: This is the Application Name used in the Vim desktop file
 msgid "Vim"
 msgstr "Vim"
 
@@ -9797,12 +9718,12 @@ msgstr "CTRL-F と CTRL-B でスクロールする行数"
 msgid "don't redraw while executing macros"
 msgstr "マクロを実行中に再描画しない"
 
-msgid "configure method of receiving terminal size changes"
-msgstr ""
+#~ msgid "configure method of receiving terminal size changes"
+#~ msgstr ""
 
 #, fuzzy
-msgid "enable terminal sync mode"
-msgstr "lisp モードを有効化"
+#~ msgid "enable terminal sync mode"
+#~ msgstr "lisp モードを有効化"
 
 msgid "timeout for 'hlsearch' and :match highlighting in msec"
 msgstr "'hlsearch' と :match のハイライト処理のタイムアウト (ミリ秒)"
@@ -9866,8 +9787,8 @@ msgid "highlight group to use for the window"
 msgstr "このウィンドウに使うハイライトグループ"
 
 #, fuzzy
-msgid "highlight group mappings for the window"
-msgstr "このウィンドウに使うハイライトグループ"
+#~ msgid "highlight group mappings for the window"
+#~ msgstr "このウィンドウに使うハイライトグループ"
 
 msgid "use GUI colors for the terminal"
 msgstr "端末で GUI カラーを使う"
@@ -9915,8 +9836,8 @@ msgid "alternate format to be used for a status line"
 msgstr "ステータス行に使われる書式"
 
 #, fuzzy
-msgid "optional settings for the status line"
-msgstr "同義語補完で使われる関数"
+#~ msgid "optional settings for the status line"
+#~ msgstr "同義語補完で使われる関数"
 
 msgid "make all windows the same size when adding/removing windows"
 msgstr "ウィンドウを追加/削除するときに全ウィンドウのサイズを等しくする"
@@ -11083,59 +11004,52 @@ msgstr "タブパネル内のカスタムのタブページ行"
 msgid "options for using tabpanel"
 msgstr "タブパネルを使うためのオプション"
 
-msgid "Notice"
-msgstr ""
+#~ msgid "Notice"
+#~ msgstr ""
 
-msgid "Quickfix list not found, stopping the job"
-msgstr ""
+#~ msgid "Quickfix list not found, stopping the job"
+#~ msgstr ""
 
-msgid "Success!"
-msgstr ""
-
-#, fuzzy
-msgid "Job terminated"
-msgstr ""
-"\n"
-"コマンドを中断しました\n"
+#~ msgid "Success!"
+#~ msgstr ""
 
 #, fuzzy
-msgid "There are errors."
-msgstr "[読込エラー]"
+#~ msgid "Job terminated"
+#~ msgstr ""
+#~ "\n"
+#~ "コマンドを中断しました\n"
 
 #, fuzzy
-msgid "Could not create quickfix list"
-msgstr "E566: cscopeパイプを作成できませんでした"
-
-msgid "File not readable:"
-msgstr ""
+#~ msgid "There are errors."
+#~ msgstr "[読込エラー]"
 
 #, fuzzy
-msgid "Failed to start job"
-msgstr "コードの実行に失敗しました"
+#~ msgid "Could not create quickfix list"
+#~ msgstr "E566: cscopeパイプを作成できませんでした"
 
-msgid "Typesetting..."
-msgstr ""
-
-#, fuzzy
-msgid "Jobs still running:"
-msgstr "E948: ジョブはまだ実行中です"
+#~ msgid "File not readable:"
+#~ msgstr ""
 
 #, fuzzy
-msgid "Done."
-msgstr "実行しました!"
+#~ msgid "Failed to start job"
+#~ msgstr "コードの実行に失敗しました"
 
-msgid "Typeset"
-msgstr ""
+#~ msgid "Typesetting..."
+#~ msgstr ""
 
-msgid "Please save the buffer first."
-msgstr ""
+#, fuzzy
+#~ msgid "Jobs still running:"
+#~ msgstr "E948: ジョブはまだ実行中です"
+
+#, fuzzy
+#~ msgid "Done."
+#~ msgstr "実行しました!"
+
+#~ msgid "Typeset"
+#~ msgstr ""
+
+#~ msgid "Please save the buffer first."
+#~ msgstr ""
 
 msgid "You discovered the command-line window! You can close it with \":q\"."
 msgstr "コマンドラインウィンドウを見つけましたね! \":q\" でクローズできます。"
-
-#~ msgid ""
-#~ "E1339: Cannot add a textprop with text after using a textprop with a "
-#~ "negative id"
-#~ msgstr ""
-#~ "E1339: 負の id 付きのテキストプロパティを使ったあとテキスト付きのテキスト"
-#~ "プロパティを付加することはできません"
