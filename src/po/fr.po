@@ -1314,8 +1314,6 @@ msgstr[1] "%ld lignes indentées "
 msgid " Keyword completion (^N^P)"
 msgstr " Complètement de mot-clé (^N^P)"
 
-# DB - todo : Faut-il une majuscule à "mode" ?
-
 msgid " Whole line completion (^L^N^P)"
 msgstr " Complètement de ligne entière (^L^N^P)"
 
@@ -1362,7 +1360,6 @@ msgid " Keyword Local completion (^N^P)"
 msgstr " Complètement local de mot-clé (^N/^P)"
 
 # AB - Remplacer "complétion" par "complètement" ? Voir l'éthymologie
-#      d'"accrétion".
 
 msgid "'dictionary' option is empty"
 msgstr "L'option 'dictionary' est vide"
@@ -4282,9 +4279,6 @@ msgstr "E113: Option inconnue : %s"
 
 # AB - La version française est meilleure que la version anglaise, qui est
 #      erronée, d'ailleurs : il s'agit d'une "double quote" et non d'une
-#      "quote".
-
-# AB - La version française est meilleure que la version anglaise.
 
 #, c-format
 msgid "E116: Invalid arguments for function %s"
@@ -4443,8 +4437,6 @@ msgstr ""
 msgid "E147: Cannot do :global recursive with a range"
 msgstr "E147: :global ne peut pas exécuter :global avec une plage"
 
-# AB - Ce message devrait contenir une référence à :vglobal.
-
 #, c-format
 msgid "E149: Sorry, no help for %s"
 msgstr "E149: Désolé, aucune aide pour %s"
@@ -4567,8 +4559,6 @@ msgstr "E177: Le quantificateur ne peut être spécifié deux fois"
 
 msgid "E178: Invalid default value for count"
 msgstr "E178: La valeur par défaut du quantificateur est invalide"
-
-# TODO: Capitalise first word of message?
 
 #, c-format
 msgid "E180: Invalid complete value: %s"
@@ -5489,8 +5479,6 @@ msgstr "E456: Le fichier de ressource PostScript \"%s.ps\" est introuvable"
 msgid "E457: Can't read PostScript resource file \"%s\""
 msgstr "E457: Impossible de lire le fichier de ressource PostScript \"%s\""
 
-# DB - todo : perfectible.
-
 msgid "E459: Cannot go back to previous directory"
 msgstr "E459: Impossible de retourner au répertoire précédent"
 
@@ -5605,8 +5593,6 @@ msgstr "E488: Caractères surnuméraires"
 #, c-format
 msgid "E488: Trailing characters: %s"
 msgstr "E488: Caractères surnuméraires : %s"
-
-# TODO: Capitalise first word of message?
 
 msgid "E490: No fold found"
 msgstr "E490: Aucun repli trouvé"
@@ -5766,7 +5752,6 @@ msgstr "E537: 'commentstring' doit être vide ou contenir %s"
 
 # AB - Ce message est utilisé lorsque :vglobal ne trouve rien. Lorsque :global
 #      ne trouve rien, c'est "Pattern not found: %s" / "Motif introuvable: %s"
-#      qui est utilisé.
 
 #, c-format
 msgid "E539: Illegal character <%s>"
@@ -6065,8 +6050,6 @@ msgstr ""
 "E626: impossible d'obtenir des informations sur la base de données cscope"
 
 # TODO: Capitalise first word of message?
-
-# TODO: Capitalise first word of message?
 #, c-format
 msgid "E630: %s(): Write while not connected"
 msgstr "E630: %s() : écriture sans être connecté"
@@ -6077,28 +6060,20 @@ msgid "E631: %s(): Write failed"
 msgstr "E631: %s() : erreur d'écriture"
 
 # AB - Vu le code source, la version française est meilleure que la
-#      version anglaise. Ce message est similaire au message E102.
 
 # AB - Vu le code source, la version française est meilleure que la
-#      version anglaise. Ce message est similaire au message E102.
 
 # AB - Vu le code source, la version française est meilleure que la
-#      version anglaise. Ce message est similaire au message E102.
 
 # AB - Vu le code source, la version française est meilleure que la
-#      version anglaise. Ce message est similaire au message E102.
 
 # AB - Vu le code source, la version française est meilleure que la
-#      version anglaise. Ce message est similaire au message E102.
 
 # AB - Vu le code source, la version française est meilleure que la
-#      version anglaise. Ce message est similaire au message E102.
 
 # AB - Vu le code source, la version française est meilleure que la
-#      version anglaise. Ce message est similaire au message E102.
 
 # AB - Vu le code source, la version française est meilleure que la
-#      version anglaise. Ce message est similaire au message E102.
 
 # TODO: Capitalise first word of message?
 #, c-format
@@ -6963,8 +6938,6 @@ msgstr "E906: pas un canal ouvert"
 msgid "E907: Using a special value as a Float"
 msgstr "E907: Utilisation d'une valeur spéciale comme un Flottant"
 
-# TODO: Capitalise first word of message?
-
 msgid "E909: Cannot index a special variable"
 msgstr "E909: Impossible d'indexer une variable spéciale"
 
@@ -7150,8 +7123,6 @@ msgstr "E961: aucun numéro de ligne à utiliser pour \"<sflnum>\""
 #, c-format
 msgid "E962: Invalid action: '%s'"
 msgstr "E962: Action invalide : « %s »"
-
-# TODO: Capitalise first word of message?
 
 #, c-format
 msgid "E964: Invalid column number: %ld"
@@ -7496,10 +7467,6 @@ msgstr "E1073: Nom déjà défini : %s"
 msgid "E1074: No white space allowed after dot"
 msgstr "E1074: Espace interdite après un point"
 
-# TODO: Capitalise first word of message?
-
-# TODO: Capitalise first word of message?
-
 #, c-format
 msgid "E1084: Cannot delete Vim9 script function %s"
 msgstr "E1084: Impossible de supprimer la fonction %s du script vim9"
@@ -7556,17 +7523,10 @@ msgstr "E1146: Commande non reconnue : %s"
 
 # AB - La version française est meilleure que la version anglaise, qui est
 #      erronée, d'ailleurs : il s'agit d'une "double quote" et non d'une
-#      "quote".
 
 #, c-format
 msgid "E1148: Cannot index a %s"
 msgstr "E1148: Impossible d'indexer %s"
-
-# TODO: Capitalise first word of message?
-
-# TODO: Capitalise first word of message?
-
-# AB - Il faut respecter l'esprit plus que la lettre.
 
 #, fuzzy
 msgid ""
@@ -7575,37 +7535,11 @@ msgstr ""
 "E856: le second argument d'\"assert_fails()\" doit être une chaîne ou une "
 "liste avec une ou deux chaînes"
 
-# TODO: Capitalise first word of message?
-
-# TODO: Capitalise first word of message?
-
-# TODO: Capitalise first word of message?
-
-# TODO: Capitalise first word of message?
-
-# TODO: Capitalise first word of message?
-
 # AB - J'espère que la plupart des utilisateurs aura l'idée d'aller vérifier
 #      ses droits d'accès.
 # AB - Le mot "viminfo" a été retiré pour que le message ne dépasse pas 80
-#      caractères dans le cas courant où %s = /home/12345678/.viminfo
 
 # AB - La version anglaise est très mauvaise, ce qui m'oblige a inventer une
-#      version française.
-
-# AB - La version française est meilleure que la version anglaise.
-
-# AB - La version française est meilleure que la version anglaise.
-
-# TODO: Capitalise first word of message?
-
-# DB - todo : trouver mieux que "destinations".
-
-# DB - todo : trouver mieux que "destinations".
-
-# DB : Suggestion
-
-# DB : Suggestion
 
 # DB - todo : ou encore : msgstr "--Aucune ligne dans le tampon--"
 msgid "--No lines in buffer--"
@@ -7947,7 +7881,6 @@ msgstr "(global ou local au tampon)"
 
 # AB - Ce message est utilisé lorsque :vglobal ne trouve rien. Lorsque :global
 #      ne trouve rien, c'est "Pattern not found: %s" / "Motif introuvable: %s"
-#      qui est utilisé.
 
 msgid "number of lines used for the command-line"
 msgstr "nombre de lignes utilisée pour la ligne de commande"
@@ -7983,7 +7916,6 @@ msgid "command line editing"
 msgstr "édition de ligne de commande"
 
 # AB - La version française est meilleure que la version anglaise.
-# DB : Suggestion.
 
 msgid "multi-byte characters"
 msgstr "caractères multi-octets"
@@ -8017,38 +7949,6 @@ msgstr "nom de la bibliothèque dynamique Tcl"
 
 msgid "name of the MzScheme dynamic library"
 msgstr "nom de la bibliothèque dynamique MzScheme"
-
-# TODO: Capitalise first word of message?
-
-# TODO: Capitalise first word of message?
-
-# TODO: Capitalise first word of message?
-
-# TODO: Capitalise first word of message?
-
-# TODO: Capitalise first word of message?
-
-# TODO: Capitalise first word of message?
-
-# TODO: Capitalise first word of message?
-
-# TODO: Capitalise first word of message?
-
-# TODO: Capitalise first word of message?
-
-# TODO: Capitalise first word of message?
-
-# TODO: Capitalise first word of message?
-
-# TODO: Capitalise first word of message?
-
-# TODO: Capitalise first word of message?
-
-# TODO: Capitalise first word of message?
-
-# TODO: Capitalise first word of message?
-
-# TODO: Capitalise first word of message?
 
 # AB - Vu le code source, la version française est meilleure que la
 #      version anglaise. Ce message est similaire au message E86.
