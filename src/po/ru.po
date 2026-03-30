@@ -24,7 +24,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: RuVim_0.9012028.281225\n"
 "Report-Msgid-Bugs-To: vim-dev@vim.org\n"
-"POT-Creation-Date: 2025-12-28 15:22+0300\n"
+"POT-Creation-Date: 2026-03-30 11:05+0900\n"
 "PO-Revision-Date: 2025-12-28 16:10+0300\n"
 "Last-Translator: Restorer, <restorer@mail2k.ru>\n"
 "Language-Team: RuVim, https://github.com/RestorerZ/RuVim\n"
@@ -10568,38 +10568,14 @@ msgstr ""
 msgid "--No lines in buffer--"
 msgstr "-- Буфер не содержит текст --"
 
-msgid "int"
-msgstr "int"
-
-msgid "long int"
-msgstr "long int"
-
-msgid "long long int"
-msgstr "long long int"
-
-msgid "unsigned int"
-msgstr "unsigned int"
-
-msgid "unsigned long int"
-msgstr "unsigned long int"
-
-msgid "unsigned long long int"
-msgstr "unsigned long long int"
-
 msgid "pointer"
 msgstr "pointer"
 
 msgid "percent"
 msgstr "percent"
 
-msgid "char"
-msgstr "char"
-
 msgid "string"
 msgstr "string"
-
-msgid "float"
-msgstr "float"
 
 msgid "search hit TOP, continuing at BOTTOM"
 msgstr "Поиск будет продолжен от НИЖНЕЙ ГРАНИЦЫ документа"

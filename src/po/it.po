@@ -14,7 +14,7 @@
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: vim-dev@vim.org\n"
-"POT-Creation-Date: 2026-03-21 16:35+0100\n"
+"POT-Creation-Date: 2026-03-30 11:05+0900\n"
 "PO-Revision-Date: 2026-03-21 17:45+0100\n"
 "Last-Translator: Antonio Colombo <azc100@gmail.com>\n"
 "Language-Team: Italian\n"
@@ -9320,38 +9320,14 @@ msgstr "E1574: gethostbyname(): non riesco a risolvere il nome dell'host in "
 msgid "--No lines in buffer--"
 msgstr "--File vuoto--"
 
-msgid "int"
-msgstr "int"
-
-msgid "long int"
-msgstr "long int"
-
-msgid "long long int"
-msgstr "long long int"
-
-msgid "unsigned int"
-msgstr "unsigned int"
-
-msgid "unsigned long int"
-msgstr "unsigned long int"
-
-msgid "unsigned long long int"
-msgstr "unsigned long long int"
-
 msgid "pointer"
 msgstr "puntatore"
 
 msgid "percent"
 msgstr "percento"
 
-msgid "char"
-msgstr "carattere"
-
 msgid "string"
 msgstr "stringa"
-
-msgid "float"
-msgstr "numero a virgola mobile"
 
 #.
 #. * Some messages that can be shared are included here.
