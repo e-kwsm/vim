@@ -23,7 +23,7 @@ SED = LANG=C sed
 
 # MSGFMTCMD is defined by Configure in ../auto/config.mk
 XGETTEXT = OLD_PO_FILE_INPUT=yes OLD_PO_FILE_OUTPUT=yes xgettext
-MSGMERGE = OLD_PO_FILE_INPUT=yes OLD_PO_FILE_OUTPUT=yes msgmerge
+MSGMERGE = OLD_PO_FILE_INPUT=yes OLD_PO_FILE_OUTPUT=yes msgmerge --no-fuzzy-matching
 
 .SUFFIXES:
 .SUFFIXES: .po .mo .pot .ck
