@@ -151,7 +151,7 @@ newtests: newtestssilent
 
 newtestssilent: $(NEW_TESTS_RES)
 
-.vim.res:
+%.res: %.vim
 	@ echo $(VIMPROG) > vimcmd
 	$(VIMPROG) -u NONE $(COMMON_ARGS) -S runtest.vim $*.vim
 	@ $(RM) vimcmd

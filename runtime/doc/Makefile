@@ -58,7 +58,7 @@ noerrors:
 
 $(HTMLS): tags.ref
 
-.txt.html:
+%.html: %.txt
 	$(AWK) -f makehtml.awk $< >$@
 
 # index.html is the starting point for HTML, but for the help files it is

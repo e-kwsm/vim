@@ -19,7 +19,7 @@ nongui:	/tmp $(SCRIPTS)
 clean:
 	csh -c \rm -rf *.out Xdir1 Xfind XfakeHOME Xdotest test.ok viminfo
 
-.in.out:
+%.out: %.in
 	copy $*.ok test.ok
 	$(VIMPROG) -u util/amiga.vim -U NONE --noplugin --not-a-term -s dotest.in $*.in
 	diff test.out $*.ok

@@ -36,10 +36,10 @@ originals: $(MOFILES)
 
 converted: $(MOCONVERTED)
 
-.po.mo:
+%.mo: %.po
 	$(MSGFMTCMD) -o $@ $<
 
-.po.ck:
+%.ck: %.po
 	$(VIMPROG) -u NONE --noplugins -e -s -X --cmd "set enc=utf-8" \
 		-S check.vim -c "if error == 0 | q | else | num 2 | cq | endif" \
 		$<

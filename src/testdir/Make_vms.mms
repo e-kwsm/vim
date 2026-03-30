@@ -45,7 +45,7 @@ SCRIPT = test20.out test21.out test22.out test23.out test24.out \
 GUI_OPTION = -g
 .ENDIF
 
-.in.out :
+%.out: %.in
 	-@ !clean up before doing the test
 	-@ if "''F$SEARCH("test.out.*")'" .NES. "" then delete/noconfirm/nolog test.out.*
 	-@ if "''F$SEARCH("$*.out.*")'"   .NES. "" then delete/noconfirm/nolog $*.out.*

@@ -86,7 +86,7 @@ gvimext.dll: gvimext.obj gvimext.res
 
 gvimext.obj: gvimext.h
 
-.cpp.obj:
+%.obj: %.cpp
 	$(cc) $(cflags) -DFEAT_GETTEXT $(cvarsmt) $*.cpp
 
 gvimext.res: gvimext.rc

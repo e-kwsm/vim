@@ -2052,11 +2052,11 @@ proto.h: \
 
 # Generate foo.cod (mixed source and assembly listing) from foo.c via "nmake
 # foo.cod"
-.c.cod:
+%.cod: %.c
 	$(CC) $(CFLAGS) /FAcs $<
 
 # Generate foo.i (preprocessor listing) from foo.c via "nmake foo.i"
-.c.i:
+%.i: %.c
 	$(CC) $(CFLAGS) /P /C $<
 
 # vim: set noet sw=8 ts=8 sts=0 wm=0 tw=79 ft=make:

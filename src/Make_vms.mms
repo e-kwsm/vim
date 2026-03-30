@@ -808,7 +808,7 @@ $(TARGET) : $(OBJ)
          ALL_OBJS_LIST.OPT/OPT $(ALL_LIBS)
 	-@ set default 'def_dev_dir_orig'
 
-.c.obj :
+%.obj: %.c
 # Override /optimize for selected modules on VAX.
 .IFDEF __VAX__                  # __VAX__
 	@ mod = f$parse( "$@", , , "NAME", "SYNTAX_ONLY")

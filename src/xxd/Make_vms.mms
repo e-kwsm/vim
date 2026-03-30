@@ -207,7 +207,7 @@ SOURCES	= xxd.c
 OBJ_BASE = xxd.obj
 OBJ     = [.$(DEST)]$(OBJ_BASE)
 
-.c.obj :
+%.obj: %.c
 	$(CC) $(DEFS) $< /object = $@
 
 $(TARGET) : $(OBJ)
