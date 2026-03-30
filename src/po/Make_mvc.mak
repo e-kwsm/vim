@@ -86,7 +86,7 @@ originals : $(MOFILES)
 
 converted: $(MOCONVERTED)
 
-.po.ck:
+%.ck: %.po
 	"$(VIMPROG)" -u NONE --noplugins -e -s --cmd "set enc=utf-8" \
 		-S check.vim \
 		-c "if error == 0 | q | else | num 2 | cq | endif" $<
@@ -377,7 +377,7 @@ uk.cp1251.po: uk.po
 		[System.IO.File]::WriteAllText(\"$@\", $$out, \
 		[System.Text.Encoding]::GetEncoding(1251))
 
-.po.mo:
+%.mo: %.po
 	set OLD_PO_FILE_INPUT=yes
 	$(MSGFMT) -o $@ $<
 

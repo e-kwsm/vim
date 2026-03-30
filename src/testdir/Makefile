@@ -124,7 +124,7 @@ nolog:
 # Tiny tests.  Works even without the +eval feature.
 tinytests: $(SCRIPTS_TINY_OUT)
 
-.in.out:
+%.out: %.in
 	-rm -rf $*.failed test.ok $(RM_ON_RUN)
 	cp $*.ok test.ok
 	@# Sleep a moment to avoid that the xterm title is messed up.
@@ -163,7 +163,7 @@ newtests: newtestssilent
 newtestssilent: $(NEW_TESTS_RES)
 
 
-.vim.res:
+%.res: %.vim
 	@echo "$(VIMPROG)" > vimcmd
 	@echo "$(RUN_VIMTEST)" >> vimcmd
 	if test -n "$${ASAN_OPTIONS}"; then \

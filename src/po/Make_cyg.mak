@@ -47,7 +47,7 @@ MKD = mkdir -p
 .SUFFIXES: .po .mo .pot
 .PHONY: first_time all install install-all clean $(LANGUAGES)
 
-.po.mo:
+%.mo: %.po
 	$(MSGFMT) -o $@ $<
 
 all: $(MOFILES) $(MOCONVERTED)
