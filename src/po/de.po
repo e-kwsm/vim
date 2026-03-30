@@ -2477,9 +2477,9 @@ msgstr " (Unterbrochen)"
 msgid "Beep!"
 msgstr "Beep!"
 
-#, c-format
+#, fuzzy, c-format
 msgid "Executing directly: \"%s\""
-msgstr ""
+msgstr "Führe aus: %s"
 
 #, c-format
 msgid "Calling shell to execute: \"%s\""
@@ -8696,8 +8696,9 @@ msgstr "E1291: Ungültiges Argument: %ld"
 msgid "E1292: Command-line window is already open"
 msgstr "E1292: Befehlszeilenfenster ist bereits geöffnet"
 
+#, fuzzy
 msgid "E1293: Cannot use a negative id for a text property"
-msgstr ""
+msgstr "E1183: Kann einen Bereich nicht mit einem Zuweisungsoperator %s nutzen"
 
 msgid "E1294: Can only use text_align when column is zero"
 msgstr "E1294: Kann text_align nur verwenden, wenn die Spalte Null ist"
@@ -9503,14 +9504,19 @@ msgstr ""
 msgid "E1572: 'listchars' field \"leadtab\" requires \"tab\" to be specified"
 msgstr ""
 
+#, fuzzy
 msgid "E1573: Cannot listen on port"
-msgstr ""
+msgstr "E1533: Auf ein Tuple kann kein Slice angewendet werden"
 
+#, fuzzy
 msgid "E1574: gethostbyname(): cannot resolve hostname in channel_listen()"
-msgstr ""
+msgstr "E901: gethostbyname() in channel_open()"
 
+#, fuzzy
 msgid "E1575: Cannot create pipes"
 msgstr ""
+"\n"
+"Pipes können nicht angelegt werden\n"
 
 #. type of cmdline window or 0
 #. result of cmdline window or 0
@@ -10130,8 +10136,9 @@ msgstr "währed der Ausführung von Makros nicht neu zeichnen"
 msgid "configure method of receiving terminal size changes"
 msgstr ""
 
+#, fuzzy
 msgid "enable terminal sync mode"
-msgstr ""
+msgstr "aktiviere Lisp Modus"
 
 msgid "timeout for 'hlsearch' and :match highlighting in msec"
 msgstr "Timeout für 'hlsearch' und :match Highlights in msec"
@@ -10196,8 +10203,9 @@ msgstr "Hervorhebung des letzten Suchmuchsters"
 msgid "highlight group to use for the window"
 msgstr "für das Fenster zu verwendende Hervorhebungsgruppe"
 
+#, fuzzy
 msgid "highlight group mappings for the window"
-msgstr ""
+msgstr "für das Fenster zu verwendende Hervorhebungsgruppe"
 
 msgid "use GUI colors for the terminal"
 msgstr "GUI Farben im Terminal nutzen"
@@ -10244,8 +10252,9 @@ msgstr "0, 1 oder 2; wann eine Statuszeile verwendet wird"
 msgid "alternate format to be used for a status line"
 msgstr "Format das für die Statuszeile verwendet wird"
 
+#, fuzzy
 msgid "optional settings for the status line"
-msgstr ""
+msgstr "verwendete Funktion zur Thesaurus-Vervollständigung"
 
 msgid "make all windows the same size when adding/removing windows"
 msgstr ""
@@ -11447,29 +11456,37 @@ msgstr ""
 msgid "Success!"
 msgstr ""
 
+#, fuzzy
 msgid "Job terminated"
 msgstr ""
+"\n"
+"Befehl beendet\n"
 
+#, fuzzy
 msgid "There are errors."
-msgstr ""
+msgstr "[Lesefehler]"
 
+#, fuzzy
 msgid "Could not create quickfix list"
-msgstr ""
+msgstr "E566: cscope Pipes konnten nicht angelegt werden"
 
 msgid "File not readable:"
 msgstr ""
 
+#, fuzzy
 msgid "Failed to start job"
-msgstr ""
+msgstr "Ausführen des Codes fehlgeschlagen"
 
 msgid "Typesetting..."
 msgstr ""
 
+#, fuzzy
 msgid "Jobs still running:"
-msgstr ""
+msgstr "E948: Job läuft noch"
 
+#, fuzzy
 msgid "Done."
-msgstr ""
+msgstr "Fertig!"
 
 msgid "Typeset"
 msgstr ""
@@ -11480,15 +11497,3 @@ msgstr ""
 msgid "You discovered the command-line window! You can close it with \":q\"."
 msgstr ""
 "Sie haben das Befehlszeilenfenster entdeckt! Schließen Sie es mit \":q\"."
-
-#~ msgid "E1293: Cannot use a negative id after adding a textprop with text"
-#~ msgstr ""
-#~ "E1293: Negative ID kann nicht verwendet werden, nachdem eine "
-#~ "Textpropertymit Text hinzugefügt wurde"
-
-#~ msgid ""
-#~ "E1339: Cannot add a textprop with text after using a textprop with a "
-#~ "negative id"
-#~ msgstr ""
-#~ "Kann kein Textproperty mit Text hinzufügen, nach einenm Textproperty mit "
-#~ "einer negativen ID"
