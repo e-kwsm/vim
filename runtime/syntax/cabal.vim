@@ -81,44 +81,43 @@ syn keyword cabalTruth true false
 " way they are not highlighted in description.
 syn region cabalStatementRegion start=+^\s*\(--\)\@<!\k\+\s*:+ end=+:+
 syn keyword cabalStatement contained containedin=cabalStatementRegion
-	\ default-language
-	\ default-extensions
+	\ asm-options
+	\ asm-sources
 	\ author
-        \ autogen-includes
-        \ autogen-modules
-        \ asm-sources
-        \ asm-options
+	\ autogen-includes
+	\ autogen-modules
 	\ branch
 	\ bug-reports
 	\ build-depends
-	\ build-tools
-        \ build-tool-depends
+	\ build-tool-depends
 	\ build-type
 	\ buildable
 	\ c-sources
 	\ cabal-version
 	\ category
 	\ cc-options
+	\ cmm-options
+	\ cmm-sources
+	\ code-generators
 	\ copyright
-        \ cmm-sources
-        \ cmm-options
 	\ cpp-options
-        \ cxx-options
-        \ cxx-sources
+	\ cxx-options
+	\ cxx-sources
 	\ data-dir
 	\ data-files
 	\ default
-        \ default-extensions
+	\ default-extensions
+	\ default-language
 	\ description
 	\ executable
-	\ exposed-modules
 	\ exposed
-	\ extensions
-        \ extra-bundled-libraries
+	\ exposed-modules
+	\ extra-bundled-libraries
 	\ extra-doc-files
 	\ extra-dynamic-library-flavours
-        \ extra-framework-dirs
-        \ extra-ghci-libraries
+	\ extra-files
+	\ extra-framework-dirs
+	\ extra-ghci-libraries
 	\ extra-lib-dirs
 	\ extra-lib-dirs-static
 	\ extra-libraries
@@ -126,57 +125,66 @@ syn keyword cabalStatement contained containedin=cabalStatementRegion
 	\ extra-library-flavours
 	\ extra-source-files
 	\ extra-tmp-files
-	\ for example
 	\ frameworks
 	\ ghc-options
 	\ ghc-prof-options
+	\ ghc-prof-shared-options
 	\ ghc-shared-options
-        \ ghcjs-options
-        \ ghcjs-prof-options
-        \ ghcjs-shared-options
+	\ ghcjs-options
+	\ ghcjs-prof-options
+	\ ghcjs-prof-shared-options
+	\ ghcjs-shared-options
 	\ homepage
-        \ hs-source-dir
 	\ hs-source-dirs
-	\ hugs-options
 	\ import
 	\ include-dirs
 	\ includes
 	\ install-includes
-        \ js-sources
+	\ js-sources
+	\ jspp-options
 	\ ld-options
-        \ lib-version-info
-        \ lib-version-linux
+	\ lib-version-info
+	\ lib-version-linux
 	\ license
 	\ license-file
 	\ location
 	\ main-is
 	\ maintainer
 	\ manual
-        \ mixins
+	\ mixins
+	\ mod-def-file
 	\ module
-        \ mod-def-file
 	\ name
-	\ nhc98-options
-        \ options
+	\ options
 	\ other-extensions
-        \ other-language
-        \ other-languages
+	\ other-language
+	\ other-languages
 	\ other-modules
 	\ package-url
 	\ pkgconfig-depends
-        \ scope
+	\ reexported-modules
+	\ scope
 	\ setup-depends
-        \ signatures
+	\ signatures
 	\ stability
 	\ subdir
 	\ synopsis
-        \ reexported-modules
 	\ tag
+	\ test-module
 	\ tested-with
-        \ test-module
 	\ type
+	\ unqual-name
 	\ version
+	\ version-range
 	\ virtual-modules
+
+syn keyword cabalDeprecatedStatement contained containedin=cabalStatementRegion
+	\ build-tools
+	\ extensions
+	\ hs-source-dir
+	\ hugs-options
+	\ jhc-options
+	\ nhc98-options
 
 " operators and version operators
 syn match cabalOperator /&&\|||\|!/
@@ -243,7 +251,7 @@ syn match cabalTestedWithRegion
 
 " build type keywords
 syn keyword cabalBuildType contained
-	\ simple custom configure
+	\ simple custom configure Hooks
 syn match cabalBuildTypeRegion
 	\ contains=cabalStatementRegion,cabalStatement,cabalBuildType
 	\ nextgroup=cabalStatementRegion
@@ -262,6 +270,7 @@ hi def link cabalVersion      Number
 hi def link cabalTruth        Boolean
 hi def link cabalComment      Comment
 hi def link cabalStatement    Statement
+hi def link cabalDeprecatedStatement    Error
 hi def link cabalLanguage     Type
 hi def link cabalCategory     Type
 hi def link cabalFunction     Function
