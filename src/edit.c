@@ -100,12 +100,17 @@ static int	ins_need_undo;		// call u_save() before inserting a
 static int	dont_sync_undo = FALSE;	// CTRL-G U prevents syncing undo for
 					// the next left/right cursor key
 
+// With 'autocompletedelay' set, arm the delay and let the main loop fire
+// Insert-mode autocommands; the popup is shown later on K_COMPLETE_DELAY.
+// Otherwise trigger completion right away.
 #define TRIGGER_AUTOCOMPLETE()			\
     do {					\
 	update_screen(UPD_VALID);  /* Show char (deletion) immediately */ \
 	out_flush();				\
 	ins_compl_enable_autocomplete();	\
-	goto docomplete;			\
+	ins_compl_arm_autostart();		\
+	if (!ins_compl_arm_autocomplete_delay())\
+	    goto docomplete;			\
     } while (0)
 
 #define MAY_TRIGGER_AUTOCOMPLETE(c)				\
@@ -601,7 +606,7 @@ edit(
 	/*
 	 * Get a character for Insert mode.  Ignore K_IGNORE and K_NOP.
 	 */
-	if (c != K_CURSORHOLD)
+	if (c != K_CURSORHOLD && c != K_COMPLETE_DELAY)
 	    lastc = c;		// remember the previous char for CTRL-D
 
 	// After using CTRL-G U the next cursor key will not break undo.
@@ -627,12 +632,16 @@ edit(
 		    if (vim_isprintc(c))
 		    {
 			ins_compl_enable_autocomplete();
+			ins_compl_arm_autostart();
 			ins_compl_init_get_longest();
 #ifdef FEAT_RIGHTLEFT
 			if (p_hkmap)
 			    c = hkmap(c);		// Hebrew mode mapping
 #endif
-			goto docomplete;
+			// Defer until the delay expires (K_COMPLETE_DELAY), or
+			// trigger now when no delay is in effect.
+			if (!ins_compl_arm_autocomplete_delay())
+			    goto docomplete;
 		    }
 		}
 	    }
@@ -670,6 +679,15 @@ edit(
 
 	// Don't want K_CURSORHOLD for the second key, e.g., after CTRL-V.
 	did_cursorhold = TRUE;
+	if (c != K_CURSORHOLD && c != K_COMPLETE_DELAY)
+	{
+	    // Don't want delayed autocompletion from the previous key either.
+	    ins_compl_clear_autocomplete_delay();
+	    ins_compl_disarm_autostart();
+	    // A completion already on screen goes on being what it was.
+	    if (!ins_compl_active())
+		ins_compl_disable_autocomplete();
+	}
 
 #ifdef FEAT_RIGHTLEFT
 	if (p_hkmap && KeyTyped)
@@ -891,6 +909,8 @@ do_intr:
 		break;
 	    }
 doESCkey:
+	    // Drop a pending autocomplete so it does not outlive Insert mode.
+	    ins_compl_clear_autocomplete_delay();
 	    /*
 	     * This is the ONLY return from edit()!
 	     */
@@ -1163,6 +1183,23 @@ doESCkey:
 		dont_sync_undo = MAYBE;
 	    break;
 
+	case K_COMPLETE_DELAY:	// 'autocompletedelay' expired
+	    // If CTRL-G U was used apply it to the next typed key.
+	    if (dont_sync_undo == TRUE)
+		dont_sync_undo = MAYBE;
+	    ins_compl_clear_autocomplete_delay();
+	    if (!ins_compl_has_autocomplete() || char_avail()
+		    || curwin->w_cursor.col == 0)
+		break;
+	    c = char_before_cursor();
+	    if (!vim_isprintc(c))
+		break;
+	    // The completion may have been cleared while waiting, so re-enable
+	    // autocomplete to match a zero delay.
+	    ins_compl_enable_autocomplete();
+	    ins_compl_arm_autostart();
+	    goto docomplete;
+
 #ifdef FEAT_GUI_MSWIN
 	    // On MS-Windows ignore <M-F4>, we get it when closing the window
 	    // was cancelled.
@@ -1233,7 +1270,21 @@ doESCkey:
 	case K_PAGEUP:
 	case K_KPAGEUP:
 	    if (pum_visible())
+	    {
+#ifdef FEAT_PROP_POPUP
+		// CTRL-SHIFT-<Up> scrolls the info popup up a line,
+		// CTRL-SHIFT-<PageUp> a page.  Shift is folded into K_S_UP but
+		// stays in mod_mask for PageUp, hence the asymmetric check.
+		if (c == K_S_UP ? (mod_mask & MOD_MASK_CTRL)
+			: ((mod_mask & MOD_MASK_CTRL)
+			    && (mod_mask & MOD_MASK_SHIFT)))
+		{
+		    popup_scroll_info(-1, c != K_S_UP);
+		    break;
+		}
+#endif
 		goto docomplete;
+	    }
 	    ins_pageup();
 	    break;
 
@@ -1250,7 +1301,19 @@ doESCkey:
 	case K_PAGEDOWN:
 	case K_KPAGEDOWN:
 	    if (pum_visible())
+	    {
+#ifdef FEAT_PROP_POPUP
+		// CTRL-SHIFT-<Down>/<PageDown> scroll the info popup down.
+		if (c == K_S_DOWN ? (mod_mask & MOD_MASK_CTRL)
+			: ((mod_mask & MOD_MASK_CTRL)
+			    && (mod_mask & MOD_MASK_SHIFT)))
+		{
+		    popup_scroll_info(1, c != K_S_DOWN);
+		    break;
+		}
+#endif
 		goto docomplete;
+	    }
 	    ins_pagedown();
 	    break;
 
@@ -1365,6 +1428,15 @@ doESCkey:
 
 	case Ctrl_P:	// Do previous/next pattern completion
 	case Ctrl_N:
+#ifdef FEAT_PROP_POPUP
+	    // CTRL-SHIFT-P/N scroll the info popup one line.
+	    if (pum_visible() && (mod_mask & MOD_MASK_SHIFT)
+		    && (c == Ctrl_P || c == Ctrl_N))
+	    {
+		popup_scroll_info(c == Ctrl_P ? -1 : 1, false);
+		break;
+	    }
+#endif
 	    // if 'complete' is empty then plain ^P is no longer special,
 	    // but it is under other ^X modes
 	    if (*curbuf->b_p_cpt == NUL
@@ -1373,6 +1445,7 @@ doESCkey:
 		goto normalchar;
 
 docomplete:
+	    ins_compl_clear_autocomplete_delay();
 	    compl_busy = TRUE;
 #ifdef FEAT_FOLDING
 	    disable_fold_update++;  // don't redraw folds here
@@ -1477,8 +1550,9 @@ normalchar:
 	    break;
 	}   // end of switch (c)
 
-	// If typed something may trigger CursorHoldI again.
-	if (c != K_CURSORHOLD
+	// If typed something may trigger CursorHoldI again; K_COMPLETE_DELAY is
+	// injected, not typed.
+	if (c != K_CURSORHOLD && c != K_COMPLETE_DELAY
 #ifdef FEAT_COMPL_FUNC
 		// but not in CTRL-X mode, a script can't restore the state
 		&& ctrl_x_mode_normal()
@@ -2512,11 +2586,16 @@ stop_arrow(void)
     {
 	if (u_save_cursor() == OK)
 	{
-	    // A command or event may have moved the cursor or edited the
-	    // buffer. Update Insstart so that later edits can properly decide
-	    // whether an extra undo entry is needed.
-	    Insstart = curwin->w_cursor;
-	    Insstart_textlen = (colnr_T)linetabsize_str(ml_get_curline());
+	    // A command or event may have moved the cursor before the next
+	    // edit. Pull Insstart back only when the cursor moved above it,
+	    // so that later edits can properly decide whether an extra undo
+	    // entry is needed. Advancing Insstart would mis-place '[ after a
+	    // register paste.
+	    if (LT_POS(curwin->w_cursor, Insstart))
+	    {
+		Insstart = curwin->w_cursor;
+		Insstart_textlen = (colnr_T)linetabsize_str(ml_get_curline());
+	    }
 	    ins_need_undo = FALSE;
 	}
     }
@@ -2630,6 +2709,8 @@ stop_insert(
 		curwin->w_cursor.col = strip_col;
 		for (;;)
 		{
+		    if (gchar_cursor() == NUL && curwin->w_cursor.col > 0)
+			--curwin->w_cursor.col;
 		    cc = gchar_cursor();
 		    if (!VIM_ISWHITE(cc))
 			break;
@@ -2652,6 +2733,9 @@ stop_insert(
 		if (VIsual_active)
 		    check_visual_pos();
 	    }
+	    else
+		// Non-whitespace follows, keep original cursor.
+		curwin->w_cursor = tpos;
 	}
     }
     did_ai = FALSE;
