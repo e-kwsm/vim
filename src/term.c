@@ -137,10 +137,12 @@ static termrequest_T rfg_status = TERMREQUEST_INIT;
 static int fg_r = 0;
 static int fg_g = 0;
 static int fg_b = 0;
+# endif
+// Background color values from the OSC 11 response, also used by the
+// image backend to flatten RGBA alpha onto the actual terminal background.
 static int bg_r = 255;
 static int bg_g = 255;
 static int bg_b = 255;
-# endif
 
 // Request background color report:
 static termrequest_T rbg_status = TERMREQUEST_INIT;
@@ -5272,6 +5274,13 @@ handle_version_response(int first, int *arg, int argc, char_u *tp)
 	    term_props[TPR_DECRQM].tpr_status = TPR_YES;
 	}
 
+	// foot terminal sends 1;12700;0
+	if (arg[0] == 1 && version == 12700 && arg[2] == 0)
+	{
+	    term_props[TPR_MOUSE].tpr_status = TPR_MOUSE_SGR;
+	    term_props[TPR_DECRQM].tpr_status = TPR_YES;
+	}
+
 	// GNU screen sends 83;30600;0, 83;40500;0, etc.
 	// 30600/40500 is a version number of GNU screen. DA2 support is added
 	// on 3.6.  DCS string has a special meaning to GNU screen, but xterm
@@ -5434,8 +5443,13 @@ put_key_modifiers_in_typebuf(
     modifiers = may_remove_shift_modifier(modifiers, key);
 
     // Produce modifiers with K_SPECIAL KS_MODIFIER {mod}
-    char_u string[MAX_KEY_CODE_LEN + 1];
+    // worst-case: 3-byte modifier + 4 byte multi-char key + NUL
+    char_u string[MAX_KEY_CODE_LEN + 2];
     int new_slen = modifiers2keycode(modifiers, &key, string);
+
+    // reject overlong key that would overflow string
+    if (key > 0x10FFFF)
+	return -1;
 
     // Add the bytes for the key.
     new_slen += add_key_to_buf(key, string + new_slen);
@@ -5704,7 +5718,9 @@ handle_csi(
 			return -1;
 		    if (!VIM_ISDIGIT(*ap))
 			break;
-		    arg[argc] = arg[argc] * 10 + (*ap - '0');
+		    // avoid overflow
+		    if (arg[argc] <= (INT_MAX - 9) / 10)
+			arg[argc] = arg[argc] * 10 + (*ap - '0');
 		    ++ap;
 		}
 		++argc;
@@ -5987,7 +6003,7 @@ check_for_color_response(char_u *resp, int len)
 		    char_u *tp_r = resp + j + 7;
 		    char_u *tp_g = resp + j + (is_4digit ? 12 : 10);
 		    char_u *tp_b = resp + j + (is_4digit ? 17 : 13);
-#if defined(FEAT_TERMRESPONSE) && defined(FEAT_TERMINAL)
+#ifdef FEAT_TERMRESPONSE
 		    int rval, gval, bval;
 
 		    rval = hexhex2nr(tp_r);
@@ -6002,11 +6018,9 @@ check_for_color_response(char_u *resp, int len)
 			LOG_TRN("Received RBG response: r=%d g=%d b=%d", rval, gval, bval);
 #ifdef FEAT_TERMRESPONSE
 			rbg_status.tr_progress = STATUS_GOT;
-# ifdef FEAT_TERMINAL
 			bg_r = rval;
 			bg_g = gval;
 			bg_b = bval;
-# endif
 #endif
 			if (!option_was_set((char_u *)"bg")
 				      && STRCMP(p_bg, new_bg_val) != 0)
@@ -6942,19 +6956,23 @@ term_get_fg_color(char_u *r, char_u *g, char_u *b)
     *g = fg_g;
     *b = fg_b;
 }
+#endif
 
+#ifdef FEAT_TERMRESPONSE
 /*
- * Get the text background color, if known.
+ * Get the text background color, if known.  Returns OK when the OSC 11
+ * response has been parsed and *r, *g, *b are populated; FAIL otherwise.
  */
-    void
+    int
 term_get_bg_color(char_u *r, char_u *g, char_u *b)
 {
     if (rbg_status.tr_progress != STATUS_GOT)
-	return;
+	return FAIL;
 
     *r = bg_r;
     *g = bg_g;
     *b = bg_b;
+    return OK;
 }
 #endif
 

@@ -692,24 +692,21 @@ endfunc
 func s:get_sleep_cmd()
   if s:python != ''
     let cmd = s:python . " test_short_sleep.py"
-    " 500 was not enough for Travis
-    let waittime = 900
   else
     echo 'This will take five seconds...'
-    let waittime = 2000
     if has('win32')
       let cmd = $windir . '\system32\timeout.exe 1'
     else
       let cmd = 'sleep 1'
     endif
   endif
-  return [cmd, waittime]
+  return cmd
 endfunc
 
 func Test_terminal_finish_open_close()
   call assert_equal(1, winnr('$'))
 
-  let [cmd, waittime] = s:get_sleep_cmd()
+  let cmd = s:get_sleep_cmd()
 
   " shell terminal closes automatically
   terminal
@@ -718,7 +715,7 @@ func Test_terminal_finish_open_close()
   " Wait for the shell to display a prompt
   call WaitForAssert({-> assert_notequal('', term_getline(buf, 1))})
   call StopShellInTerminal(buf)
-  call WaitForAssert({-> assert_equal(1, winnr('$'))}, waittime)
+  call WaitForAssert({-> assert_equal(1, winnr('$'))})
 
   " shell terminal that does not close automatically
   terminal ++noclose
@@ -734,32 +731,32 @@ func Test_terminal_finish_open_close()
   exe 'terminal ++close ' . cmd
   call assert_equal(2, winnr('$'))
   wincmd p
-  call WaitForAssert({-> assert_equal(1, winnr('$'))}, waittime)
+  call WaitForAssert({-> assert_equal(1, winnr('$'))})
 
   call term_start(cmd, {'term_finish': 'close'})
   call assert_equal(2, winnr('$'))
   wincmd p
-  call WaitForAssert({-> assert_equal(1, winnr('$'))}, waittime)
+  call WaitForAssert({-> assert_equal(1, winnr('$'))})
   call assert_equal(1, winnr('$'))
 
   exe 'terminal ++open ' . cmd
   close!
-  call WaitForAssert({-> assert_equal(2, winnr('$'))}, waittime)
+  call WaitForAssert({-> assert_equal(2, winnr('$'))})
   bwipe
 
   call term_start(cmd, {'term_finish': 'open'})
   close!
-  call WaitForAssert({-> assert_equal(2, winnr('$'))}, waittime)
+  call WaitForAssert({-> assert_equal(2, winnr('$'))})
   bwipe
 
   exe 'terminal ++hidden ++open ' . cmd
   call assert_equal(1, winnr('$'))
-  call WaitForAssert({-> assert_equal(2, winnr('$'))}, waittime)
+  call WaitForAssert({-> assert_equal(2, winnr('$'))})
   bwipe
 
   call term_start(cmd, {'term_finish': 'open', 'hidden': 1})
   call assert_equal(1, winnr('$'))
-  call WaitForAssert({-> assert_equal(2, winnr('$'))}, waittime)
+  call WaitForAssert({-> assert_equal(2, winnr('$'))})
   bwipe
 
   call assert_fails("call term_start(cmd, {'term_opencmd': 'open'})", 'E475:')
@@ -769,11 +766,27 @@ func Test_terminal_finish_open_close()
 
   call term_start(cmd, {'term_finish': 'open', 'term_opencmd': '4split | buffer %d | let g:result = "opened the buffer in a window"'})
   close!
-  call WaitForAssert({-> assert_equal(2, winnr('$'))}, waittime)
+  call WaitForAssert({-> assert_equal(2, winnr('$'))})
   call assert_equal(4, winheight(0))
   call assert_equal('opened the buffer in a window', g:result)
   unlet g:result
   bwipe
+
+  " Test "noclose" for term_start()
+  let cmd = Get_cat_123_cmd()
+
+  let buf = term_start(cmd, {
+        \ 'term_finish': 'noclose',
+        \ 'hidden': v:true
+        \ })
+
+  call WaitForAssert({-> assert_equal('finished', term_getstatus(buf))})
+
+  let info = getbufinfo(buf)[0]
+  call assert_equal(1, info.hidden)
+  call assert_equal(1, info.listed)
+  call assert_equal(1, info.loaded)
+  call WaitForAssert({-> assert_equal(['123'], getbufline(buf, 1, 1))})
 endfunc
 
 func Test_terminal_cwd()
@@ -942,7 +955,9 @@ func Test_terminal_eof_arg()
     call WaitFor({-> getline('$') =~ 'hello'})
     call assert_equal('hello', getline('$'))
   endif
-  let exitval = bufnr()->term_getjob()->job_info().exitval
+  let job = bufnr()->term_getjob()
+  call WaitForAssert({-> assert_equal('dead', job_status(job))})
+  let exitval = job->job_info().exitval
   if !has('win32')
     call assert_equal(123, exitval)
   else
@@ -984,7 +999,9 @@ func Test_terminal_duplicate_eof_arg()
     call WaitFor({-> getline('$') =~ 'hello'})
     call assert_equal('hello', getline('$'))
   endif
-  let exitval = bufnr()->term_getjob()->job_info().exitval
+  let job = bufnr()->term_getjob()
+  call WaitForAssert({-> assert_equal('dead', job_status(job))})
+  let exitval = job->job_info().exitval
   if !has('win32')
     call assert_equal(123, exitval)
   else
@@ -1150,7 +1167,11 @@ func Test_terminal_composing_unicode()
   endif
 
   enew
-  let buf = term_start(cmd, {'curwin': 1})
+  let term_opts = {'curwin': 1}
+  if has('sun')
+    let term_opts.env = {'LC_ALL': 'C.UTF-8'}
+  endif
+  let buf = term_start(cmd, term_opts)
   let g:job = term_getjob(buf)
   call WaitFor({-> term_getline(buf, 1) !=# ''}, 1000)
 
@@ -1209,6 +1230,7 @@ func Test_terminal_composing_unicode()
 endfunc
 
 func Test_terminal_aucmd_on_close()
+  let s:called = 0
   fun Nop()
     let s:called = 1
   endfun
@@ -1218,14 +1240,14 @@ func Test_terminal_aucmd_on_close()
       au BufWinLeave * call Nop()
   aug END
 
-  let [cmd, waittime] = s:get_sleep_cmd()
+  let cmd = s:get_sleep_cmd()
 
   call assert_equal(1, winnr('$'))
   new
   call setline(1, ['one', 'two'])
   exe 'term ++close ' . cmd
   wincmd p
-  call WaitForAssert({-> assert_equal(2, winnr('$'))}, waittime)
+  call WaitForAssert({-> assert_equal(2, winnr('$'))})
   call assert_equal(1, s:called)
   bwipe!
 
@@ -1334,7 +1356,7 @@ endfunc
 
 " Run Vim, start a terminal in that Vim with the kill argument,
 " :qall works.
-func Run_terminal_qall_kill(line1, line2)
+func Run_terminal_qall_kill_int(line1, line2, cmd)
   " 1. Open a terminal window and wait for the prompt to appear
   " 2. set kill using term_setkill()
   " 3. make Vim exit, it will kill the shell
@@ -1346,13 +1368,18 @@ func Run_terminal_qall_kill(line1, line2)
 	\ 'endwhile',
 	\ a:line2,
 	\ 'au VimLeavePre * call writefile(["done"], "Xdone")',
-	\ 'qall',
+	\ a:cmd,
 	\ ]
   if !RunVim([], after, '')
     return
   endif
   call assert_equal("done", readfile("Xdone")[0])
   call delete("Xdone")
+endfunc
+
+func Run_terminal_qall_kill(line1, line2)
+  call Run_terminal_qall_kill_int(a:line1, a:line2, 'qall')
+  call Run_terminal_qall_kill_int(a:line1, a:line2, 'wqall')
 endfunc
 
 " Run Vim in a terminal, then start a terminal in that Vim with a kill
@@ -2469,9 +2496,10 @@ func Test_terminal_unwraps()
   call assert_equal('14+15', l)
 
   call TermWait(buf)
-  " It should appear as a single buffer line in vim
-  let lastline = getline('$')
-  call assert_equal('1+2+3+4+5+6+7+8+9+10+11+12+13+14+15', lastline)
+  " It should appear as a single buffer line in vim, once the job finished and
+  " the contents were moved to the buffer.
+  call WaitForAssert({-> assert_equal(
+	\ '1+2+3+4+5+6+7+8+9+10+11+12+13+14+15', getline('$'))})
 
   bwipe!
 endfunc

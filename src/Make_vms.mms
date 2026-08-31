@@ -536,6 +536,7 @@ SRC = \
  gc.c \
  gui_xim.c \
  hardcopy.c \
+ hardcopy_postscript.c \
  hashtab.c \
  help.c \
  highlight.c \
@@ -582,6 +583,9 @@ SRC = \
  session.c \
  sha256.c \
  sign.c \
+ sixel.c \
+ kitty.c \
+ cairo.c \
  sound.c \
  spell.c \
  spellfile.c \
@@ -673,6 +677,7 @@ OBJ = \
  [.$(DEST)]gc.obj \
  [.$(DEST)]gui_xim.obj \
  [.$(DEST)]hardcopy.obj \
+ [.$(DEST)]hardcopy_postscript.obj \
  [.$(DEST)]hashtab.obj \
  [.$(DEST)]help.obj \
  [.$(DEST)]highlight.obj \
@@ -720,6 +725,9 @@ OBJ = \
  [.$(DEST)]session.obj \
  [.$(DEST)]sha256.obj \
  [.$(DEST)]sign.obj \
+ [.$(DEST)]sixel.obj \
+ [.$(DEST)]kitty.obj \
+ [.$(DEST)]cairo.obj \
  [.$(DEST)]sound.obj \
  [.$(DEST)]spell.obj \
  [.$(DEST)]spellfile.obj \
@@ -1164,6 +1172,10 @@ lua_env :
  ascii.h keymap.h termdefs.h macros.h structs.h regexp.h \
  gui.h beval.h option.h ex_cmds.h proto.h \
  errors.h globals.h version.h
+[.$(DEST)]hardcopy_postscript.obj : hardcopy_postscript.c vim.h [.$(DEST)]config.h feature.h os_unix.h \
+ ascii.h keymap.h termdefs.h macros.h structs.h regexp.h \
+ gui.h beval.h option.h ex_cmds.h proto.h \
+ errors.h globals.h version.h
 [.$(DEST)]hashtab.obj : hashtab.c vim.h [.$(DEST)]config.h feature.h os_unix.h \
  ascii.h keymap.h termdefs.h macros.h structs.h regexp.h \
  gui.h beval.h option.h ex_cmds.h proto.h \
@@ -1326,6 +1338,18 @@ lua_env :
  beval.h alloc.h ex_cmds.h spell.h proto.h \
  errors.h globals.h
 [.$(DEST)]sign.obj : sign.c vim.h [.$(DEST)]config.h feature.h os_unix.h \
+ ascii.h keymap.h termdefs.h macros.h option.h structs.h regexp.h gui.h \
+ beval.h alloc.h ex_cmds.h spell.h proto.h \
+ errors.h globals.h
+[.$(DEST)]sixel.obj : sixel.c vim.h [.$(DEST)]config.h feature.h os_unix.h \
+ ascii.h keymap.h termdefs.h macros.h option.h structs.h regexp.h gui.h \
+ beval.h alloc.h ex_cmds.h spell.h proto.h \
+ errors.h globals.h
+[.$(DEST)]kitty.obj : kitty.c vim.h [.$(DEST)]config.h feature.h os_unix.h \
+ ascii.h keymap.h termdefs.h macros.h option.h structs.h regexp.h gui.h \
+ beval.h alloc.h ex_cmds.h spell.h proto.h \
+ errors.h globals.h
+[.$(DEST)]cairo.obj : cairo.c vim.h [.$(DEST)]config.h feature.h os_unix.h \
  ascii.h keymap.h termdefs.h macros.h option.h structs.h regexp.h gui.h \
  beval.h alloc.h ex_cmds.h spell.h proto.h \
  errors.h globals.h
