@@ -834,6 +834,7 @@ OBJ = \
 	$(OUTDIR)/gc.o \
 	$(OUTDIR)/gui_xim.o \
 	$(OUTDIR)/hardcopy.o \
+	$(OUTDIR)/hardcopy_postscript.o \
 	$(OUTDIR)/hashtab.o \
 	$(OUTDIR)/help.o \
 	$(OUTDIR)/highlight.o \
@@ -877,6 +878,10 @@ OBJ = \
 	$(OUTDIR)/session.o \
 	$(OUTDIR)/sha256.o \
 	$(OUTDIR)/sign.o \
+	$(OUTDIR)/sixel.o \
+	$(OUTDIR)/kitty.o \
+	$(OUTDIR)/cairo.o \
+	$(OUTDIR)/socketserver.o \
 	$(OUTDIR)/spell.o \
 	$(OUTDIR)/spellfile.o \
 	$(OUTDIR)/spellsuggest.o \
@@ -1158,8 +1163,10 @@ endif
 
 all: $(MAIN_TARGET) vimrun.exe xxd/xxd.exe tee/tee.exe install.exe uninstall.exe GvimExt/gvimext.dll
 
+# Coverage instrumentation makes _wsystem() in vimrun hang, and vimrun is not
+# part of Vim itself, so never instrument it.
 vimrun.exe: vimrun.c
-	$(CC) $(CFLAGS) -o vimrun.exe vimrun.c $(LIB)
+	$(CC) $(filter-out --coverage,$(CFLAGS)) -o vimrun.exe vimrun.c $(LIB)
 
 install.exe: dosinst.c dosinst.h version.h
 	$(CC) $(CFLAGS) -o install.exe dosinst.c $(LIB) -lole32 -luuid
@@ -1319,6 +1326,8 @@ $(OUTDIR)/ex_cmds2.o: ex_cmds2.c $(INCL) version.h
 $(OUTDIR)/ex_docmd.o: ex_docmd.c $(INCL) ex_cmdidxs.h
 
 $(OUTDIR)/hardcopy.o: hardcopy.c $(INCL) version.h
+
+$(OUTDIR)/hardcopy_postscript.o: hardcopy_postscript.c $(INCL) version.h
 
 $(OUTDIR)/misc1.o: misc1.c $(INCL) version.h
 
