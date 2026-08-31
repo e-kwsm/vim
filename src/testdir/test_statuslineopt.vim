@@ -235,6 +235,35 @@ func Test_multistatusline_highlight()
   call StopVimInTerminal(buf)
 endfunc
 
+func Test_multistatusline_carry_hl()
+  CheckScreendump
+
+  " %#XX# / %N* set on one row should persist on subsequent rows until %*
+  " (or another %# / %*) changes it.
+  let lines =<< trim END
+    func MyStatusLine()
+      return 'L1A%=%#Search#L1B%@'
+        \ .. 'L2 carried Search%@'
+        \ .. '%*L3 reset%@'
+        \ .. '%2*L4 user2%@'
+        \ .. 'L5 carried user2%@'
+        \ .. '%*L6 reset'
+    endfunc
+
+    hi User2 ctermfg=Yellow ctermbg=Blue
+    set laststatus=2
+    set statuslineopt=maxheight:6
+    set statusline=%!MyStatusLine()
+  END
+  call writefile(lines, 'XTest_multistatusline_carry_hl', 'D')
+
+  let buf = g:RunVimInTerminal('-S XTest_multistatusline_carry_hl', {'rows': 9})
+  call term_sendkeys(buf, "\<C-L>")
+  call VerifyScreenDump(buf, 'Test_multistatusline_carry_hl_01', {})
+
+  call StopVimInTerminal(buf)
+endfunc
+
 func Test_statuslineopt_default_stl()
   CheckScreendump
 
@@ -362,8 +391,8 @@ func Test_statuslineopt_wincmd_underscore()
   CheckScreendump
 
   " Test CTRL-W__ with global stlo maxheight:3 and multi-line statusline.
-  " After maximizing, the large window should keep stlh=3, not collapse to 1
-  " because the minimized other window constrained global_stlh.
+  " The height is computed when 'stlo' is set (a single window here, so 3).
+  " Splitting and maximizing do not recompute it, so both status lines stay 3.
   let lines =<< trim END
     set laststatus=2
     set statuslineopt=maxheight:3
@@ -375,6 +404,27 @@ func Test_statuslineopt_wincmd_underscore()
   let buf = g:RunVimInTerminal('-S XTest_statuslineopt_wincmd_underscore', {'rows': 14})
   call term_sendkeys(buf, "\<C-W>_\<C-L>")
   call VerifyScreenDump(buf, 'Test_statuslineopt_wincmd_underscore_01', {})
+
+  call StopVimInTerminal(buf)
+endfunc
+
+func Test_statuslineopt_wincmd_underscore_besteff()
+  CheckScreendump
+
+  " Best effort when global 'stlo' is set after CTRL-W__ has minimized the
+  " other window.  That window only fits a 1-row status line, so the global
+  " height is reduced to 1 even though maxheight is 3.
+  let lines =<< trim END
+    set laststatus=2
+    set statusline=GA%@GB%@GC
+    new
+    wincmd _
+  END
+  call writefile(lines, 'XTest_statuslineopt_wincmd_underscore_besteff', 'D')
+
+  let buf = g:RunVimInTerminal('-S XTest_statuslineopt_wincmd_underscore_besteff', {'rows': 14})
+  call term_sendkeys(buf, ":set statuslineopt=maxheight:3\<CR>\<C-L>")
+  call VerifyScreenDump(buf, 'Test_statuslineopt_wincmd_underscore_besteff_01', {})
 
   call StopVimInTerminal(buf)
 endfunc

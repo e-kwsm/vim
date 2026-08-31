@@ -343,7 +343,10 @@
 #endif
 #ifdef BACKSLASH_IN_FILENAME
 # define PATH_ESC_CHARS ((char_u *)" \t\n*?[{`%#'\"|!<")
-# define BUFFER_ESC_CHARS ((char_u *)" \t\n*?[`%#'\"|!<")
+// '%' and '#' are not escaped for ":buffer": it has no EX_XFILE, so they are
+// not expanded, and escaping them as "\%"/"\#" breaks buffer name matching
+// when '%'/'#' is in 'isfname' (backslash treated as a path separator).
+# define BUFFER_ESC_CHARS ((char_u *)" \t\n*?[`'\"|!<")
 #else
 # ifdef VMS
     // VMS allows a lot of characters in the file name
@@ -574,6 +577,7 @@ extern char *(*dyn_libintl_bindtextdomain)(const char *domainname, const char *d
 extern char *(*dyn_libintl_bind_textdomain_codeset)(const char *domainname, const char *codeset);
 extern char *(*dyn_libintl_textdomain)(const char *domainname);
 extern int (*dyn_libintl_wputenv)(const wchar_t *envstring);
+extern int *dyn_libintl_nl_msg_cat_cntr;
 #endif
 
 
@@ -690,13 +694,15 @@ extern int (*dyn_libintl_wputenv)(const wchar_t *envstring);
 #define POPF_INFO_MENU	0x400	// align info popup with popup menu
 #define POPF_POSINVERT	0x800	// vertical position can be inverted
 #define POPF_OPACITY 0x1000	// popup has opacity/transparency setting
+#define POPF_CLIPWINDOW	0x2000	// confine popup to its host window's rect
 
 // flags used in w_popup_handled
 #define POPUP_HANDLED_1	    0x01    // used by mouse_find_win()
 #define POPUP_HANDLED_2	    0x02    // used by popup_do_filter()
 #define POPUP_HANDLED_3	    0x04    // used by popup_check_cursor_pos()
 #define POPUP_HANDLED_4	    0x08    // used by may_update_popup_mask()
-#define POPUP_HANDLED_5	    0x10    // used by update_popups()
+#define POPUP_HANDLED_5	    0x10    // used by update_popups() and
+				    // update_popup_images()
 
 /*
  * Terminal highlighting attribute bits.
@@ -867,6 +873,7 @@ extern int (*dyn_libintl_wputenv)(const wchar_t *envstring);
 #define EXPAND_FILETYPECMD	63
 #define EXPAND_PATTERN_IN_BUF	64
 #define EXPAND_RETAB		65
+#define EXPAND_USER_COMPLETEOPT	66
 
 
 // Values for exmode_active (0 is no exmode)
@@ -1095,7 +1102,7 @@ extern int (*dyn_libintl_wputenv)(const wchar_t *envstring);
 #define FM_BACKWARD	0x01	// search backwards
 #define FM_FORWARD	0x02	// search forwards
 #define FM_BLOCKSTOP	0x04	// stop at start/end of block
-#define FM_SKIPCOMM	0x08	// skip comments
+#define FM_SKIPCOMM	0x08	// skip comments (cursor must start outside)
 
 // Values for action argument for do_buffer() and close_buffer()
 #define DOBUF_GOTO	0	// go to specified buffer
@@ -1483,6 +1490,8 @@ enum auto_event
     EVENT_TEXTCHANGEDI,		// text was modified in Insert mode
     EVENT_TEXTCHANGEDP,		// TextChangedI with popup menu visible
     EVENT_TEXTCHANGEDT,		// text was modified in Terminal mode
+    EVENT_TEXTPUTPOST,		// after some text was put
+    EVENT_TEXTPUTPRE,		// before some text was put
     EVENT_TEXTYANKPOST,		// after some text was yanked
     EVENT_USER,			// user defined autocommand
     EVENT_VIMENTER,		// after starting Vim
@@ -1534,7 +1543,7 @@ typedef enum
     , HLF_S	    // status lines
     , HLF_SNC	    // status lines of not-current windows
     , HLF_C	    // column to separate vertically split windows
-    , HLF_CNC	    // column separator for not-current windows
+    , HLF_CNC	    // column to separate vertically split non-current windows
     , HLF_T	    // Titles for output from ":set all", ":autocmd" etc.
     , HLF_V	    // Visual mode
     , HLF_VNC	    // Visual mode, autoselecting and not clipboard owner
@@ -1565,6 +1574,9 @@ typedef enum
     , HLF_PST	    // popup menu scrollbar thumb
     , HLF_PMB	    // popup menu border
     , HLF_PMS	    // popup menu shadow
+    , HLF_POP	    // popup window body
+    , HLF_POPB	    // popup window border
+    , HLF_POPT	    // popup window title
     , HLF_TP	    // tabpage line
     , HLF_TPS	    // tabpage line selected
     , HLF_TPF	    // tabpage line filler
@@ -1590,6 +1602,7 @@ typedef enum
 		  'w', 'W', 'f', 'F', 'A', 'C', 'D', 'T', 'E', '-', '>', \
 		  'B', 'P', 'R', 'L', \
 		  '+', '=', 'k', '<','[', ']', '{', '}', 'x', 'X', 'j', 'H', \
+		  'p', 'J', 'Q', \
 		  '*', '#', '_', '!', '.', 'o', 'q', \
 		  'z', 'Z', 'g', \
 		  '%', '^', '&', 'I', '('}
@@ -1788,9 +1801,9 @@ void *vim_memset(void *, int, size_t);
  */
 #define STRLEN(s)	    strlen((char *)(s))
 #define STRCPY(d, s)	    strcpy((char *)(d), (char *)(s))
-#define STRNCPY(d, s, n)    strncpy((char *)(d), (char *)(s), (size_t)(n))
+#define STRNCPY(d, s, n)    strncpy((char *)(d), (char *)(s), (n))
 #define STRCMP(d, s)	    strcmp((char *)(d), (char *)(s))
-#define STRNCMP(d, s, n)    strncmp((char *)(d), (char *)(s), (size_t)(n))
+#define STRNCMP(d, s, n)    strncmp((char *)(d), (char *)(s), (n))
 #ifdef HAVE_STRCASECMP
 # define STRICMP(d, s)	    strcasecmp((char *)(d), (char *)(s))
 #else
@@ -1810,12 +1823,12 @@ void *vim_memset(void *, int, size_t);
 #define STRMOVE(d, s)	    mch_memmove((d), (s), STRLEN(s) + 1)
 
 #ifdef HAVE_STRNCASECMP
-# define STRNICMP(d, s, n)  strncasecmp((char *)(d), (char *)(s), (size_t)(n))
+# define STRNICMP(d, s, n)  strncasecmp((char *)(d), (char *)(s), (n))
 #else
 # ifdef HAVE_STRNICMP
-#  define STRNICMP(d, s, n) strnicmp((char *)(d), (char *)(s), (size_t)(n))
+#  define STRNICMP(d, s, n) strnicmp((char *)(d), (char *)(s), (n))
 # else
-#  define STRNICMP(d, s, n) vim_strnicmp((char *)(d), (char *)(s), (size_t)(n))
+#  define STRNICMP(d, s, n) vim_strnicmp((char *)(d), (char *)(s), (n))
 # endif
 #endif
 
@@ -1830,7 +1843,7 @@ void *vim_memset(void *, int, size_t);
 #define MB_STRNICMP2(d, s, n1, n2)	mb_strnicmp2((char_u *)(d), (char_u *)(s), (n1), (n2))
 
 #define STRCAT(d, s)	    strcat((char *)(d), (char *)(s))
-#define STRNCAT(d, s, n)    strncat((char *)(d), (char *)(s), (size_t)(n))
+#define STRNCAT(d, s, n)    strncat((char *)(d), (char *)(s), (n))
 
 #ifdef HAVE_STRPBRK
 # define vim_strpbrk(s, cs) (char_u *)strpbrk((char *)(s), (char *)(cs))
@@ -1910,7 +1923,7 @@ typedef unsigned short disptick_T;	// display tick type
 typedef void	    *vim_acl_T;		// dummy to pass an ACL to a function
 
 #ifndef mch_memmove
-# define mch_memmove(to, from, len) memmove((char*)(to), (char*)(from), (size_t)(len))
+# define mch_memmove(to, from, len) memmove((char*)(to), (char*)(from), (len))
 #endif
 
 /*
@@ -1920,7 +1933,7 @@ typedef void	    *vim_acl_T;		// dummy to pass an ACL to a function
  * thus it is not 100% accurate!)
  */
 #define fnamecmp(x, y) vim_fnamecmp((char_u *)(x), (char_u *)(y))
-#define fnamencmp(x, y, n) vim_fnamencmp((char_u *)(x), (char_u *)(y), (size_t)(n))
+#define fnamencmp(x, y, n) vim_fnamencmp((char_u *)(x), (char_u *)(y), (n))
 
 #if defined(UNIX) || defined(FEAT_GUI) || defined(VMS) \
 	|| defined(FEAT_CLIENTSERVER)
@@ -1938,8 +1951,8 @@ typedef void	    *vim_acl_T;		// dummy to pass an ACL to a function
 # define vim_read(fd, buf, count)   read((fd), (char *)(buf), (unsigned int)(count))
 # define vim_write(fd, buf, count)  write((fd), (char *)(buf), (unsigned int)(count))
 #else
-# define vim_read(fd, buf, count)   read((fd), (char *)(buf), (size_t) (count))
-# define vim_write(fd, buf, count)  write((fd), (char *)(buf), (size_t) (count))
+# define vim_read(fd, buf, count)   read((fd), (char *)(buf), (count))
+# define vim_write(fd, buf, count)  write((fd), (char *)(buf), (count))
 #endif
 
 /*
@@ -2312,6 +2325,11 @@ typedef enum {
 # define VIM_ATOM_NAME "_VIM_TEXT"
 # define VIMENC_ATOM_NAME "_VIMENC_TEXT"
 
+// These are used for the GTK4 GUI, since GTK4 only supports conforming mime
+// types, see gui_gtk4_cb.c for more information.
+# define VIM_MIMETYPE_NAME "application/x-vim-text"
+# define VIMENC_MIMETYPE_NAME "application/x-vim-enc-text"
+
 // Selection states for modeless selection
 # define SELECT_CLEARED		0
 # define SELECT_IN_PROGRESS	1
@@ -2358,7 +2376,7 @@ typedef struct
     Atom	sel_atom;	// PRIMARY/CLIPBOARD selection ID
 # endif
 
-# ifdef FEAT_GUI_GTK
+# if defined(FEAT_GUI_GTK) && !defined(USE_GTK4)
     GdkAtom     gtk_sel_atom;	// PRIMARY/CLIPBOARD selection ID
 # endif
 
@@ -2762,6 +2780,12 @@ typedef int (*opt_expand_cb_T)(optexpand_T *args, int *numMatches, char_u ***mat
 # endif
 #endif
 
+#if defined(FEAT_PRINT_PANGO) && defined(FEAT_GUI_GTK) && defined(USE_GTK4)
+# if GTK_CHECK_VERSION(4, 14, 0)
+#  define USE_GTK4_PRINT_DIALOG
+# endif
+#endif
+
 #ifndef FEAT_NETBEANS_INTG
 # undef NBDEBUG
 #endif
@@ -2885,6 +2909,15 @@ typedef int (*opt_expand_cb_T)(optexpand_T *args, int *numMatches, char_u ***mat
 # define MAX_OPEN_CHANNELS 10
 #else
 # define MAX_OPEN_CHANNELS 0
+#endif
+
+// Maximum number of simultaneously accepted socketserver client channels.
+// Bounds the channels (and file descriptors) added to the select()/poll()
+// sets so a connection flood cannot overflow the fd_set / pollfd arrays.
+#ifdef FEAT_SOCKETSERVER
+# define MAX_CLIENT_CHANNELS 100
+#else
+# define MAX_CLIENT_CHANNELS 0
 #endif
 
 #if defined(MSWIN)
@@ -3078,6 +3111,10 @@ long elapsed(DWORD start_tick);
 // flags used by user commands and :autocmd
 #define UC_BUFFER	1	// -buffer: local to current buffer
 #define UC_VIM9		2	// {} argument: Vim9 syntax.
+
+// flags for the -completeopt= attribute of :command
+#define UCC_ESCAPE	0x1	// escape spaces, tabs and backslashes in
+				// matches
 
 // flags used by vim_strsave_fnameescape()
 #define VSE_NONE	0
