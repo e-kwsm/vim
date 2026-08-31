@@ -316,7 +316,7 @@ get_last_leader_offset(char_u *line, char_u **flags)
 		for (off = (len2 > i ? i : len2); off > 0 && off + len1 > len2;)
 		{
 		    --off;
-		    if (!STRNCMP(string + off, com_leader, len2 - off))
+		    if (STRNCMP(string + off, com_leader, len2 - off) == 0)
 		    {
 			if (i - off < lower_check_bound)
 			    lower_check_bound = i - off;
@@ -439,7 +439,7 @@ plines_win_nofold(win_T *wp, linenr_T lnum)
 
 /*
  * Like plines_win(), but only reports the number of physical screen lines
- * used from the start of the line to the given column number.
+ * used from the start of the line to the given byte column.
  */
     int
 plines_win_col(win_T *wp, linenr_T lnum, long column)
@@ -465,7 +465,8 @@ plines_win_col(win_T *wp, linenr_T lnum, long column)
     line = ml_get_buf(wp->w_buffer, lnum, FALSE);
 
     init_chartabsize_arg(&cts, wp, lnum, 0, line, line);
-    while (*cts.cts_ptr != NUL && --column >= 0)
+    // "column" is a byte index, advance the pointer until it is reached.
+    while (*cts.cts_ptr != NUL && cts.cts_ptr < line + column)
     {
 	cts.cts_vcol += win_lbr_chartabsize(&cts, NULL, NULL);
 	MB_PTR_ADV(cts.cts_ptr);
@@ -621,7 +622,7 @@ check_status(buf_T *buf)
     FOR_ALL_WINDOWS(wp)
 	if (wp->w_buffer == buf && wp->w_status_height)
 	{
-	    wp->w_redr_status = TRUE;
+	    wp->w_redr_status = true;
 	    set_must_redraw(UPD_VALID);
 	}
 }
@@ -1398,7 +1399,7 @@ init_vimdir(void)
     char_u *
 expand_env_save(char_u *src)
 {
-    return expand_env_save_opt(src, FALSE);
+    return expand_env_save_opt(src, FALSE, NULL);
 }
 
 /*
@@ -1406,13 +1407,13 @@ expand_env_save(char_u *src)
  * expand "~" at the start.
  */
     char_u *
-expand_env_save_opt(char_u *src, int one)
+expand_env_save_opt(char_u *src, int one, char_u *esc_chars)
 {
     char_u	*p;
 
     p = alloc(MAXPATHL);
     if (p != NULL)
-	expand_env_esc(src, p, MAXPATHL, FALSE, one, NULL);
+	expand_env_esc(src, p, MAXPATHL, esc_chars, one, NULL);
     return p;
 }
 
@@ -1428,7 +1429,7 @@ expand_env(
     char_u	*dst,		// where to put the result
     int		dstlen)		// maximum length of the result
 {
-    return expand_env_esc(src, dst, dstlen, FALSE, FALSE, NULL);
+    return expand_env_esc(src, dst, dstlen, NULL, FALSE, NULL);
 }
 
     size_t
@@ -1436,7 +1437,7 @@ expand_env_esc(
     char_u	*srcp,		// input string e.g. "$HOME/vim.hlp"
     char_u	*dst,		// where to put the result
     int		dstlen,		// maximum length of the result
-    int		esc,		// escape spaces in expanded variables
+    char_u	*esc_chars,	// chars to escape in expanded vars
     int		one,		// "srcp" is one file name
     char_u	*startstr)	// start again after this (can be NULL)
 {
@@ -1655,11 +1656,13 @@ expand_env_esc(
 	    }
 #endif
 
-	    // If "var" contains white space, escape it with a backslash.
-	    // Required for ":e ~/tt" when $HOME includes a space.
-	    if (esc && var != NULL && vim_strpbrk(var, (char_u *)" \t") != NULL)
+	    // If "var" contains any character from "esc_chars", escape it
+	    // with a backslash.  The historical use is escaping spaces so
+	    // that ":e ~/tt" works when $HOME contains a space.
+	    if (esc_chars != NULL && var != NULL
+		    && vim_strpbrk(var, esc_chars) != NULL)
 	    {
-		char_u	*p = vim_strsave_escaped(var, (char_u *)" \t");
+		char_u	*p = vim_strsave_escaped(var, esc_chars);
 
 		if (p != NULL)
 		{
@@ -2284,13 +2287,18 @@ prepare_to_exit(void)
 #ifdef FEAT_GUI
     if (gui.in_use)
     {
-	gui.dying = TRUE;
+	gui.dying = true;
 	out_trash();	// trash any pending output
     }
     else
 #endif
     {
 	windgoto((int)Rows - 1, cmdline_col_off);
+
+	// When "full_screen" was reset, e.g. by deathtrap(), settmode() below
+	// returns without switching the mouse off, so do it here.
+	if (!full_screen)
+	    mch_setmouse(FALSE);
 
 	/*
 	 * Switch terminal mode back now, so messages end up on the "normal"
@@ -2427,8 +2435,9 @@ get_cmd_output(
     if (check_restricted() || check_secure())
 	return NULL;
 
-    // get a name for the temp file
-    if ((tempname = vim_tempname('o', FALSE)) == NULL)
+    // Keep the file reserved until the shell opens it.  On MS-Windows,
+    // deleting it here would let another Vim process reuse the same name.
+    if ((tempname = vim_tempname('o', TRUE)) == NULL)
     {
 	emsg(_(e_cant_get_temp_file_name));
 	return NULL;
@@ -2475,7 +2484,6 @@ get_cmd_output(
     if (buffer != NULL)
 	i = (int)fread((char *)buffer, (size_t)1, (size_t)len, fd);
     fclose(fd);
-    mch_remove(tempname);
     if (buffer == NULL)
 	goto done;
 # ifdef VMS
@@ -2499,6 +2507,7 @@ get_cmd_output(
 	*ret_len = len;
 
 done:
+    mch_remove(tempname);
     vim_free(tempname);
     return buffer;
 }
@@ -2952,4 +2961,3 @@ trim_to_int(vimlong_T x)
 {
     return x > INT_MAX ? INT_MAX : x < INT_MIN ? INT_MIN : x;
 }
-

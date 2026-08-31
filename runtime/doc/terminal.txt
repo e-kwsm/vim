@@ -1,4 +1,4 @@
-*terminal.txt*	For Vim version 9.2.  Last change: 2026 Apr 02
+*terminal.txt*	For Vim version 9.2.  Last change: 2026 Aug 30
 
 
 		  VIM REFERENCE MANUAL	  by Bram Moolenaar
@@ -232,7 +232,7 @@ Command syntax ~
 			keys in the terminal window.  For MS-Windows see the
 			++eof argument below.
 
-						*term++close* *term++open*
+				    *term++close* *term++noclose* *term++open*
 			Supported [options] are:
 			++close		The terminal window will close
 					automatically when the job terminates.
@@ -380,6 +380,11 @@ When the job is running the contents of the terminal is under control of the
 job.  That includes the cursor position.  Typed keys are sent to the job.
 The terminal contents can change at any time.  This is called Terminal-Job
 mode.
+
+In Terminal-Job mode the cursor position you see belongs to the terminal job,
+not to Vim.  The window's cursor position is only updated when Vim takes over
+in |Terminal-Normal| mode, so the 'ruler' and the 'statusline' show a stale
+cursor position.
 
 Use CTRL-W N (or 'termwinkey' N) to switch to Terminal-Normal mode.  Now the
 contents of the terminal window is under control of Vim, the job output is
@@ -596,7 +601,7 @@ term_dumpwrite({buf}, {filename} [, {options}])		*term_dumpwrite()*
 		name: >
 			GetFilename()->term_dumpwrite(bufnr)
 <
-		Return type: |Number|
+		Return type: void
 
 
 term_getaltscreen({buf})				*term_getaltscreen()*
@@ -817,7 +822,7 @@ term_sendkeys({buf}, {keys})				*term_sendkeys()*
 		Can also be used as a |method|: >
 			GetBufnr()->term_sendkeys(keys)
 <
-		Return type: |Number|
+		Return type: void
 
 
 term_setansicolors({buf}, {colors})			*term_setansicolors()*
@@ -852,7 +857,7 @@ term_setansicolors({buf}, {colors})			*term_setansicolors()*
 		Can also be used as a |method|: >
 			GetBufnr()->term_setansicolors(colors)
 <
-		Return type: |Number|
+		Return type: void
 
 		{only available with GUI enabled and/or the |+termguicolors|
 		feature}
@@ -866,11 +871,13 @@ term_setapi({buf}, {expr})				*term_setapi()*
 <
 		The default is "Tapi_".  When {expr} is an empty string then
 		no |terminal-api| function can be used for {buf}.
+		Setting the API only affects the "call" part, "drop" is always
+		allowed.
 
 		When used as a method the base is used for {buf}: >
 			GetBufnr()->term_setapi({expr})
 <
-		Return type: |Number|
+		Return type: void
 
 
 term_setkill({buf}, {how})				*term_setkill()*
@@ -888,7 +895,7 @@ term_setkill({buf}, {how})				*term_setkill()*
 		Can also be used as a |method|: >
 			GetBufnr()->term_setkill(how)
 <
-		Return type: |Number|
+		Return type: void
 
 
 term_setrestore({buf}, {command})			*term_setrestore()*
@@ -903,7 +910,7 @@ term_setrestore({buf}, {command})			*term_setrestore()*
 		Can also be used as a |method|: >
 			GetBufnr()->term_setrestore(command)
 <
-		Return type: |Number|
+		Return type: void
 
 
 term_setsize({buf}, {rows}, {cols})		*term_setsize()* *E955*
@@ -919,7 +926,7 @@ term_setsize({buf}, {rows}, {cols})		*term_setsize()* *E955*
 		Can also be used as a |method|: >
 			GetBufnr()->term_setsize(rows, cols)
 <
-		Return type: |Number|
+		Return type: void
 
 
 term_start({cmd} [, {options}])			*term_start()*
@@ -965,6 +972,20 @@ term_start({cmd} [, {options}])			*term_start()*
 		input and one output handle, with no separate handle for
 		stderr.
 
+		Note: term_start() always uses RAW mode for its callbacks.
+		"out_cb" and "err_cb" receive the raw chunk of data as read
+		from the OS.  A single callback invocation may contain
+		multiple lines separated by NL, and (for stdout via a pty)
+		each line may have a trailing CR from the line discipline
+		(ONLCR).  If per-line handling is desired, the callback must
+		split "msg" on NL and strip the trailing CR itself.
+		Example: >
+			func Handle(ch, msg)
+			  for line in split(a:msg, "\n")
+			    echom substitute(line, '\r$', '', '')
+			  endfor
+			endfunc
+<
 		There are extra options:
 		   "term_name"	     name to use for the buffer name, instead
 				     of the command name.
@@ -987,9 +1008,11 @@ term_start({cmd} [, {options}])			*term_start()*
 				     terminal window, see |term_setkill()|
 		   "term_finish"     What to do when the job is finished:
 					"close": close any windows
+					"noclose": window will not be closed
 					"open": open window if needed
 				     Note that "open" can be interruptive.
-				     See |term++close| and |term++open|.
+				     See |term++close|, |term++noclose| and
+				     |term++open|.
 		   "term_opencmd"    command to use for opening the window
 				     when "open" is used for "term_finish";
 				     must have "%d" where the buffer number
@@ -1027,7 +1050,7 @@ term_wait({buf} [, {time}])					*term_wait()*
 		Can also be used as a |method|: >
 			GetBufnr()->term_wait()
 <
-		Return type: |Number|
+		Return type: void
 
 ==============================================================================
 3. Terminal communication			 *terminal-communication*
@@ -1064,6 +1087,11 @@ encodes a command that Vim understands.  Example of such a message: >
 The body is always a list, making it easy to find the end: ]<07>.
 The <Esc>]51;msg<07> sequence is reserved by xterm for "Emacs shell", which is
 similar to what we are doing here.
+
+Note that any output appearing in a terminal window is checked for this
+escape sequence, thus the job can make Vim open a file with the "drop"
+command below.  |term_setapi()| only restricts which functions the "call"
+command may use, it does not affect the "drop" API.
 
 Currently supported commands:
 

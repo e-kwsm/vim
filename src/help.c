@@ -634,7 +634,7 @@ prepare_help_buffer(void)
 {
     char_u	*p;
 
-    curbuf->b_help = TRUE;
+    curbuf->b_help = true;
 #ifdef FEAT_QUICKFIX
     set_string_option_direct((char_u *)"buftype", -1,
 				     (char_u *)"help", OPT_FREE|OPT_LOCAL, 0);
@@ -795,7 +795,7 @@ fix_help_buffer(void)
 		    if (*NameBuff != NUL && !after_pathsep(NameBuff, NameBuff + NameBufflen))
 		    {
 			STRCPY(NameBuff + NameBufflen, PATHSEPSTR);
-			NameBufflen += STRLEN_LITERAL(PATHSEPSTR);
+			NameBufflen += sizeof(PATHSEP);
 		    }
 #ifdef FEAT_MULTI_LANG
 		    STRCPY(NameBuff + NameBufflen, "doc/*.??[tx]");

@@ -27,6 +27,8 @@ handle_mode(typval_T *item, jobopt_T *opt, ch_mode_T *modep, int jo)
 	*modep = CH_MODE_NL;
     else if (STRCMP(val, "raw") == 0)
 	*modep = CH_MODE_RAW;
+    else if (STRCMP(val, "blob") == 0)
+	*modep = CH_MODE_BLOB;
     else if (STRCMP(val, "js") == 0)
 	*modep = CH_MODE_JS;
     else if (STRCMP(val, "json") == 0)
@@ -384,7 +386,8 @@ get_job_options(typval_T *tv, jobopt_T *opt, int supported, int supported2)
 		if (!(supported2 & JO2_TERM_FINISH))
 		    break;
 		val = tv_get_string(item);
-		if (STRCMP(val, "open") != 0 && STRCMP(val, "close") != 0)
+		if (STRCMP(val, "open") != 0 && STRCMP(val, "close") != 0
+			&& STRCMP(val, "noclose") != 0)
 		{
 		    semsg(_(e_invalid_value_for_argument_str_str),
 							   "term_finish", val);
@@ -1867,7 +1870,11 @@ job_info(job_T *job, dict_T *dict)
     if (l == NULL)
 	return;
 
-    dict_add_list(dict, "cmd", l);
+    if (dict_add_list(dict, "cmd", l) == FAIL)
+    {
+	list_unref(l);
+	return;
+    }
     if (job->jv_argv != NULL)
 	for (i = 0; job->jv_argv[i] != NULL; i++)
 	    list_append_string(l, (char_u *)job->jv_argv[i], -1);

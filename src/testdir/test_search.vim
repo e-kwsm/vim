@@ -700,6 +700,27 @@ func Test_search_cmdline7()
   call feedkeys("//e\<c-g>\<cr>", 'tx')
   call assert_equal('1 bbvimb', getline('.'))
   call assert_equal(4, col('.'))
+  call cursor(1, 1)
+  call feedkeys("//+1\<c-g>\<cr>", 'tx')
+  call assert_equal(' 2 bbvimb', getline('.'))
+  call assert_equal([0, 2, 1, 0], getpos('.'))
+  call setline(1, 'blah blah blah')
+  call feedkeys("gg0/blah/e\<C-G>\<CR>", 'tx')
+  call assert_equal([0, 1, 9, 0], getpos('.'))
+  call feedkeys("gg0/blah/e\<C-G>\<C-G>\<CR>", 'tx')
+  call assert_equal([0, 1, 14, 0], getpos('.'))
+  call feedkeys("gg0/blah/e\<C-G>\<C-G>\<C-T>\<CR>", 'tx')
+  call assert_equal([0, 1, 9, 0], getpos('.'))
+  call cursor(1, col('$'))
+  call feedkeys("?blah?e\<C-G>\<CR>", 'tx')
+  call assert_equal([0, 1, 9, 0], getpos('.'))
+  call feedkeys("gg0/blah/e+1\<C-G>\<CR>", 'tx')
+  call assert_equal([0, 1, 10, 0], getpos('.'))
+  call feedkeys("gg0/blah/e-2\<C-G>\<CR>", 'tx')
+  call assert_equal([0, 1, 7, 0], getpos('.'))
+  call setline(1, 'a/b a/b a/b')
+  call feedkeys("gg0/a\\/b/e\<C-G>\<CR>", 'tx')
+  call assert_equal([0, 1, 7, 0], getpos('.'))
 
   set noincsearch
   call test_override("char_avail", 0)
@@ -1032,6 +1053,7 @@ func Test_hlsearch_and_visual()
 	\ ], 'Xhlvisual_script', 'D')
   let buf = RunVimInTerminal('-S Xhlvisual_script', {'rows': 6, 'cols': 40})
   call term_sendkeys(buf, "vjj")
+  call WaitForAssert({-> assert_match('VISUAL.*-\d', term_getline(buf, 6))}, 1000)
   call VerifyScreenDump(buf, 'Test_hlsearch_visual_1', {})
   call term_sendkeys(buf, "\<Esc>")
 
@@ -2144,6 +2166,19 @@ func Test_search_match_paren()
   normal [(
   call assert_equal([1, 4], [line('.'), col('.')])
 
+  call setline(1, ['x" (a "b" )\', '")'])
+  call cursor(1, 4)
+  normal %
+  call assert_equal([1, 11], [line('.'), col('.')])
+  normal %
+  call assert_equal([1, 4], [line('.'), col('.')])
+  call cursor(1, 10)
+  normal [(
+  call assert_equal([1, 4], [line('.'), col('.')])
+  call cursor(1, 4)
+  normal ])
+  call assert_equal([1, 11], [line('.'), col('.')])
+
   " matching parenthesis in 'virtualedit' mode with cursor after the eol
   call setline(1, 'abc(defgh)')
   set virtualedit=all
@@ -2179,6 +2214,7 @@ func Test_incsearch_highlighting_newline()
   [CODE]
   call writefile(commands, 'Xincsearch_nl', 'D')
   let buf = RunVimInTerminal('-S Xincsearch_nl', {'rows': 5, 'cols': 10})
+  call TermWait(buf, 100)
   call term_sendkeys(buf, '/test')
   call VerifyScreenDump(buf, 'Test_incsearch_newline1', {})
   " Need to send one key at a time to force a redraw
@@ -2419,6 +2455,19 @@ func Test_incsearch_delimiter_ctrlg()
   call term_sendkeys(buf, "\<Esc>")
 
   call StopVimInTerminal(buf)
+endfunc
+
+func Test_searchcount_maxcount_cached()
+  new
+  call setline(1, repeat(['foo'], 5))
+  set maxsearchcount=99
+  let @/ = 'foo'
+  call cursor(1, 1)
+  call searchcount(#{recompute: v:true,  maxcount: 3})
+  let r = searchcount(#{recompute: v:false, maxcount: 3})
+  call assert_equal(3, r.maxcount)
+  set maxsearchcount&
+  bwipe!
 endfunc
 
 " vim: shiftwidth=2 sts=2 expandtab

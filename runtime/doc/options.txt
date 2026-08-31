@@ -1,4 +1,4 @@
-*options.txt*	For Vim version 9.2.  Last change: 2026 Apr 03
+*options.txt*	For Vim version 9.2.  Last change: 2026 Aug 30
 
 
 		  VIM REFERENCE MANUAL	  by Bram Moolenaar
@@ -324,12 +324,12 @@ that was last closed are used again.  If this buffer has been edited in this
 window, the values from back then are used.  Otherwise the values from the
 last closed window where the buffer was edited last are used.
 
-It's possible to set a local window option specifically for a type of buffer.
-When you edit another buffer in the same window, you don't want to keep
-using these local window options.  Therefore Vim keeps a global value of the
-local window options, which is used when editing another buffer.  Each window
-has its own copy of these values.  Thus these are local to the window, but
-global to all buffers in the window.  With this you can do: >
+":setlocal" can be used to set a local window option specifically for a type
+of buffer.  When you edit another buffer in the same window, you don't want to
+keep using these local window options.  Meanwhile ":set" also sets a global
+value of a local window option, which is used when editing another buffer.
+Each window has its own copy of these global values, making them local to the
+window, but global to all buffers in the window.  With this you can do: >
 	:e one
 	:set list
 	:e two
@@ -2302,8 +2302,8 @@ A jump table for the options with a short description can be found at |Q_op|.
 		    See also |preinserted()|.
 
 	   menu	    Use a popup menu to show the possible completions.  The
-		    menu is only shown when there is more than one match and
-		    sufficient colors are available.  |ins-completion-menu|
+		    menu is only shown when there is more than one match.
+		    |ins-completion-menu|
 
 	   menuone  Use the popup menu also when there is only one match.
 		    Useful when there is additional information about the
@@ -2393,6 +2393,9 @@ A jump table for the options with a short description can be found at |Q_op|.
 		close		show close button: "on" (default) or "off"
 		height		maximum height of the popup
 		highlight	popup highlight group (default: PmenuSel)
+		opacity		opacity percentage 0-100 (default 100, fully
+				opaque).  When less than 100, content beneath
+				the popup shows through.
 		resize		show resize handle: "on" (default) or "off"
 		shadow		"off" (default) or "on" using |hl-PmenuShadow|
 		width		maximum width of the popup
@@ -2400,6 +2403,7 @@ A jump table for the options with a short description can be found at |Q_op|.
 	Example: >
 		:set completepopup=height:10,border:single,highlight:InfoPopup
 		:set completepopup=width:60,border:custom:─;│;─;│;┌;┐;┘;└
+		:set completepopup=border:round,opacity:80
 <
 	When "align" is set to "item", the popup is positioned near the
 	selected item and moves as the selection changes.
@@ -3579,6 +3583,10 @@ A jump table for the options with a short description can be found at |Q_op|.
 	To ignore all but some events, a "-" prefix can be used: >
 	    :set ei=all,-WinLeave
 <
+	Events that are triggered by comparing the current state against a
+	stored one, such as |CursorMoved| and |TextChanged|, are not triggered
+	afterwards for what happened while they were ignored.
+
 						*'eventignorewin'* *'eiw'*
 'eventignorewin' 'eiw'	string	(default "")
 			window-local
@@ -3979,9 +3987,9 @@ A jump table for the options with a short description can be found at |Q_op|.
 	|String| and is the |:find| command argument.  The second argument is
 	a |Boolean| and is set to |v:true| when the function is called to get
 	a List of command-line completion matches for the |:find| command.
-	The function should return a List of strings.
+	The function should return a List, which is handled similarly to the
+	return value of a |:command-completion-customlist| function.
 
-	The function is called only once per |:find| command invocation.
 	The function can process all the directories specified in 'path'.
 
 	If a match is found, the function should return a |List| containing
@@ -4489,7 +4497,7 @@ A jump table for the options with a short description can be found at |Q_op|.
 						*'guiheadroom'* *'ghr'*
 'guiheadroom' 'ghr'	number	(default 50)
 			global
-			{only for GTK and X11 GUI}
+			{only for GTK and X11 GUI, except GTK4 GUI}
 	The number of pixels subtracted from the screen height when fitting
 	the GUI window on the screen.  Set this before the GUI is started,
 	e.g., in your |gvimrc| file.  When zero, the whole screen height will
@@ -4608,10 +4616,10 @@ A jump table for the options with a short description can be found at |Q_op|.
 		Photon GUIs.
 								*'go-s'*
 	  's'	Enable fullscreen mode.  Currently only supported in the
-		MS-Windows GUI version.  When set, the window will occupy the
-		entire screen and remove window decorations.  Define custom
-		mappings to toggle this mode conveniently.  For detailed usage
-		instructions, see |gui-w32-fullscreen|.
+		MS-Windows and GTK GUI version.  When set, the window will
+		occupy the entire screen and remove window decorations.
+		Define custom mappings to toggle this mode conveniently.
+		For detailed usage instructions, see |gui-fullscreen|.
 								*'go-r'*
 	  'r'	Right-hand scrollbar is always present.
 								*'go-R'*
@@ -4757,7 +4765,8 @@ A jump table for the options with a short description can be found at |Q_op|.
 				     l:Search,m:MoreMsg,M:ModeMsg,n:LineNr,
 				     a:LineNrAbove,b:LineNrBelow,
 				     N:CursorLineNr,r:Question,s:StatusLine,
-				     S:StatusLineNC,c:VertSplit,t:Title,
+				     S:StatusLineNC,c:VertSplit,
+				     |:VertSplitNC,t:Title,
 				     v:Visual,V:VisualNOS,w:WarningMsg,
 				     W:WildMenu,f:Folded,F:FoldColumn,
 				     A:DiffAdd,C:DiffChange,D:DiffDelete,
@@ -4768,7 +4777,8 @@ A jump table for the options with a short description can be found at |Q_op|.
 				     [:PmenuKind,]:PmenuKindSel,
 				     {:PmenuExtra,}:PmenuExtraSel,
 				     x:PmenuSbar,X:PmenuThumb,j:PmenuBorder,
-				     H:PmenuShadow,*:TabLine,
+				     H:PmenuShadow,p:Popup,J:PopupBorder,
+				     Q:PopupTitle,*:TabLine,
 				     #:TabLineSel,_:TabLineFill,!:CursorColumn,
 				     .:CursorLine,o:ColorColumn,q:QuickFixLine,
 				     z:StatusLineTerm,Z:StatusLineTermNC,
@@ -4805,6 +4815,8 @@ A jump table for the options with a short description can be found at |Q_op|.
 	|hl-StatusLineNC|  S  status lines of not-current windows
 	|hl-Title|	 t  Titles for output from ":set all", ":autocmd" etc.
 	|hl-VertSplit|	 c  column used to separate vertically split windows
+	|hl-VertSplitNC| |  column separating non-current vertically split
+			    windows
 	|hl-Visual|	 v  Visual mode
 	|hl-VisualNOS|	 V  Visual mode when Vim is "Not Owning the
 			    Selection" Only X11 Gui's |gui-x11|,
@@ -4837,6 +4849,9 @@ A jump table for the options with a short description can be found at |Q_op|.
 	|hl-PmenuMatchSel| <  popup menu matched text in selected line
 	|hl-PmenuBorder|   j  popup menu border characters
 	|hl-PmenuShadow|   H  popup menu shadow
+	|hl-Popup|	 p  popup window body
+	|hl-PopupBorder|   J  popup window border characters
+	|hl-PopupTitle|	 Q  popup window title
 	|hl-PreInsert|	 I  text inserted when "preinsert" is in 'completeopt'
 	|hl-Normal|	 (  Window color (supersedes 'wincolor' option)
 
@@ -4936,6 +4951,8 @@ A jump table for the options with a short description can be found at |Q_op|.
 	restored if possible |X11|.  See |X11-icon| for changing the icon on
 	X11.
 	For MS-Windows the icon can be changed, see |windows-icon|.
+	NOTE: GNU screen is not consistent in handling icon-title and title
+	escape sequences between versions.   See 'title'.
 
 						*'iconstring'*
 'iconstring'		string	(default "")
@@ -5015,6 +5032,9 @@ A jump table for the options with a short description can be found at |Q_op|.
 		:set imactivatekey=S-space
 <	"S-space" means shift+space.  This is the activation key for kinput2 +
 	canna (Japanese), and ami (Korean).
+
+	Note that when using the GTK4 GUI, this option is not supported. The
+	only valid value for this option will be an empty string.
 
 				*'imcmdline'* *'imc'* *'noimcmdline'* *'noimc'*
 'imcmdline' 'imc'	boolean (default off)
@@ -5212,7 +5232,8 @@ A jump table for the options with a short description can be found at |Q_op|.
 	command line has no uppercase characters, the added character is
 	converted to lowercase.
 	CTRL-R CTRL-W can be used to add the word at the end of the current
-	match, excluding the characters that were already typed.
+	match, excluding the characters that were already typed (starting from
+	the beginning of the word).
 	NOTE: This option is reset when 'compatible' is set.
 
 						*'indentexpr'* *'inde'*
@@ -5379,9 +5400,7 @@ A jump table for the options with a short description can be found at |Q_op|.
 	expand "$HOME/.viminfo".  Maybe you should change 'iskeyword' instead.
 
 						*'iskeyword'* *'isk'*
-'iskeyword' 'isk'	string (Vim default for Win32:
-					    "@,48-57,_,128-167,224-235"
-				   otherwise:  "@,48-57,_,192-255"
+'iskeyword' 'isk'	string (Vim default: "@,48-57,_,192-255"
 				Vi default: "@,48-57,_")
 			local to buffer
 	Keywords are used in searching and recognizing with many commands:
@@ -5665,6 +5684,12 @@ A jump table for the options with a short description can be found at |Q_op|.
 		0: never
 		1: only if there are at least two windows
 		2: always
+
+	Here "last window" means the last window in a column, i.e. the bottom-
+	most one, just above the command line.  A window with another window
+	below it always has a status line, since it also visually separates
+	those.
+
 	The screen looks nicer with a status line if you have several
 	windows, but it takes another screen line. |status-line|
 
@@ -6195,6 +6220,54 @@ A jump table for the options with a short description can be found at |Q_op|.
 	NOTE: 'modeline' is set to the Vi default value when 'compatible' is
 	set and to the Vim default value when 'compatible' is reset.
 
+		    *'modelinestrict'* *'mlst'* *'nomodelinestrict'* *'nomlst'*
+'modelinestrict' 'mlst'	boolean (default: on)
+			global
+	When on, only a safe subset of options can be set from a |modeline|.
+	The following options are allowed:
+		'autoindent'
+		'cindent'
+		'commentstring'
+		'expandtab'
+		'filetype'
+		'foldcolumn'
+		'foldenable'
+		'foldmarker'
+		'foldmethod'
+		'modifiable'
+		'readonly'
+		'rightleft'
+		'shiftwidth'
+		'smartindent'
+		'softtabstop'
+		'spell'
+		'spelllang'
+		'tabstop'
+		'textwidth'
+		'varsofttabstop'
+		'vartabstop'
+
+	Any other option set from a modeline will be silently ignored.
+	This option cannot be set from a |modeline| or in the |sandbox|, for
+	security reasons.
+
+	As an exception, `set nomodeline` is honored from within a modeline
+	even when 'modelinestrict' is on.  Other forms (`set modeline=0`,
+	`set modeline!`, `set invmodeline`) are still silently ignored.
+	This lets a file disable further modeline processing for itself.
+
+	The behaviour of 'modeline', 'modelinestrict' and 'modelineexpr' is
+	as follows:
+
+	'modeline'| 'modelinestrict'| 'modelineexpr' | Meaning
+	----------+-----------------+-------------------+--------~
+	   on     |    off          |   on           | All options can be set
+	   on     |    on           |   any          | Only whitelisted
+		  |                 |                | options can be set
+	   on     |    off          |   off          | All options except for
+		  |                 |                | expr options can be set
+	   off    |    any          |   any          | No options can be set
+
 				*'modifiable'* *'ma'* *'nomodifiable'* *'noma'*
 				*E21*
 'modifiable' 'ma'	boolean	(default on)
@@ -6308,7 +6381,10 @@ A jump table for the options with a short description can be found at |Q_op|.
 			be acted upon, i.e. no cursor move.  This implies of
 			course, that right clicking outside a selection will
 			end Visual mode.
-	Overview of what button does what for each model:
+
+	For a detailed description of 'mousemodel' behaviour see
+	|mouse-mode-table|.  Overview of what button does what for each model:
+
 	mouse		    extend		popup(_setpos) ~
 	left click	    place cursor	place cursor
 	left drag	    start selection	start selection
@@ -6394,7 +6470,7 @@ A jump table for the options with a short description can be found at |Q_op|.
 	  x	<number>	any X11 pointer number (see X11/cursorfont.h)
 
 	The "avail" column contains a 'w' if the shape is available for Win32,
-	x for X11 (including GTK+ 2), g for GTK+ 3.
+	x for X11 (including GTK+ 2), g for GTK+ 3 and GTK 4.
 	Any modes not specified or shapes not available use the normal mouse
 	pointer.
 
@@ -6828,7 +6904,7 @@ A jump table for the options with a short description can be found at |Q_op|.
 'printexpr' 'pexpr'	string	(default: see below)
 			global
 			{only available when compiled with the |+printer|
-			and |+postscript| features}
+			and |+postscript| or |+pango| features}
 	Expression used to print the PostScript produced with |:hardcopy|.
 	See |pexpr-option|.
 	This option cannot be set from a |modeline| or in the |sandbox|, for
@@ -6885,6 +6961,7 @@ A jump table for the options with a short description can be found at |Q_op|.
 			global
 	Defines a border and optional decorations for the popup menu in
 	completion.  The value is a comma-separated list of keywords.
+	See 'pumopt' for a consolidated alternative.
 
 	Border styles (at most one):
 	"single"	use thin box-drawing characters
@@ -6920,6 +6997,7 @@ A jump table for the options with a short description can be found at |Q_op|.
 	Determines the maximum number of items to show in the popup menu for
 	Insert mode completion.  When zero as much space as available is used.
 	|ins-completion-menu|.
+	See 'pumopt' for a consolidated alternative.
 
 						*'pummaxwidth'* *'pmw'*
 'pummaxwidth' 'pmw'	number	(default 0)
@@ -6931,12 +7009,68 @@ A jump table for the options with a short description can be found at |Q_op|.
 
 	This option takes precedence over 'pumwidth'.
 	|ins-completion-menu|.
+	See 'pumopt' for a consolidated alternative.
+
+						*'pumopt'*
+'pumopt'		string	(default "")
+			global
+	Configures the popup menu used for Insert mode completion.
+	The value is a comma-separated list of "key:value" pairs and flags.
+
+	Keys with values:
+	  border:{style}	set a border style (at most one):
+				"single"  thin box-drawing characters
+				"double"  double-line box-drawing characters
+				"round"   rounded corners
+				"ascii"   ASCII characters (-, |, +)
+				"custom:X;X;X;X;X;X;X;X"
+					  eight characters separated by
+					  semicolons, in the order: top, right,
+					  bottom, left, topleft, topright,
+					  botright, botleft
+	  height:{n}		maximum number of items to show (default 0,
+				meaning as much space as available)
+	  width:{n}		minimum width (default 15)
+	  maxwidth:{n}		maximum width (default 0, meaning no limit).
+				This takes precedence over width.
+				Truncated text is indicated by "trunc" value
+				of 'fillchars' option.
+	  opacity:{n}		opacity percentage 0-100 (default 100).
+				When less than 100, background content shows
+				through the popup menu.  Requires the GUI,
+				'termguicolors', or a 256-color terminal.
+
+	Flags (no value):
+	  margin		adds one-cell spacing inside the left and
+				right border.  Requires a border style.
+	  shadow		draws a shadow at the right and bottom edges.
+
+	Border styles using box-drawing characters ("single", "double",
+	"round") are only available when 'encoding' is "utf-8" and 'ambiwidth'
+	is "single".
+
+	Highlight groups:
+	|hl-PmenuBorder|	used for the border characters
+	|hl-PmenuShadow|	used for the shadow
+
+	Note: When 'pumopt' is set, all values are reset to their defaults
+	first, then the specified keys are applied.  Unspecified keys get
+	their default values.
+
+	Examples: >
+		:set pumopt=border:single
+		:set pumopt=border:double,margin,shadow
+		:set pumopt=height:10,width:20,opacity:80
+		:set pumopt=border:custom:─;│;─;│;┌;┐;┘;└,shadow
+<
+	See also: |ins-completion-menu|.
 
 						*'pumwidth'* *'pw'*
 'pumwidth' 'pw'		number	(default 15)
 			global
 	Determines the minimum width to use for the popup menu for Insert mode
 	completion.  |ins-completion-menu|.
+	See 'pumopt' for a consolidated alternative.
 
 						*'pythondll'*
 'pythondll'		string	(default depends on the build)
@@ -7211,7 +7345,8 @@ A jump table for the options with a short description can be found at |Q_op|.
 		    emoji might be rendered beyond the bounding box of drawing
 		    cell.
 
-	Other render types are currently not supported.
+	Other render types are currently not supported.  See also
+	'guiligatures'.
 
 						*'report'*
 'report'		number	(default 2)
@@ -7474,8 +7609,8 @@ A jump table for the options with a short description can be found at |Q_op|.
 	Minimal number of screen lines to keep above and below the cursor.
 	This will make some context visible around where you are working.  If
 	you set it to a very large value (999) the cursor line will always be
-	in the middle of the window (except at the start or end of the file or
-	when long lines wrap).
+	in the middle of the window (except at the start or end of the file,
+	see 'scrolloffpad', or when long lines wrap).
 	After using the local value, go back the global value with one of
 	these two: >
 		setlocal scrolloff<
@@ -7483,7 +7618,24 @@ A jump table for the options with a short description can be found at |Q_op|.
 <	For scrolling horizontally see 'sidescrolloff'.
 	NOTE: This option is set to 0 when 'compatible' is set.
 
-						*'scrollopt'* *'sbo'*
+						*'scrolloffpad'* *'sop'*
+'scrolloffpad' 'sop'	number	(default 0)
+			global or local to window |global-local|
+	When 'scrolloff' and 'scrolloffpad' are greater than zero, allow
+	the cursor to remain centered when at the end of the file.
+	Normally, 'scrolloff' will not keep the cursor centered at the
+	end of the file.
+
+	A value of 0 disables this feature.  Any value above 0 enables it.
+	For a window-local value, -1 means to use the global value.
+	Values below -1 are invalid.
+
+	After using the local value, go back the global value with one of
+	these two: >
+		setlocal scrolloffpad<
+		setlocal scrolloffpad=-1
+
+<						*'scrollopt'* *'sbo'*
 'scrollopt' 'sbo'	string	(default "ver,jump")
 			global
 	This is a comma-separated list of words that specifies how
@@ -7720,6 +7872,7 @@ A jump table for the options with a short description can be found at |Q_op|.
 	Note: When using a pipe like "| tee", you'll lose the exit code of the
 	shell command.  This might be configurable by your shell, look for
 	the pipefail option (for bash and zsh, use ":set -o pipefail").
+	Only a single "%s" value is allowed.
 	This option cannot be set from a |modeline| or in the |sandbox|, for
 	security reasons.
 
@@ -7763,6 +7916,9 @@ A jump table for the options with a short description can be found at |Q_op|.
 	become obsolete (at least for Unix).
 	This option cannot be set from a |modeline| or in the |sandbox|, for
 	security reasons.
+								*E1577*
+	Only a single "%s" item is allowed in the option value.
+
 
 			*'shellslash'* *'ssl'* *'noshellslash'* *'nossl'*
 'shellslash' 'ssl'	boolean	(default off)
@@ -7924,6 +8080,9 @@ A jump table for the options with a short description can be found at |Q_op|.
 		search count statistics.  The maximum limit can be set with
 		the 'maxsearchcount' option, see also |searchcount()|
 		function.
+	  u	don't give undo and redo messages like			*shm-u*
+		"1 line less; before #1  1 second ago", "Already at oldest
+		change" or "Already at newest change"
 
 	This gives you the opportunity to avoid that a change between buffers
 	requires you to hit <Enter>, but still gives as useful a message as
@@ -8524,7 +8683,8 @@ A jump table for the options with a short description can be found at |Q_op|.
 	{ NF  Evaluate expression between '%{' and '}' and substitute result.
 	      Note that there is no '%' before the closing '}'.  The
 	      expression cannot contain a '}' character, call a function to
-	      work around that.  See |stl-%{| below.
+	      work around that.  See |stl-%{| below.  Use '%0{' to insert the
+	      result verbatim.
 	{% -  This is almost same as { except the result of the expression is
 	      re-evaluated as a statusline format string.  Thus if the
 	      return value of expr contains % items they will get expanded.
@@ -8562,10 +8722,62 @@ A jump table for the options with a short description can be found at |Q_op|.
 	      applied to StatusLineNC for the statusline of non-current
 	      windows.
 	      The number N must be between 1 and 9.  See |hl-User1..9|
-								*stl-%@*
+							*stl-%@*
 	@ -   Inserts a newline.  This only takes effect when the "maxheight"
 	      value of 'statuslineopt' is greater than 1, or for |tabpanel|.
 
+							*stl-%[FuncName]*
+	%[ defines clickable regions in the statusline.  When the user clicks
+	on a region with the mouse, the specified function is called.  The
+	same syntax can also be used in 'tabline' and 'tabpanel'.
+
+	  %[FuncName]	Start of a clickable region.  "FuncName" is the name
+			of a Vim function to call when the region is clicked.
+	  %[]		End of the clickable region.  If omitted, the region
+			extends to the end of the statusline or to the start
+			of the next clickable region.
+
+	A {minwid} value can be used to pass an identifier to the callback:
+	  %3[FuncName]	Starts a clickable region with minwid 3.
+
+	The function receives a single |Dictionary| argument with these
+	entries:
+	  "minwid"	The minwid value from %N[Func] (0 if not specified).
+	  "nclicks"	Number of clicks: 1, 2, or 3.
+	  "button"	Mouse button: "l" (left), "m" (middle), "r" (right).
+	  "mods"	Modifier keys: combination of "s" (shift), "c" (ctrl),
+			"a" (alt).  Empty string if no modifiers.
+	  "winid"	|window-ID| of the window whose statusline was clicked,
+			or 0 when the click was in 'tabline' or 'tabpanel'.
+	  "area"	"statusline", "tabline", or "tabpanel".  Indicates
+			which option the clicked region belongs to.
+	  "tabnr"	(tabpanel only) Tab page number of the clicked label.
+
+	If the function returns non-zero, the statusline is redrawn.
+	Dragging the statusline to resize the window still works even when
+	click handlers are defined.  When used in 'tabline' or 'tabpanel',
+	clicks in %[FuncName] regions are dispatched to the callback
+	instead of the default tab-selection behavior.
+
+	Example: >
+	    func! ClickFile(info)
+		if a:info.button ==# 'l' && a:info.nclicks == 2
+		    browse edit
+		endif
+		return 0
+	    endfunc
+	    set statusline=%[ClickFile]%f%[]\ %l:%c
+<	This makes the filename in the statusline clickable.  Double-clicking
+	it opens the file browser.
+
+	Use `has('statusline_click')` to check if this feature is available.
+	This is useful for backward compatibility: >
+	    if has('statusline_click')
+		set statusline=%[ClickFile]%f%[]\ %l:%c
+	    else
+		set statusline=%f\ %l:%c
+	    endif
+<
 	When displaying a flag, Vim removes the leading comma, if any, when
 	that flag comes right after plaintext.  This will make a nice display
 	when flags are used like in the examples below.
@@ -8599,6 +8811,8 @@ A jump table for the options with a short description can be found at |Q_op|.
 	A result of all digits is regarded a number for display purposes.
 	Otherwise the result is taken as flag text and applied to the rules
 	described above.
+								*stl-%0{*
+	With %0{ neither applies: the result is inserted as a literal string.
 
 	Watch out for errors in expressions.  They may render Vim unusable!
 	If you are stuck, hold down ':' or 'Q' to get a prompt, then quit and
@@ -8880,24 +9094,22 @@ A jump table for the options with a short description can be found at |Q_op|.
 	Optional settings for the |tabpanel|,  It can consist of the following
 	items.  Items must be separated by a comma.
 
-		align:{text}	Specifies the position of the tabpanel.
-				Currently supported positions are:
-
-				left	left-side
+	    align:{text}    Specifies the position of the tabpanel.
+			    Currently supported positions are:
+				left	left-side  (default)
 				right	right-side
-
-				(default "left")
-
-		columns:{n}	Number of columns of the tabpanel.
-				If this value is 0 or less than 'columns', the
-				tab panel will not be displayed.
-				(default 20)
-
-		vert		Use a vertical separator for tabpanel.
-				The vertical separator character is taken from
-				"tpl_vert" in 'fillchars'.
-				(default off)
-
+	    columns:{n}	    Number of columns of the tabpanel.  (default 20)
+			    If this value is 0 or less than 'columns', the
+			    tabpanel will not be displayed.
+	    scrollbar	    A one-column scrollbar is always displayed at the
+			    right edge of the tabpanel, regardless of the
+			    "align:" setting.  (default off)
+			    See |tabpanel-scroll|.
+	    vert	    The vertical separator is drawn at the boundary
+			    between the tabpanel and the buffer area.
+			    (default off)
+			    The character to be drawn uses "tpl_vert" from
+			    'fillchars'.
 	Examples: >
 		:set tabpanelopt=columns:16,align:right
 		:set tabpanelopt=
@@ -9034,6 +9246,22 @@ A jump table for the options with a short description can be found at |Q_op|.
 	The use of |:set+=| and |:set-=| is preferred when adding or removing
 	file names from the list.  This avoids problems when a future version
 	uses another default.
+
+			*'tagsecure'* *'tsc'* *'notagsecure'* *'notsc'*
+'tagsecure' 'tsc'	boolean	(default on)
+			global
+	When on, Vim refuses to follow tag entries whose file field looks like
+	a URL ("scheme://..."), aborting the jump with error |E1576|.  This
+	prevents tag files from causing Vim to open URLs through |netrw|, which
+	would trigger a network request and expose netrw's URL-handling code to
+	attacker-controlled input or lead to environment exfiltration.
+
+	Tag files might be distributed alongside source code (e.g. via Git
+	repositories) and may therefore be untrustworthy.  Only disable
+	this option if you fully control the tag files Vim will read.
+
+	This option cannot be set from a |modeline| or in the |sandbox|, for
+	security reasons.
 
 				*'tagstack'* *'tgst'* *'notagstack'* *'notgst'*
 'tagstack' 'tgst'	boolean	(default on)
@@ -9420,6 +9648,9 @@ A jump table for the options with a short description can be found at |Q_op|.
 	then the WINDOWID environment variable should be inherited and the
 	title of the window should change back to what it should be after
 	exiting Vim.
+	NOTE: GNU screen is not consistent in handling icon-title and title
+	escape sequences between versions. In particular, screen 5 may swap
+	title and icon-title.
 
 								*'titlelen'*
 'titlelen'		number	(default 85)
@@ -9482,7 +9713,8 @@ A jump table for the options with a short description can be found at |Q_op|.
 		icons		Toolbar buttons are shown with icons.
 		text		Toolbar buttons shown with text.
 		horiz		Icon and text of a toolbar button are
-				horizontally arranged.  {only in GTK+ 2 GUI}
+				horizontally arranged.
+				{only in GTK+ 2 and GTK 4 GUI}
 		tooltips	Tooltips are active for toolbar buttons.
 	Tooltips refer to the popup help text which appears after the mouse
 	cursor is placed over a toolbar button for a brief moment.
@@ -9871,6 +10103,14 @@ A jump table for the options with a short description can be found at |Q_op|.
 		letter.  Thus "KEEPTHIS and "K_L_M" are stored, but "KeepThis"
 		and "_K_L_M" are not.  Nested List and Dict items may not be
 		read back correctly, you end up with an empty item.
+
+		Restoring |List|, |Dictionary| and |Tuple| variables is done by
+		parsing their textual form with the Vim expression evaluator.
+		Reading a viminfo file with "!" enabled is therefore only safe
+		when the file is trusted.  In particular, do not enable "!"
+		before reading a viminfo file you obtained from another user,
+		downloaded, or that is writable by another account.  See
+		also |viminfo-security|.
 							*viminfo-quote*
 	"	Maximum number of lines saved for each register.  Old name of
 		the '<' item, with the disadvantage that you need to put a
@@ -10228,8 +10468,12 @@ A jump table for the options with a short description can be found at |Q_op|.
 			applies to buffer name completion.
 	"noselect"	If 'wildmenu' is enabled, show the menu but do not
 			preselect the first item.
-	If only one match exists, it is completed fully, unless "noselect" is
-	specified.
+	"noinsert"	If 'wildmenu' is enabled, show the menu and preselect
+			the first match, but do not insert it in the command
+			line.  If both "noinsert" and "noselect" are present,
+			"noselect" takes precedence.
+	If only one match exists, it is completed fully, unless "noselect" or
+	"noinsert" is specified.
 
 	Some useful combinations of colon-separated values:
 	"longest:full"		Start with the longest common string and show
@@ -10276,7 +10520,7 @@ A jump table for the options with a short description can be found at |Q_op|.
 	  exacttext	When this flag is present, search pattern completion
 			(e.g., in |/|, |?|, |:s|, |:g|, |:v|, and |:vim|)
 			shows exact buffer text as menu items, without
-			preserving regex artifacts like position
+			preserving regexp artifacts like position
 			anchors (e.g., |/\<|).  This provides more intuitive
 			menu items that match the actual buffer text.
 			However, searches may be less accurate since the
@@ -10296,7 +10540,11 @@ A jump table for the options with a short description can be found at |Q_op|.
 			is not supported for file and directory names and
 			instead wildcard expansion is used.
 	  pum		Display the completion matches using the popup menu in
-			the same style as the |ins-completion-menu|.
+			the same style as the |ins-completion-menu|.  When an
+			info popup is shown next to the menu, it can be
+			scrolled by moving the mouse pointer on top of it and
+			using the scroll wheel, or with the keyboard like in
+			Insert mode completion, see |popupmenu-keys|.
 	  tagfile	When using CTRL-D to list matching tags, the kind of
 			tag and the file of the tag is listed.	Only one match
 			is displayed per line.  Often used tag kinds are:
@@ -10497,11 +10745,10 @@ A jump table for the options with a short description can be found at |Q_op|.
 				*'wlsteal'* *'wst'* *'nowlsteal'* *'nowst'*
 'wlsteal' 'wst'		boolean  (default off)
 			global
-			{only when the |+wayland_focus_steal| feature is
-			included}
+	DEPRECATED: This option is no longer used; changing it has no effect.
+
 	When enabled, then allow Vim to steal focus by creating a temporary
-	surface, in order to access the clipboard.  For more information see
-	|wayland-focus-steal|.
+	surface, in order to access the clipboard.
 
 						*'wltimeoutlen'* *'wtm'*
 'wltimeoutlen' 'wtm'	number	(default 500)
@@ -10513,9 +10760,6 @@ A jump table for the options with a short description can be found at |Q_op|.
 	setting this to a lower value may make Vim feel more responsive in
 	some cases.  On the other hand, it may also mean you receive errors
 	when the compositor takes more time to respond than usual.
-
-	Additionally, this option is also used as the maximum timeout when
-	waiting for a surface to gain focus, see |wayland-focus-steal|.
 
 						*'wrap'* *'nowrap'*
 'wrap'			boolean	(default on)
