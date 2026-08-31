@@ -3156,6 +3156,10 @@ def Test_expr9_dict()
   v9.CheckDefFailure(['var x = ({'], 'E723:', 2)
   v9.CheckScriptFailure(['vim9script', 'var x = ({'], 'E723:', 2)
   v9.CheckDefExecAndScriptFailure(['{}[getftype("file")]'], 'E716: Key not present in Dictionary: ""', 1)
+
+  # invalid dot notation key name
+  v9.CheckDefAndScriptFailure(['var x = { "a#b": 1 }', 'x.a#b'], ['E488:', 'E716:'], 2)
+  v9.CheckDefAndScriptFailure(['var x = { "a:b": 1 }', 'x.a:b'], ['E488:', 'E716:'], 2)
 enddef
 
 def Test_expr9_dict_vim9script()
@@ -3960,6 +3964,14 @@ def Test_expr9_method_call()
       var sorted = [3, 1, 2]
                     -> sort()
       assert_equal([1, 2, 3], sorted)
+
+      var nrs = [1, 2]
+                    ->((x) => x)()
+      assert_equal([1, 2], nrs)
+
+      nrs = [3, 4]
+                    -> ((x) => x)()
+      assert_equal([3, 4], nrs)
   END
   v9.CheckDefAndScriptSuccess(lines)
 
