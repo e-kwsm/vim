@@ -113,7 +113,39 @@ func Test_window_cmd_wincmd_gf()
   call assert_notequal(fname, bufname("%"))
   new | only!
 
+  au! test_window_cmd_wincmd_gf
   augroup! test_window_cmd_wincmd_gf
+  delfunc s:swap_exists
+  bw!
+endfunc
+
+func Test_abort_in_wincmd_f()
+  let fname = 'test_f.txt'
+  let swp_fname = $'.{fname}.swp'
+  call writefile([], fname, 'D')
+  call writefile([], swp_fname, 'D')
+  " Remove the catch-all that runtest.vim adds
+  au! SwapExists
+  augroup test_window_cmd_wincmd_f
+    autocmd!
+    " (A)bort
+    autocmd SwapExists test_f.txt let v:swapchoice = 'a'
+  augroup END
+
+  call setline(1, fname)
+  call assert_equal(1, winnr('$'))
+  try
+    wincmd f
+  catch /^Vim:Interrupt$/
+    " expected interrupt by abort
+  endtry
+  call assert_equal(1, winnr('$'))
+  new | only!
+
+  " See :h W19 for the background of this au!. Ideally other tests
+  " should also follow this.
+  au! test_window_cmd_wincmd_f
+  augroup! test_window_cmd_wincmd_f
   bw!
 endfunc
 
@@ -284,7 +316,7 @@ func Test_window_split_no_room()
   call setwinvar(winnr('k'), '&statusline', '@#')
   let last_stl_row = win_screenpos(0)[0] - 1
   redraw
-  call assert_equal('@# ', GetScreenStr(last_stl_row))
+  call assert_equal('@#|', GetScreenStr(last_stl_row))
   call assert_equal('~ |', GetScreenStr(&lines - &cmdheight))
 
   call assert_fails('wincmd H', 'E36:')
@@ -292,7 +324,7 @@ func Test_window_split_no_room()
   call assert_equal(info, s:win_layout_info())
   call setwinvar(winnr('k'), '&statusline', '=-')
   redraw
-  call assert_equal('=- ', GetScreenStr(last_stl_row))
+  call assert_equal('=-|', GetScreenStr(last_stl_row))
   call assert_equal('~ |', GetScreenStr(&lines - &cmdheight))
 
   %bw!
@@ -2002,6 +2034,47 @@ func Test_splitkeep_cmdheight()
   set splitkeep& cmdheight&
 endfunc
 
+func Test_splitkeep_screen_smoothscroll()
+  set splitkeep=screen
+  setlocal smoothscroll
+  call setline(1, [repeat('x', 3000)] + repeat(['line'], 10))
+  exe "normal! gg10\<C-E>"
+  redraw
+  let skipcol = winsaveview().skipcol
+  call assert_notequal(0, skipcol)
+
+  " Keeping the same screen lines also keeps the position in a long line.
+  split
+  close
+  redraw
+  call assert_equal(skipcol, winsaveview().skipcol)
+
+  %bwipeout!
+  set splitkeep&
+endfunc
+
+func Test_aucmd_win_scroll_multibyte()
+  " Using the autocommand window must not scroll the current window when the
+  " cursor is behind multi-byte characters.
+  set splitkeep=cursor
+  " Use a window with a fixed size, the size of the screen may change while
+  " the test is running.
+  call NewWindow(11, 40)
+  call setline(1, repeat([repeat(nr2char(0x3042), 100)], 20))
+  normal! G050l
+  redraw
+  let topline = line('w0')
+
+  for i in range(3)
+    call bufload(bufadd(''))
+  endfor
+  call assert_equal(topline, line('w0'))
+
+  %bwipeout!
+  only!
+  set splitkeep&
+endfunc
+
 func Test_splitkeep_cursor()
   CheckScreendump
   let lines =<< trim END
@@ -2447,6 +2520,23 @@ func Test_winfixheight_resize_wmh_zero()
 
   cclose
   set winminheight& laststatus&
+endfunc
+
+" Splitting the only window while it has 'winfixheight' set and 'laststatus' is
+" one must not leave a screen line unused.
+func Test_winfixheight_split_only_window()
+  set laststatus=1
+  new
+  only!
+  setlocal winfixheight
+  split
+  " Two windows, both with a status line, and the command line.
+  call assert_equal(&lines - &cmdheight - 2, winheight(1) + winheight(2))
+
+  only!
+  setlocal winfixheight&
+  set laststatus&
+  bwipe!
 endfunc
 
 " Test that setting 'laststatus' from 0 to 2 gives all windows in a vertical

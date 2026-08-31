@@ -887,7 +887,8 @@ handle_closure_in_use(ectx_T *ectx, int free_arguments)
 		*(stack + idx) = *tv;
 		tv->v_type = VAR_UNKNOWN;
 	    }
-	    else
+	    else if (tv->v_type != VAR_UNKNOWN)
+		// Skip an argument that was not set, the stack was cleared.
 		copy_tv(tv, stack + idx);
 	}
 	// Skip the stack frame.
@@ -2157,10 +2158,8 @@ fill_partial_and_closure(
 	// and local variables) so that the closure can use it later.
 	// Store a reference to the partial so we can handle that.
 	if (GA_GROW_FAILS(&ectx->ec_funcrefs, 1))
-	{
-	    vim_free(pt);
+	    // caller needs to free pt
 	    return FAIL;
-	}
 	// Extra variable keeps the count of closures created in the current
 	// function call.
 	++(((typval_T *)ectx->ec_stack.ga_data) + ectx->ec_frame_idx
@@ -2998,7 +2997,8 @@ execute_for(isn_T *iptr, ectx_T *ectx)
 	// changed.
 	if (idxtv->vval.v_number == -1 && blob != NULL)
 	{
-	    blob_copy(blob, ltv);
+	    ltv->v_lock = 0;
+	    ltv->vval.v_blob = blob_copy(blob);
 	    blob_unref(blob);
 	    blob = ltv->vval.v_blob;
 	}
@@ -4182,9 +4182,30 @@ exec_instructions(ectx_T *ectx)
 
 		    if (di == NULL)
 		    {
-			SOURCING_LNUM = iptr->isn_lnum;
-			semsg(_(e_undefined_variable_str), name);
-			goto on_error;
+			ufunc_T	*ufunc = NULL;
+
+			if (iptr->isn_type == ISN_LOADEXPORT)
+			{
+			    type_T	*type;
+
+			    // Not a variable, it can be an exported function
+			    // used as a value.
+			    (void)find_exported(sid, name, &ufunc, &type,
+							 NULL, NULL, FALSE);
+			}
+			if (ufunc == NULL)
+			{
+			    SOURCING_LNUM = iptr->isn_lnum;
+			    semsg(_(e_undefined_variable_str), name);
+			    goto on_error;
+			}
+			if (GA_GROW_FAILS(&ectx->ec_stack, 1))
+			    goto theend;
+			tv = STACK_TV_BOT(0);
+			tv->v_lock = 0;
+			++ectx->ec_stack.ga_len;
+			tv->v_type = VAR_FUNC;
+			tv->vval.v_string = vim_strsave(ufunc->uf_name);
 		    }
 		    else
 		    {
@@ -4721,7 +4742,8 @@ exec_instructions(ectx_T *ectx)
 			tv->vval.v_float = iptr->isn_arg.fnumber;
 			break;
 		    case ISN_PUSHBLOB:
-			blob_copy(iptr->isn_arg.blob, tv);
+			tv->v_type = VAR_BLOB;
+			tv->vval.v_blob = blob_copy(iptr->isn_arg.blob);
 			break;
 		    case ISN_PUSHFUNC:
 			tv->v_type = VAR_FUNC;
@@ -5123,7 +5145,10 @@ exec_instructions(ectx_T *ectx)
 		    if (fill_partial_and_closure(pt, ufunc,
 			       extra == NULL ? NULL : &extra->fre_loopvar_info,
 								 ectx) == FAIL)
+		    {
+			vim_free(pt);
 			goto theend;
+		    }
 		    tv = STACK_TV_BOT(0);
 		    ++ectx->ec_stack.ga_len;
 		    tv->vval.v_partial = pt;
@@ -5240,9 +5265,12 @@ exec_instructions(ectx_T *ectx)
 		    size_t argidx = ufunc->uf_def_args.ga_len
 					+ iptr->isn_arg.jumparg.jump_arg_off
 					+ STACK_FRAME_SIZE;
-		    type_T *tuple = ufunc->uf_arg_types[argidx];
+		    type_T *type = ufunc->uf_arg_types[argidx];
 		    CLEAR_POINTER(tv);
-		    tv->v_type = tuple->tt_type;
+		    // "any" is not a type a value can have, leave the
+		    // argument marked as not set.
+		    if (type->tt_type != VAR_ANY)
+			tv->v_type = type->tt_type;
 		}
 
 		if (iptr->isn_type == ISN_JUMP_IF_ARG_SET ? arg_set : !arg_set)
@@ -7329,9 +7357,10 @@ list_instructions(char *pfx, isn_T *instr, int instr_count, ufunc_T *ufunc)
 		{
 		    isn_outer_T *outer = &iptr->isn_arg.outer;
 
-		    if (outer->outer_depth == OUTER_LOOP_DEPTH)
-			smsg("%s%4d STOREOUTER level 1 $%d in loop",
-				pfx, current, outer->outer_idx);
+		    if (outer->outer_depth < 0)
+			smsg("%s%4d STOREOUTER $%d in loop level %d",
+				pfx, current, outer->outer_idx,
+				-outer->outer_depth);
 		    else
 			smsg("%s%4d STOREOUTER level %d $%d", pfx, current,
 				outer->outer_depth, outer->outer_idx);
