@@ -1,7 +1,6 @@
 " Test using builtin functions in the Vim9 script language.
 
 source util/screendump.vim
-source util/socketserver.vim
 import './util/vim9.vim' as v9
 
 " Test for passing too many or too few arguments to builtin functions
@@ -1163,6 +1162,11 @@ def Test_extend_arg_types()
       assert_equal({a: 1, b: 2}, extend({a: 1, b: 2}, {b: 4}, 'keep'))
       assert_equal({a: 1, b: 2}, extend({a: 1, b: 2}, {b: 4}, g:string_keep))
 
+      assert_equal(0z010203, extend(0z0102, 0z03))
+      assert_equal(0z030102, extend(0z0102, 0z03, 0))
+      assert_equal(0z010302, extend(0z0102, 0z03, 1))
+      assert_equal(0z010302, extend(0z0102, 0z03, g:number_one))
+
       # mix of types is OK without a declaration
 
       var res: list<dict<any>>
@@ -1183,13 +1187,16 @@ def Test_extend_arg_types()
   END
   v9.CheckSourceDefAndScriptSuccess(lines)
 
-  v9.CheckSourceDefAndScriptFailure(['extend("a", 1)'], ['E1013: Argument 1: type mismatch, expected list<any> but got string', 'E712: Argument of extend() must be a List or Dictionary'])
-  v9.CheckSourceDefAndScriptFailure(['extend([1, 2], 3)'], ['E1013: Argument 2: type mismatch, expected list<any> but got number', 'E712: Argument of extend() must be a List or Dictionary'])
+  v9.CheckSourceDefAndScriptFailure(['extend("a", 1)'], ['E1013: Argument 1: type mismatch, expected list<any> but got string', 'E896: Argument of extend() must be a List, Dictionary or Blob'])
+  v9.CheckSourceDefAndScriptFailure(['extend([1, 2], 3)'], ['E1013: Argument 2: type mismatch, expected list<any> but got number', 'E896: Argument of extend() must be a List, Dictionary or Blob'])
   v9.CheckSourceDefAndScriptFailure(['var ll = [1, 2]', 'extend(ll, ["x"])'], ['E1013: Argument 2: type mismatch, expected list<number> but got list<string>', 'E1013: Argument 2: type mismatch, expected list<number> but got list<string>'])
   v9.CheckSourceDefFailure(['extend([1, 2], [3], "x")'], 'E1013: Argument 3: type mismatch, expected number but got string')
 
   v9.CheckSourceDefFailure(['extend({a: 1}, 42)'], 'E1013: Argument 2: type mismatch, expected dict<any> but got number')
   v9.CheckSourceDefFailure(['extend({a: 1}, {b: 2}, 1)'], 'E1013: Argument 3: type mismatch, expected string but got number')
+
+  v9.CheckSourceDefFailure(['extend(0z01, 42)'], 'E1013: Argument 2: type mismatch, expected blob but got number')
+  v9.CheckSourceDefFailure(['extend(0z01, 0z02, 1.1)'], 'E1013: Argument 3: type mismatch, expected number but got float')
 
   v9.CheckSourceScriptFailure(['vim9script', 'var l = [1]', 'extend(l, ["b", 1])'], 'E1013: Argument 2: type mismatch, expected list<number> but got list<any> in extend()')
 enddef
@@ -1306,6 +1313,19 @@ def Test_extend_const()
   END
   v9.CheckSourceDefSuccess(lines)
 
+  lines =<< trim END
+      const b = 0z0102
+      extend(b, 0z03)
+  END
+  v9.CheckSourceDefFailure(lines, 'E1307: Argument 1: Trying to modify a const blob')
+
+  lines =<< trim END
+      final b = 0z0102
+      extend(b, 0z03)
+      assert_equal(0z010203, b)
+  END
+  v9.CheckSourceDefSuccess(lines)
+
   # item in a for loop is final
   lines =<< trim END
       var l: list<dict<any>> = [{n: 1}]
@@ -1319,11 +1339,15 @@ enddef
 def Test_extendnew()
   assert_equal([1, 2, 'a'], extendnew([1, 2], ['a']))
   assert_equal({one: 1, two: 'a'}, extendnew({one: 1}, {two: 'a'}))
+  assert_equal(0z010203, extendnew(0z0102, 0z03))
 
-  v9.CheckSourceDefAndScriptFailure(['extendnew({a: 1}, 42)'], ['E1013: Argument 2: type mismatch, expected dict<number> but got number', 'E712: Argument of extendnew() must be a List or Dictionary'])
-  v9.CheckSourceDefAndScriptFailure(['extendnew({a: 1}, [42])'], ['E1013: Argument 2: type mismatch, expected dict<number> but got list<number>', 'E712: Argument of extendnew() must be a List or Dictionary'])
-  v9.CheckSourceDefAndScriptFailure(['extendnew([1, 2], "x")'], ['E1013: Argument 2: type mismatch, expected list<number> but got string', 'E712: Argument of extendnew() must be a List or Dictionary'])
-  v9.CheckSourceDefAndScriptFailure(['extendnew([1, 2], {x: 1})'], ['E1013: Argument 2: type mismatch, expected list<number> but got dict<number>', 'E712: Argument of extendnew() must be a List or Dictionary'])
+  v9.CheckSourceDefAndScriptFailure(['extendnew({a: 1}, 42)'], ['E1013: Argument 2: type mismatch, expected dict<number> but got number', 'E896: Argument of extendnew() must be a List, Dictionary or Blob'])
+  v9.CheckSourceDefAndScriptFailure(['extendnew({a: 1}, [42])'], ['E1013: Argument 2: type mismatch, expected dict<number> but got list<number>', 'E896: Argument of extendnew() must be a List, Dictionary or Blob'])
+  v9.CheckSourceDefAndScriptFailure(['extendnew([1, 2], "x")'], ['E1013: Argument 2: type mismatch, expected list<number> but got string', 'E896: Argument of extendnew() must be a List, Dictionary or Blob'])
+  v9.CheckSourceDefAndScriptFailure(['extendnew([1, 2], {x: 1})'], ['E1013: Argument 2: type mismatch, expected list<number> but got dict<number>', 'E896: Argument of extendnew() must be a List, Dictionary or Blob'])
+  v9.CheckSourceDefAndScriptFailure(['extendnew(0z0102, "x")'], ['E1013: Argument 2: type mismatch, expected blob but got string', 'E896: Argument of extendnew() must be a List, Dictionary or Blob'])
+  v9.CheckSourceDefAndScriptFailure(['extendnew(0z0102, [42])'], ['E1013: Argument 2: type mismatch, expected blob but got list<number>', 'E896: Argument of extendnew() must be a List, Dictionary or Blob'])
+  v9.CheckSourceDefAndScriptFailure(['extendnew(0z0102, 0z03, 1.1)'], ['E1013: Argument 3: type mismatch, expected number but got float', 'E805: Using a Float as a Number'])
 enddef
 
 def Test_feedkeys()
@@ -1627,6 +1651,7 @@ enddef
 
 def Test_foldclosed()
   v9.CheckSourceDefAndScriptFailure(['foldclosed(function("min"))'], ['E1013: Argument 1: type mismatch, expected string but got func(...): unknown', 'E1220: String or Number required for argument 1'])
+  v9.CheckSourceDefAndScriptFailure(['foldclosed(".", "a")'], ['E1013: Argument 2: type mismatch, expected number but got string', 'E1210: Number required for argument 2'])
   v9.CheckSourceDefExecAndScriptFailure(['foldclosed("")'], 'E1209: Invalid value for a line number')
   assert_equal(-1, foldclosed(1))
   assert_equal(-1, foldclosed('$'))
@@ -1634,6 +1659,7 @@ enddef
 
 def Test_foldclosedend()
   v9.CheckSourceDefAndScriptFailure(['foldclosedend(true)'], ['E1013: Argument 1: type mismatch, expected string but got bool', 'E1220: String or Number required for argument 1'])
+  v9.CheckSourceDefAndScriptFailure(['foldclosedend(".", "a")'], ['E1013: Argument 2: type mismatch, expected number but got string', 'E1210: Number required for argument 2'])
   v9.CheckSourceDefExecAndScriptFailure(['foldclosedend("")'], 'E1209: Invalid value for a line number')
   assert_equal(-1, foldclosedend(1))
   assert_equal(-1, foldclosedend('w0'))
@@ -1641,6 +1667,7 @@ enddef
 
 def Test_foldlevel()
   v9.CheckSourceDefAndScriptFailure(['foldlevel(0z10)'], ['E1013: Argument 1: type mismatch, expected string but got blob', 'E1220: String or Number required for argument 1'])
+  v9.CheckSourceDefAndScriptFailure(['foldlevel(".", "a")'], ['E1013: Argument 2: type mismatch, expected number but got string', 'E1210: Number required for argument 2'])
   v9.CheckSourceDefExecAndScriptFailure(['foldlevel("")'], 'E1209: Invalid value for a line number')
   assert_equal(0, foldlevel(1))
   assert_equal(0, foldlevel('.'))
@@ -1648,6 +1675,7 @@ enddef
 
 def Test_foldtextresult()
   v9.CheckSourceDefAndScriptFailure(['foldtextresult(1.1)'], ['E1013: Argument 1: type mismatch, expected string but got float', 'E1220: String or Number required for argument 1'])
+  v9.CheckSourceDefAndScriptFailure(['foldtextresult(".", "a")'], ['E1013: Argument 2: type mismatch, expected number but got string', 'E1210: Number required for argument 2'])
   v9.CheckSourceDefExecAndScriptFailure(['foldtextresult("")'], 'E1209: Invalid value for a line number')
   assert_equal('', foldtextresult(1))
   assert_equal('', foldtextresult('.'))
@@ -2658,6 +2686,7 @@ enddef
 
 def Test_listener_add()
   v9.CheckSourceDefAndScriptFailure(['listener_add("1", true)'], ['E1013: Argument 2: type mismatch, expected string but got bool', 'E1220: String or Number required for argument 2'])
+  v9.CheckSourceDefAndScriptFailure(['listener_add("1", 1, [1])'], ['E1013: Argument 3: type mismatch, expected bool but got list<number>', 'E1212: Bool required for argument 3'])
 enddef
 
 def Test_listener_flush()
@@ -3525,11 +3554,12 @@ enddef
 
 def Test_remote_expr()
   CheckFeature clientserver
-  TrySocketServer
+  CheckNotMSWindows
 
-  if !g:socketserver_only
+  if has("x11")
     CheckEnv DISPLAY
   endif
+
   v9.CheckSourceDefAndScriptFailure(['remote_expr(1, "b")'], ['E1013: Argument 1: type mismatch, expected string but got number', 'E1174: String required for argument 1'])
   v9.CheckSourceDefAndScriptFailure(['remote_expr("a", 2)'], ['E1013: Argument 2: type mismatch, expected string but got number', 'E1174: String required for argument 2'])
   v9.CheckSourceDefAndScriptFailure(['remote_expr("a", "b", 3)'], ['E1013: Argument 3: type mismatch, expected string but got number', 'E1174: String required for argument 3'])
@@ -3551,10 +3581,12 @@ enddef
 
 def Test_remote_peek()
   CheckFeature clientserver
-  TrySocketServer
-  if !g:socketserver_only
+  CheckNotMSWindows
+
+  if has("x11")
     CheckEnv DISPLAY
   endif
+
   v9.CheckSourceDefAndScriptFailure(['remote_peek(0z10)'], ['E1013: Argument 1: type mismatch, expected string but got blob', 'E1174: String required for argument 1'])
   v9.CheckSourceDefAndScriptFailure(['remote_peek("a5b6c7", [1])'], ['E1013: Argument 2: type mismatch, expected string but got list<number>', 'E1174: String required for argument 2'])
   v9.CheckSourceDefExecAndScriptFailure(['remote_peek("")'], 'E573: Invalid server id used')
@@ -3562,7 +3594,12 @@ enddef
 
 def Test_remote_read()
   CheckFeature clientserver
-  CheckEnv DISPLAY
+  CheckNotMSWindows
+
+  if has("x11")
+    CheckEnv DISPLAY
+  endif
+
   v9.CheckSourceDefAndScriptFailure(['remote_read(1)'], ['E1013: Argument 1: type mismatch, expected string but got number', 'E1174: String required for argument 1'])
   v9.CheckSourceDefAndScriptFailure(['remote_read("a", "x")'], ['E1013: Argument 2: type mismatch, expected number but got string', 'E1210: Number required for argument 2'])
   v9.CheckSourceDefExecAndScriptFailure(['remote_read("")'], 'E573: Invalid server id used')
@@ -3570,10 +3607,12 @@ enddef
 
 def Test_remote_send()
   CheckFeature clientserver
-  TrySocketServer
-  if !g:socketserver_only
+  CheckNotMSWindows
+
+  if has("x11")
     CheckEnv DISPLAY
   endif
+
   v9.CheckSourceDefAndScriptFailure(['remote_send(1, "b")'], ['E1013: Argument 1: type mismatch, expected string but got number', 'E1174: String required for argument 1'])
   v9.CheckSourceDefAndScriptFailure(['remote_send("a", 2)'], ['E1013: Argument 2: type mismatch, expected string but got number', 'E1174: String required for argument 2'])
   v9.CheckSourceDefAndScriptFailure(['remote_send("a", "b", 3)'], ['E1013: Argument 3: type mismatch, expected string but got number', 'E1174: String required for argument 3'])
@@ -3582,11 +3621,24 @@ enddef
 
 def Test_remote_startserver()
   CheckFeature clientserver
-  TrySocketServer
-  if !g:socketserver_only
+  CheckNotMSWindows
+
+  if has("x11")
     CheckEnv DISPLAY
   endif
+
   v9.CheckSourceDefAndScriptFailure(['remote_startserver({})'], ['E1013: Argument 1: type mismatch, expected string but got dict<any>', 'E1174: String required for argument 1'])
+enddef
+
+def Test_remote_serverlist()
+  CheckFeature clientserver
+
+  v9.CheckSourceDefAndScriptFailure(['serverlist("")'], ['E1013: Argument 1: type mismatch, expected dict<any> but got string', 'E1206: Dictionary required for argument 1'])
+  v9.CheckSourceScriptFailure(['vim9script', 'serverlist({list: ""})'], 'E1135: Using a String as a Bool: ""')
+  var l: any = serverlist()
+  assert_equal(v:t_string, type(l))
+  l = serverlist({'list': true})
+  assert_equal(v:t_list, type(l))
 enddef
 
 def Test_remove_literal_list()
@@ -5124,6 +5176,7 @@ enddef
 
 func Test_win_gotoid_in_mapping()
   CheckScreendump
+  CheckClipboardInTerminal
 
   " requires a working clipboard and this doesn't work on MacOS
   if has('clipboard_working') && !has('mac')

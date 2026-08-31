@@ -3,12 +3,16 @@
 
 # Source files for all source archives.
 SRC_ALL =	\
-		.cirrus.yml \
 		.gitattributes \
 		.git-blame-ignore-revs \
 		.github/MAINTAINERS \
 		.github/ISSUE_TEMPLATE/bug_report.yml \
 		.github/ISSUE_TEMPLATE/feature_request.md \
+		.github/workflows/ci-cygwin.yml \
+		.github/workflows/ci-linux.yml \
+		.github/workflows/ci-linux_asan.yml \
+		.github/workflows/ci-macos.yml \
+		.github/workflows/ci-windows.yml \
 		.github/workflows/ci.yml \
 		.github/workflows/codeql-analysis.yml \
 		.github/workflows/coverity.yml \
@@ -18,21 +22,21 @@ SRC_ALL =	\
 		.github/dependabot.yml \
 		.gitignore \
 		.hgignore \
-		.appveyor.yml \
 		.clang-format \
 		.codecov.yml \
 		.editorconfig \
-		ci/appveyor.bat \
 		ci/config.mk*.sed \
 		ci/gen_testset.py \
 		ci/if_ver*.vim \
 		ci/if_feat_check.vim \
 		ci/lychee.toml \
 		ci/setup-xvfb.sh \
+		ci/setup-weston.sh \
 		ci/remove_snap.sh \
 		ci/ddebs.list \
 		ci/pinned-pkgs \
 		src/Make_all.mak \
+		src/Make_tags.mak \
 		src/README.md \
 		src/alloc.c \
 		src/alloc.h \
@@ -91,6 +95,10 @@ SRC_ALL =	\
 		src/gui.h \
 		src/gui_beval.c \
 		src/hardcopy.c \
+		src/hardcopy.h \
+		src/hardcopy_pango.c \
+		src/hardcopy_postscript.c \
+		src/hardcopy_postscript.h \
 		src/hashtab.c \
 		src/help.c \
 		src/highlight.c \
@@ -147,6 +155,10 @@ SRC_ALL =	\
 		src/session.c \
 		src/sha256.c \
 		src/sign.c \
+		src/sixel.c \
+		src/kitty.c \
+		src/cairo.c \
+		src/socketserver.c \
 		src/sound.c \
 		src/spell.c \
 		src/spell.h \
@@ -305,6 +317,8 @@ SRC_ALL =	\
 		src/proto/gui.pro \
 		src/proto/gui_beval.pro \
 		src/proto/hardcopy.pro \
+		src/proto/hardcopy_pango.pro \
+		src/proto/hardcopy_postscript.pro \
 		src/proto/hashtab.pro \
 		src/proto/help.pro \
 		src/proto/highlight.pro \
@@ -346,6 +360,10 @@ SRC_ALL =	\
 		src/proto/session.pro \
 		src/proto/sha256.pro \
 		src/proto/sign.pro \
+		src/proto/sixel.pro \
+		src/proto/kitty.pro \
+		src/proto/cairo.pro \
+		src/proto/socketserver.pro \
 		src/proto/sound.pro \
 		src/proto/spell.pro \
 		src/proto/spellfile.pro \
@@ -500,6 +518,17 @@ SRC_UNIX =	\
 		src/gui_gtk_f.c \
 		src/gui_gtk_f.h \
 		src/gui_gtk_x11.c \
+		src/gui_gtk4.c \
+		src/gui_gtk4_f.c \
+		src/gui_gtk4_f.h \
+		src/gui_gtk4_cb.c \
+		src/gui_gtk4_cb.h \
+		src/gui_gtk4_da.c \
+		src/gui_gtk4_da.h \
+		src/gui_gtk4_tb.c \
+		src/gui_gtk4_tb.h \
+		src/gui_gtk4_menu.c \
+		src/gui_gtk4_menu.h \
 		src/gui_gtk_res.xml \
 		src/gui_motif.c \
 		src/gui_xmdlg.c \
@@ -529,6 +558,7 @@ SRC_UNIX =	\
 		src/proto/gui_gtk.pro \
 		src/proto/gui_gtk_x11.pro \
 		src/proto/gui_gtk_gresources.pro \
+		src/proto/gui_gtk4.pro \
 		src/proto/gui_motif.pro \
 		src/proto/gui_xmdlg.pro \
 		src/proto/gui_x11.pro \
@@ -644,13 +674,7 @@ SRC_DOS =	\
 		src/tee/tee.c \
 		src/xxd/Make_ming.mak \
 		src/xxd/Make_mvc.mak \
-		nsis/auxiliary.nsh \
-		nsis/gvim.nsi \
-		nsis/Makefile \
-		nsis/Make_mvc.mak \
 		nsis/README.txt \
-		nsis/lang/*.nsi \
-		nsis/lang/README.txt \
 		uninstall.txt \
 
 # Source files for MS Windows without CR/LF translation (also in the extra archive).
@@ -668,7 +692,6 @@ SRC_DOS_BIN =	\
 		src/xpm/x86/lib-vc14/libXpm.lib \
 		src/xpm/x86/lib/libXpm.a \
 		runtime/bitmaps/vim.ico \
-		nsis/icons.zip \
 
 # Source files for Amiga, DOS, etc. (also in the extra archive).
 SRC_AMI_DOS =	\
@@ -1119,6 +1142,7 @@ LANG_GEN = \
 		runtime/doc/*-sv.UTF-8.1 \
 		runtime/doc/*-tr.1 \
 		runtime/doc/*-tr.UTF-8.1 \
+		runtime/doc/*-zh_CN.UTF-8.1 \
 		runtime/lang/README.txt \
 		runtime/lang/Makefile \
 		runtime/lang/Make_all.mak \
@@ -1195,7 +1219,6 @@ LANG_DOS = \
 # be excluded from distribution tarballs and the like.
 # This excludes them from the CI check for unlisted files.
 IGNORE = \
-		.appveyor.yml \
 		.github/FUNDING.yml \
 		.github/labeler.yml \
 		.github/workflows/label.yml \

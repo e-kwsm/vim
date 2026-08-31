@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Vim\n"
 "Report-Msgid-Bugs-To: vim-dev@vim.org\n"
-"POT-Creation-Date: 2026-04-29 19:49+0000\n"
+"POT-Creation-Date: 2026-08-18 20:22+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -252,9 +252,6 @@ msgstr ""
 
 #, c-format
 msgid "%d of %d edited"
-msgstr ""
-
-msgid "Socket server not online:Send expression failed"
 msgstr ""
 
 msgid "No display: Send expression failed.\n"
@@ -921,9 +918,11 @@ msgstr ""
 msgid "VIM - Search..."
 msgstr ""
 
+#. "Find what:" label + entry
 msgid "Find what:"
 msgstr ""
 
+#. "Replace with:" label + entry
 msgid "Replace with:"
 msgstr ""
 
@@ -957,6 +956,21 @@ msgstr ""
 msgid "_Close"
 msgstr ""
 
+msgid "Close Tab"
+msgstr ""
+
+msgid "New Tab"
+msgstr ""
+
+msgid "Open Tab..."
+msgstr ""
+
+msgid "Direction:"
+msgstr ""
+
+msgid "Close"
+msgstr ""
+
 msgid "Vim: Received \"die\" request from session manager\n"
 msgstr ""
 
@@ -964,9 +978,6 @@ msgid "Close tab"
 msgstr ""
 
 msgid "New tab"
-msgstr ""
-
-msgid "Open Tab..."
 msgstr ""
 
 msgid "Vim: Main window unexpectedly destroyed\n"
@@ -1714,7 +1725,8 @@ msgstr ""
 msgid "-Y\t\t\tDo not connect to Wayland compositor"
 msgstr ""
 
-msgid "--clientserver <socket|x11> Backend for clientserver communication"
+msgid ""
+"--clientserver <socket|x11|mswin> Backend for clientserver communication"
 msgstr ""
 
 msgid "--remote <files>\tEdit <files> in a Vim server if possible"
@@ -1807,6 +1819,11 @@ msgid "+reverse\t\tDon't use reverse video (also: +rv)"
 msgstr ""
 
 msgid "-xrm <resource>\tSet the specified resource"
+msgstr ""
+
+msgid ""
+"\n"
+"Arguments recognised by gvim (GTK4 version):\n"
 msgstr ""
 
 msgid ""
@@ -1966,7 +1983,13 @@ msgstr ""
 msgid "???BLOCK MISSING"
 msgstr ""
 
+msgid "??? BLOCK PAGE COUNT MISMATCH"
+msgstr ""
+
 msgid "??? from here until ???END lines may be messed up"
+msgstr ""
+
+msgid "??? block header corrupted"
 msgstr ""
 
 msgid "??? from here until ???END lines may have been inserted/deleted"
@@ -2158,10 +2181,10 @@ msgstr ""
 msgid "\" already exists!"
 msgstr ""
 
-msgid "VIM - ATTENTION"
+msgid "Swap file already exists!"
 msgstr ""
 
-msgid "Swap file already exists!"
+msgid "VIM - ATTENTION"
 msgstr ""
 
 msgid ""
@@ -2520,10 +2543,6 @@ msgstr ""
 msgid "XSMP SmcOpenConnection failed: %s"
 msgstr ""
 
-#, c-format
-msgid "Failed creating socket directory: %s"
-msgstr ""
-
 msgid "At line"
 msgstr ""
 
@@ -2793,6 +2812,10 @@ msgid " (NOT FOUND)"
 msgstr ""
 
 msgid " (not supported)"
+msgstr ""
+
+#, c-format
+msgid "Failed creating socket directory: %s"
 msgstr ""
 
 #, c-format
@@ -3094,6 +3117,16 @@ msgstr ""
 msgid "syncing on C-style comments"
 msgstr ""
 
+msgid ""
+"\n"
+"--- Syntax sync items ---"
+msgstr ""
+
+msgid ""
+"\n"
+"syncing on items"
+msgstr ""
+
 msgid "no syncing"
 msgstr ""
 
@@ -3104,16 +3137,6 @@ msgid "syncing starts "
 msgstr ""
 
 msgid " lines before top line"
-msgstr ""
-
-msgid ""
-"\n"
-"--- Syntax sync items ---"
-msgstr ""
-
-msgid ""
-"\n"
-"syncing on items"
 msgstr ""
 
 msgid ""
@@ -3449,6 +3472,9 @@ msgid ""
 msgstr ""
 
 msgid "without GUI."
+msgstr ""
+
+msgid "with GTK4 GUI."
 msgstr ""
 
 msgid "with GTK3 GUI."
@@ -6657,9 +6683,8 @@ msgstr ""
 msgid "E882: Uniq compare function failed"
 msgstr ""
 
-msgid ""
-"E883: Search pattern and expression register may not contain two or more "
-"lines"
+#, c-format
+msgid "E883: Register '%c' cannot contain multiple lines"
 msgstr ""
 
 #, c-format
@@ -8474,6 +8499,10 @@ msgstr ""
 msgid "E1405: Class \"%s\" cannot be used as a value"
 msgstr ""
 
+#, c-format
+msgid "E1406: Public and protected member have the same name: %s and _%s"
+msgstr ""
+
 msgid "E1407: Cannot use a Typealias as a variable or value"
 msgstr ""
 
@@ -8816,20 +8845,20 @@ msgstr ""
 msgid "E1562: Diff anchors cannot be used with hidden diff windows"
 msgstr ""
 
-msgid "E1563: Socket path is too big"
-msgstr ""
-
-msgid "E1564: Socket name cannot have slashes in it without being a path"
+#, c-format
+msgid "E1564: Socket name '%s' cannot have slashes in it without being a path"
 msgstr ""
 
 msgid "E1565: Socket server is not online, call remote_startserver() first"
 msgstr ""
 
 #, c-format
-msgid "E1566: Failed connecting to socket %s: %s"
+msgid "E1566: Failed connecting to socket '%s'"
 msgstr ""
 
-msgid "E1567: Cannot start socket server, socket path is unavailable"
+msgid ""
+"E1567: Socket server protocol version mismatch, check what Vim version you "
+"are using"
 msgstr ""
 
 #, c-format
@@ -8858,6 +8887,22 @@ msgid "E1575: Cannot create pipes"
 msgstr ""
 
 msgid "E1576: Tag file entry must not be a URL"
+msgstr ""
+
+#, c-format
+msgid "E1577: Invalid format string, only one \"%s\" is allowed"
+msgstr ""
+
+msgid "E1578: Too many postponed prefixes and/or compound flags"
+msgstr ""
+
+msgid "E1579: -completeopt=escape cannot be used with -nargs=_"
+msgstr ""
+
+msgid "E1580: Too many text properties on a single line"
+msgstr ""
+
+msgid "E1581: Cannot extend a null blob"
 msgstr ""
 
 #. type of cmdline window or 0
@@ -9340,6 +9385,9 @@ msgid ""
 msgstr ""
 
 msgid "file names in a tags file are relative to the tags file"
+msgstr ""
+
+msgid "a :tag command cannot access remote files"
 msgstr ""
 
 msgid "a :tag command will use the tagstack"

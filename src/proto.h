@@ -98,6 +98,12 @@ extern int _stricoll(char *a, char *b);
 # include "gc.pro"
 # include "gui_xim.pro"
 # include "hardcopy.pro"
+# ifdef FEAT_PRINT_PANGO
+#  include "hardcopy_pango.pro"
+# endif
+# ifdef FEAT_POSTSCRIPT
+#  include "hardcopy_postscript.pro"
+# endif
 # include "hashtab.pro"
 # include "help.pro"
 # include "highlight.pro"
@@ -211,6 +217,15 @@ void mbyte_im_set_active(int active_arg);
 #  include "popupwin.pro"
 #  include "textprop.pro"
 # endif
+# ifdef FEAT_IMAGE_SIXEL
+#  include "sixel.pro"
+# endif
+# ifdef FEAT_IMAGE_KITTY
+#  include "kitty.pro"
+# endif
+# ifdef FEAT_IMAGE_CAIRO
+#  include "cairo.pro"
+# endif
 # include "testing.pro"
 # include "textobject.pro"
 # include "textformat.pro"
@@ -277,6 +292,9 @@ void mbyte_im_set_active(int active_arg);
 #  include "job.pro"
 #  include "channel.pro"
 # endif
+# ifdef FEAT_SOCKETSERVER
+#  include "socketserver.pro"
+# endif
 
 # ifdef FEAT_EVAL
 // Not generated automatically so that we can add an extra attribute.
@@ -302,8 +320,12 @@ extern char_u *vimpty_getenv(const char_u *string);	// in misc2.c
 #   include "gui_w32.pro"
 #  endif
 #  ifdef FEAT_GUI_GTK
-#   include "gui_gtk.pro"
-#   include "gui_gtk_x11.pro"
+#   ifdef USE_GTK4
+#    include "gui_gtk4.pro"
+#   else
+#    include "gui_gtk.pro"
+#    include "gui_gtk_x11.pro"
+#   endif
 #  endif
 #  ifdef FEAT_GUI_MOTIF
 #   include "gui_motif.pro"

@@ -50,7 +50,7 @@ static int build_stl_str_hl_local(stl_mode_T mode, win_T *wp,
 		char_u *out, size_t outlen, char_u **fmt_arg,
 		char_u *opt_name, int opt_scope, int fillchar, int maxwidth,
 		stl_hlrec_T **hltab, stl_hlrec_T **tabtab,
-		stl_clickrec_T **clicktab, int *lbreaks);
+		stl_clickrec_T **clicktab, int *lbreaks, int *carry_hl);
 #endif
 static int	append_arg_number(win_T *wp, char_u *buf, size_t buflen, int add_file);
 static void	free_buffer(buf_T *);
@@ -735,6 +735,11 @@ aucmd_abort:
 	goto_tabpage_win(the_curtab, win);
 	unblock_autocmds();
     }
+
+    // When a quickfix buffer is deleted from a window, clear the
+    // 'winfixheight' option.
+    if (bt_quickfix(buf) && win_valid && win->w_buffer == buf)
+	win->w_p_wfh = FALSE;
 
     // Remember if the buffer may be hidden soon, or is already hidden.
     hiding_buf = buf->b_nwindows <= 0 || ((win_valid || closed_popup)
@@ -1648,7 +1653,8 @@ do_buffer_ext(
 		buf = curbuf->b_next;
 	    else
 		buf = curbuf->b_prev;
-	    if (bt_quickfix(buf) || (buf != curbuf && buf->b_locked_split))
+	    if (bt_quickfix(buf)
+		    || (buf != NULL && buf != curbuf && buf->b_locked_split))
 		buf = NULL;
 	}
     }
@@ -3948,9 +3954,8 @@ fileinfo(
 	    name = curbuf->b_fname;
 	else
 	    name = curbuf->b_ffname;
-	home_replace(shorthelp ? curbuf : NULL, name, (char_u *)buffer + bufferlen,
-					  IOSIZE - (int)bufferlen, TRUE);
-	bufferlen += STRLEN(buffer + bufferlen);
+	bufferlen += home_replace(shorthelp ? curbuf : NULL, name,
+	    (char_u *)buffer + bufferlen, IOSIZE - (int)bufferlen, TRUE);
     }
 
     bufferlen += vim_snprintf_safelen(
@@ -4393,7 +4398,7 @@ build_stl_str_hl(
 {
     return build_stl_str_hl_local(STL_MODE_SINGLE, wp, out, outlen, &fmt,
 	    opt_name, opt_scope, fillchar, maxwidth, hltab, tabtab, clicktab,
-	    NULL);
+	    NULL, NULL);
 }
 
     int
@@ -4408,11 +4413,13 @@ build_stl_str_hl_mline(
     int		maxwidth,
     stl_hlrec_T **hltab,	// return: HL attributes (can be NULL)
     stl_hlrec_T **tabtab,	// return: tab page nrs (can be NULL)
-    stl_clickrec_T **clicktab)	// return: click func regions (can be NULL)
+    stl_clickrec_T **clicktab,	// return: click func regions (can be NULL)
+    int		*carry_hl)	// (in/out) %# / %* highlight carried across
+				// line breaks (can be NULL)
 {
     return build_stl_str_hl_local(STL_MODE_MULTI, wp, out, outlen, fmt,
 	    opt_name, opt_scope, fillchar, maxwidth, hltab, tabtab, clicktab,
-	    NULL);
+	    NULL, carry_hl);
 }
 
 # ifdef ENABLE_STL_MODE_MULTI_NL
@@ -4428,11 +4435,13 @@ build_stl_str_hl_mline_nl(
     int		maxwidth,
     stl_hlrec_T **hltab,	// return: HL attributes (can be NULL)
     stl_hlrec_T **tabtab,	// return: tab page nrs (can be NULL)
-    stl_clickrec_T **clicktab)	// return: click func regions (can be NULL)
+    stl_clickrec_T **clicktab,	// return: click func regions (can be NULL)
+    int		*carry_hl)	// (in/out) %# / %* highlight carried across
+				// line breaks (can be NULL)
 {
     return build_stl_str_hl_local(STL_MODE_MULTI_NL, wp, out, outlen, fmt,
 	    opt_name, opt_scope, fillchar, maxwidth, hltab, tabtab, clicktab,
-	    NULL);
+	    NULL, carry_hl);
 }
 # endif
 
@@ -4453,7 +4462,8 @@ get_stl_rendered_height(
     ++emsg_off;
     (void)build_stl_str_hl_local(STL_MODE_GET_RENDERED_HEIGHT,
 	    wp, buf, sizeof(buf), &fmt,
-	    opt_name, opt_scope, 0, 0, NULL, NULL, NULL, &rendered_height);
+	    opt_name, opt_scope, 0, 0, NULL, NULL, NULL, &rendered_height,
+	    NULL);
     --emsg_off;
     return rendered_height;
 }
@@ -4489,7 +4499,9 @@ build_stl_str_hl_local(
     stl_hlrec_T **hltab,	// return: HL attributes (can be NULL)
     stl_hlrec_T **tabtab,	// return: tab page nrs (can be NULL)
     stl_clickrec_T **clicktab,	// return: click func regions (can be NULL)
-    int		*rendered_height)   // return: stl rendered height (can be NULL)
+    int		*rendered_height,   // return: stl rendered height (can be NULL)
+    int		*carry_hl)	// (in/out) %# / %* highlight carried across
+				// line breaks (can be NULL)
 {
     linenr_T	lnum;
     colnr_T	len;
@@ -4614,6 +4626,18 @@ build_stl_str_hl_local(
 # endif
     p = out;
     curitem = 0;
+
+    // Pre-insert a Highlight item from carry_hl so that %# / %* set on a
+    // previous multi-line statusline row continues to apply on this row.
+    if (carry_hl != NULL && *carry_hl != 0)
+    {
+	stl_items[curitem].stl_type = Highlight;
+	stl_items[curitem].stl_start = p;
+	stl_items[curitem].stl_minwid = *carry_hl;
+	stl_items[curitem].stl_clickfunc = NULL;
+	curitem++;
+    }
+
     prevchar_isflag = TRUE;
     prevchar_isitem = FALSE;
     for (s = usefmt; *s != NUL; )
@@ -4841,7 +4865,9 @@ build_stl_str_hl_local(
 		p = p - n + 1;
 
 		// Fill up space left over by half a double-wide char.
-		while (++l < stl_items[stl_groupitem[groupdepth]].stl_minwid)
+		int minwid_fixed = MIN(stl_items[stl_groupitem[groupdepth]].stl_minwid,
+				       stl_items[stl_groupitem[groupdepth]].stl_maxwid);
+		while (++l < minwid_fixed)
 		    MB_CHAR2BYTES(fillchar, p);
 
 		// correct the start of the items for the truncation
@@ -4857,25 +4883,30 @@ build_stl_str_hl_local(
 	    {
 		// fill
 		n = stl_items[stl_groupitem[groupdepth]].stl_minwid;
+		int fillchar_len = MB_CHAR2LEN(fillchar);
 		if (n < 0)
 		{
 		    // fill by appending characters
 		    n = 0 - n;
-		    while (l++ < n && p + 1 < out + outlen)
+		    while (l++ < n && p + fillchar_len < out + outlen)
 			MB_CHAR2BYTES(fillchar, p);
 		}
 		else
 		{
 		    // fill by inserting characters
-		    l = (n - l) * MB_CHAR2LEN(fillchar);
-		    mch_memmove(t + l, t, (size_t)(p - t));
+		    n = n - l;
+		    l = n * fillchar_len;
 		    if (p + l >= out + outlen)
-			l = (long)((out + outlen) - p - 1);
+		    {
+			n = (long)((out + outlen) - p - 1) / fillchar_len;
+			l = n * fillchar_len;
+		    }
+		    mch_memmove(t + l, t, (size_t)(p - t));
 		    p += l;
+		    for ( ; n > 0; n--)
+			MB_CHAR2BYTES(fillchar, t);
 		    for (n = stl_groupitem[groupdepth] + 1; n < curitem; n++)
 			stl_items[n].stl_start += l;
-		    for ( ; l > 0; l--)
-			MB_CHAR2BYTES(fillchar, t);
 		}
 	    }
 	    continue;
@@ -5023,7 +5054,8 @@ build_stl_str_hl_local(
 
 	    if (reevaluate)
 		s++;
-	    itemisflag = TRUE;
+	    // %0{} keeps the result verbatim
+	    itemisflag = zeropad ? FALSE : TRUE;
 	    t = p;
 	    while ((*s != '}' || (reevaluate && s[-1] != '%'))
 					  && *s != NUL && p + 1 < out + outlen)
@@ -5060,7 +5092,7 @@ build_stl_str_hl_local(
 	    do_unlet((char_u *)"g:actual_curbuf", TRUE);
 	    do_unlet((char_u *)"g:actual_curwin", TRUE);
 
-	    if (str != NULL && *str != NUL)
+	    if (!zeropad && str != NULL && *str != NUL)
 	    {
 		if (*skipdigits(str) == NUL)
 		{
@@ -5445,6 +5477,17 @@ find_linebreak:
     *p = NUL;
     outputlen = (size_t)(p - out);
     itemcnt = curitem;
+
+    // Remember the most recent %# / %* highlight so the next row of a
+    // multi-line statusline can resume it.
+    if (carry_hl != NULL)
+    {
+	int last_hl = 0;
+	for (l = 0; l < itemcnt; l++)
+	    if (stl_items[l].stl_type == Highlight)
+		last_hl = stl_items[l].stl_minwid;
+	*carry_hl = last_hl;
+    }
 
     if (mode == STL_MODE_MULTI
 # ifdef ENABLE_STL_MODE_MULTI_NL

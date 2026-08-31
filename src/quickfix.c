@@ -1412,7 +1412,6 @@ qf_parse_file_pfx(
 	*fields->namebuf = NUL;
 	if (tail && *tail)
 	{
-	    STRMOVE(IObuff, skipwhite(tail));
 	    qfl->qf_multiscan = TRUE;
 	    return QF_MULTISCAN;
 	}
@@ -1579,7 +1578,15 @@ restofline:
 	{				// global file names
 	    status = qf_parse_file_pfx(idx, fields, qfl, tail);
 	    if (status == QF_MULTISCAN)
+	    {
+		char_u *s = skipwhite(tail);
+		int new_linelen = (int)STRLEN(s);
+		if (new_linelen >= linelen)
+		    return QF_IGNORE_LINE;
+		linebuf = s;
+		linelen = new_linelen;
 		goto restofline;
+	    }
 	}
 	if (fmt_ptr->flags == '-')	// generally exclude this line
 	{
@@ -3620,6 +3627,32 @@ qf_jump_edit_buffer(
 }
 
 /*
+ * Return the byte index in the current line for screen column "vcol"
+ * (zero-based).  A <tab> is always counted as 8 screen columns, matching the
+ * column numbers compilers report for the "%v" item in 'errorformat',
+ * regardless of the buffer's 'tabstop'.
+ */
+    static int
+qf_screen_col_to_idx(colnr_T vcol)
+{
+    char_u	*line = ml_get_curline();
+    char_u	*p = line;
+    colnr_T	col = 0;
+
+    while (*p != NUL && col < vcol)
+    {
+	if (*p == TAB)
+	    col += 8 - (col % 8);
+	else
+	    col += ptr2cells(p);
+	if (col > vcol)
+	    break;
+	MB_PTR_ADV(p);
+    }
+    return (int)(p - line);
+}
+
+/*
  * Go to the error line in the current file using either line/column number or
  * a search pattern.
  */
@@ -3646,7 +3679,7 @@ qf_jump_goto_line(
 	{
 	    curwin->w_cursor.coladd = 0;
 	    if (qf_viscol == TRUE)
-		coladvance(qf_col - 1);
+		curwin->w_cursor.col = qf_screen_col_to_idx(qf_col - 1);
 	    else
 		curwin->w_cursor.col = qf_col - 1;
 	    curwin->w_set_curswant = true;
@@ -4401,6 +4434,9 @@ qf_mark_adjust(
 		if (qfp->qf_fnum == curbuf->b_fnum)
 		{
 		    found_one = TRUE;
+		    if (qfp->qf_cleared)
+			continue;
+
 		    if (qfp->qf_lnum >= line1 && qfp->qf_lnum <= line2)
 		    {
 			if (amount == MAXLNUM)
@@ -7186,7 +7222,10 @@ get_qfline_items(qfline_T *qfp, list_T *list)
     if ((dict = dict_alloc()) == NULL)
 	return FAIL;
     if (list_append_dict(list, dict) == FAIL)
+    {
+	dict_unref(dict);
 	return FAIL;
+    }
 
     buf[0] = qfp->qf_type;
     buf[1] = NUL;
@@ -8166,12 +8205,15 @@ qf_setprop_curidx(qf_info_T *qi, qf_list_T *qfl, dictitem_T *di)
 }
 
 /*
- * Set the current index in the specified quickfix list
+ * Set the 'quickfixtextfunc' in the specified quickfix/location list
  */
     static int
 qf_setprop_qftf(qf_info_T *qi UNUSED, qf_list_T *qfl, dictitem_T *di)
 {
     callback_T	cb;
+
+    if (check_restricted() || check_secure())
+	return FAIL;
 
     free_callback(&qfl->qf_qftf_cb);
     cb = get_callback(&di->di_tv);

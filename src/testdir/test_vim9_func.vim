@@ -2,6 +2,7 @@
 
 import './util/vim9.vim' as v9
 source util/screendump.vim
+source util/shared.vim
 
 func Test_def_basic()
   def SomeFunc(): string
@@ -389,6 +390,12 @@ def Test_endfunc_enddef()
     enddef there
   END
   v9.CheckScriptFailure(lines, 'E1173: Text found after enddef: there', 6)
+
+  lines =<< trim END
+    def ShortEnddef()
+    endd
+  END
+  v9.CheckScriptFailure(lines, 'E1065: Command cannot be shortened: endd', 2)
 enddef
 
 def Test_missing_endfunc_enddef()
@@ -5037,6 +5044,29 @@ def Test_void_method_chain()
     TestFunc()
   END
   v9.CheckScriptFailure(lines, 'E1186: Expression does not result in a value: bufload(')
+enddef
+
+def Test_term_wait_in_job_exit_cb()
+  CheckUnix
+  CheckFeature terminal
+
+  var cmd = g:GetVimCommand()
+
+  var lines =<< eval trim END
+      var buf: number = term_start(["{cmd}", "+q"], {{}})
+
+      var job: job = term_getjob(buf)
+
+      job_setoptions(job, {{
+      exit_cb: (_, _) => {{
+        term_wait(buf)
+          }}
+      }})
+  END
+
+  # This shouldn't cause an ASAN error immediately, but will result in a use
+  # after free when Vim exits.
+  v9.CheckDefSuccess(lines)
 enddef
 
 " vim: ts=8 sw=2 sts=2 expandtab tw=80 fdm=marker

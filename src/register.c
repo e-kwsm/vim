@@ -181,12 +181,11 @@ valid_yank_reg(
     if (       (regname > 0 && ASCII_ISALNUM(regname))
 	    || (!writing && vim_strchr((char_u *)
 #ifdef FEAT_EVAL
-				    "/.%:="
+				    "/#.%:="
 #else
-				    "/.%:"
+				    "/#.%:"
 #endif
 					, regname) != NULL)
-	    || regname == '#'
 	    || regname == '"'
 	    || regname == '-'
 	    || regname == '_'
@@ -1081,6 +1080,36 @@ shift_delete_registers(void)
 }
 
 #if defined(FEAT_EVAL)
+    static void
+add_regtype_to_dict(int regname, dict_T *dict, char_u *buf, int bufsize)
+{
+    size_t  buflen;
+    long    reglen;
+    // Register type
+    switch (get_reg_type(regname, &reglen))
+    {
+	case MLINE:
+	    buf[0] = 'V';
+	    buf[1] = NUL;
+	    buflen = 1;
+	    break;
+	case MCHAR:
+	    buf[0] = 'v';
+	    buf[1] = NUL;
+	    buflen = 1;
+	    break;
+	case MBLOCK:
+	    buflen = vim_snprintf_safelen((char *)buf, bufsize,
+		"%c%ld", Ctrl_V, reglen + 1);
+	    break;
+	default:
+	    buf[0] = NUL;
+	    buflen = 0;
+	    break;
+    }
+    (void)dict_add_string_len(dict, "regtype", buf, (int)buflen);
+}
+
     void
 yank_do_autocmd(oparg_T *oap, yankreg_T *reg)
 {
@@ -1090,7 +1119,6 @@ yank_do_autocmd(oparg_T *oap, yankreg_T *reg)
     int		    n;
     char_u	    buf[NUMBUFLEN + 2];
     size_t	    buflen;
-    long	    reglen = 0;
     save_v_event_T  save_v_event;
 
     if (recursive)
@@ -1106,7 +1134,8 @@ yank_do_autocmd(oparg_T *oap, yankreg_T *reg)
     for (n = 0; n < reg->y_size; n++)
 	list_append_string(list, reg->y_array[n].string, (int)reg->y_array[n].length);
     list->lv_lock = VAR_FIXED;
-    (void)dict_add_list(v_event, "regcontents", list);
+    if (dict_add_list(v_event, "regcontents", list) == FAIL)
+	list_unref(list);
 
     // register name or empty string for unnamed operation
     buf[0] = (char_u)oap->regname;
@@ -1124,29 +1153,7 @@ yank_do_autocmd(oparg_T *oap, yankreg_T *reg)
     buflen = (buf[0] == NUL) ? 0 : (buf[1] == NUL) ? 1 : 2;
     (void)dict_add_string_len(v_event, "operator", buf, (int)buflen);
 
-    // register type
-    switch (get_reg_type(oap->regname, &reglen))
-    {
-	case MLINE:
-	    buf[0] = 'V';
-	    buf[1] = NUL;
-	    buflen = 1;
-	    break;
-	case MCHAR:
-	    buf[0] = 'v';
-	    buf[1] = NUL;
-	    buflen = 1;
-	    break;
-	case MBLOCK:
-	    buflen = vim_snprintf_safelen((char *)buf, sizeof(buf),
-		"%c%ld", Ctrl_V, reglen + 1);
-	    break;
-	default:
-	    buf[0] = NUL;
-	    buflen = 0;
-	    break;
-    }
-    (void)dict_add_string_len(v_event, "regtype", buf, (int)buflen);
+    add_regtype_to_dict(oap->regname, v_event, buf, sizeof(buf));
 
     // selection type - visual or not
     (void)dict_add_bool(v_event, "visual", oap->is_VIsual);
@@ -1159,6 +1166,103 @@ yank_do_autocmd(oparg_T *oap, yankreg_T *reg)
     apply_autocmds(EVENT_TEXTYANKPOST, NULL, NULL, FALSE, curbuf);
     textlock--;
     recursive = FALSE;
+
+    // Empty the dictionary, v:event is still valid
+    restore_v_event(v_event, &save_v_event);
+}
+
+    static void
+put_do_autocmd(
+	int	    regname,
+	yankreg_T   *reg,	// May be NULL, if special register
+	string_T    *insert,	// Not NULL if special register, except '.'
+	bool	    post,	// If Post or Pre
+	int	    dir)	// BACKWARD for 'P', FORWARD for 'p'
+{
+    static bool	    recursive = false;
+    dict_T	    *v_event;
+    list_T	    *list;
+    int		    n;
+    char_u	    buf[NUMBUFLEN + 2];
+    size_t	    buflen;
+    save_v_event_T  save_v_event;
+
+    if (recursive || regname == '_')
+	return;
+
+    if (regname != '.' && insert == NULL
+	    && reg == NULL)
+	// Can happen when pasting text in normal mode in a terminal buffer
+	return;
+
+    v_event = get_v_event(&save_v_event);
+
+    list = list_alloc();
+    if (list == NULL)
+	return;
+
+    // Make sure regcontents will be up to date
+# ifdef FEAT_CLIPBOARD_PROVIDER
+    inc_clip_provider();
+    call_clip_provider_request(regname);
+# endif
+# ifdef FEAT_CLIPBOARD
+    if (clipmethod != CLIPMETHOD_PROVIDER)
+	regname = may_get_selection(regname);
+# endif
+
+    if (regname == '.')
+    {
+	if (last_insert_ga.ga_data != NULL)
+	    // Get the last inserted text to place in "regcontents"
+	    list_append_string(list, last_insert_ga.ga_data,
+		    (int)last_insert_ga.ga_len);
+    }
+    else if (insert != NULL)
+    {
+	list_append_string(list, insert->string, (int)insert->length);
+    }
+    else
+    {
+	for (n = 0; n < reg->y_size; n++)
+	    list_append_string(list, reg->y_array[n].string,
+		    (int)reg->y_array[n].length);
+    }
+
+    list->lv_lock = VAR_FIXED;
+    if (dict_add_list(v_event, "regcontents", list) == FAIL)
+	list_unref(list);
+
+    // register name or empty string for unnamed operation
+    buf[0] = (char_u)regname;
+    buf[1] = NUL;
+    buflen = (buf[0] == NUL) ? 0 : 1;
+    (void)dict_add_string_len(v_event, "regname", buf, (int)buflen);
+
+    // kind of operation (P, p)
+    buf[0] = dir == BACKWARD ? 'P' : 'p';
+    buf[1] = NUL;
+    buflen = 1;
+    (void)dict_add_string_len(v_event, "operator", buf, (int)buflen);
+
+    add_regtype_to_dict(regname, v_event, buf, sizeof(buf));
+# ifdef FEAT_CLIPBOARD_PROVIDER
+    dec_clip_provider();
+# endif
+
+    (void)dict_add_bool(v_event, "visual", VIsual_active);
+
+    // Lock the dictionary and its keys
+    dict_set_items_ro(v_event);
+
+    recursive = true;
+    textlock++;
+    if (post)
+	apply_autocmds(EVENT_TEXTPUTPOST, NULL, NULL, FALSE, curbuf);
+    else
+	apply_autocmds(EVENT_TEXTPUTPRE, NULL, NULL, FALSE, curbuf);
+    textlock--;
+    recursive = false;
 
     // Empty the dictionary, v:event is still valid
     restore_v_event(v_event, &save_v_event);
@@ -1627,6 +1731,7 @@ do_put(
     adjust_clip_reg(&regname);
 #endif
 #ifdef FEAT_CLIPBOARD_PROVIDER
+    inc_clip_provider();
     call_clip_provider_request(regname);
 #endif
 #ifdef FEAT_CLIPBOARD
@@ -1648,8 +1753,33 @@ do_put(
     {
 	if (VIsual_active)
 	    stuffcharReadbuff(VIsual_mode);
+
+#ifdef FEAT_EVAL
+	bool has_textput_events = has_textputpre() || has_textputpost();
+	if (has_textput_events)
+	    add_last_insert++;
+#endif
+
 	(void)stuff_inserted((dir == FORWARD ? (count == -1 ? 'o' : 'a') :
 				    (count == -1 ? 'O' : 'i')), count, FALSE);
+
+#ifdef FEAT_EVAL
+	// Since the text is not inserted into the buffer immediately, just call
+	// TextPutPost after TextPutPre.
+	if (has_textputpre())
+	    put_do_autocmd('.', NULL, NULL, false, dir);
+#endif
+#ifdef FEAT_CLIPBOARD_PROVIDER
+	dec_clip_provider();
+#endif
+#ifdef FEAT_EVAL
+	if (has_textputpost())
+	    put_do_autocmd('.', NULL, NULL, true, dir);
+
+	if (has_textput_events && --add_last_insert == 0)
+	    ga_clear(&last_insert_ga);
+#endif
+
 	// Putting the text is done later, so can't really move the cursor to
 	// the next character.  Use "l" to simulate it.
 	if ((flags & PUT_CURSEND) && gchar_cursor() != NUL)
@@ -1665,7 +1795,12 @@ do_put(
 	insert_string.string = expr_result;
     else if (get_spec_reg(regname, &insert_string.string, &allocated, TRUE)
 		&& insert_string.string == NULL)
+    {
+#ifdef FEAT_CLIPBOARD_PROVIDER
+	dec_clip_provider();
+#endif
 	return;
+    }
 
     // Autocommands may be executed when saving lines for undo.  This might
     // make "y_array" invalid, so we start undo now to avoid that.
@@ -1733,9 +1868,22 @@ do_put(
 	    y_size = 1;		// use fake one-line yank register
 	    y_array = &insert_string;
 	}
+#ifdef FEAT_EVAL
+	if (has_textputpre())
+	    put_do_autocmd(regname, NULL, &insert_string, false, dir);
+#endif
     }
     else
     {
+#ifdef FEAT_EVAL
+	if (has_textputpre())
+	{
+	    // Make sure to call this before we set the variables, as setreg()
+	    // may be called and invalidate them.
+	    get_yank_register(regname, FALSE);
+	    put_do_autocmd(regname, y_current, NULL, false, dir);
+	}
+#endif
 	get_yank_register(regname, FALSE);
 
 	y_type = y_current->y_type;
@@ -1882,8 +2030,8 @@ do_put(
 		// move to start of next multi-byte character
 		curwin->w_cursor.col += (*mb_ptr2len)(ml_get_cursor());
 	    else
-	    if (c != TAB || cur_ve_flags != VE_ALL)
-		++curwin->w_cursor.col;
+		if (c != TAB || cur_ve_flags != VE_ALL)
+		    ++curwin->w_cursor.col;
 	    ++col;
 	}
 	else
@@ -2401,6 +2549,21 @@ end:
 	curbuf->b_op_start = orig_start;
 	curbuf->b_op_end = orig_end;
     }
+
+#ifdef FEAT_CLIPBOARD_PROVIDER
+    dec_clip_provider();
+#endif
+
+#ifdef FEAT_EVAL
+    if (has_textputpost())
+    {
+	if (insert_string.string == NULL)
+	    put_do_autocmd(regname, y_current, NULL, true, dir);
+	else
+	    put_do_autocmd(regname, NULL, &insert_string, true, dir);
+    }
+#endif
+
     if (allocated)
 	vim_free(insert_string.string);
     if (regname == '=')
@@ -2597,7 +2760,7 @@ ex_display(exarg_T *eap)
     }
 
     // display alternate file name
-    if ((arg == NULL || vim_strchr(arg, '%') != NULL) && !got_int)
+    if ((arg == NULL || vim_strchr(arg, '#') != NULL) && !got_int)
     {
 	char_u	    *fname;
 	linenr_T    dummy;
@@ -2931,7 +3094,7 @@ write_reg_contents_lst(
 {
     yankreg_T  *old_y_previous, *old_y_current;
 
-    if (name == '/' || name == '=')
+    if (name == '/' || name == '=' || name == '#')
     {
 	char_u	*s;
 
@@ -2939,7 +3102,7 @@ write_reg_contents_lst(
 	    s = (char_u *)"";
 	else if (strings[1] != NULL)
 	{
-	    emsg(_(e_search_pattern_and_expression_register_may_not_contain_two_or_more_lines));
+	    semsg(_(e_register_char_cannot_contain_multiple_lines), name);
 	    return;
 	}
 	else
@@ -2990,6 +3153,12 @@ write_reg_contents_ex(
 
     if (name == '#')
     {
+	if (len == 0)
+	{
+	  curwin->w_alt_fnum = 0; // clear altfile
+	  return;
+	}
+
 	buf_T	*buf;
 
 	if (VIM_ISDIGIT(*str))
