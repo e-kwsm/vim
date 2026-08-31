@@ -642,7 +642,7 @@ tree_count_words(char_u *byts, long byts_len, idx_T *idxs)
 		    ++curi[depth];
 		}
 	    }
-	    else
+	    else if (depth < MAXWLEN - 1)
 	    {
 		// Normal char, go one level deeper to count the words.
 		++depth;
@@ -1178,8 +1178,6 @@ read_sofo_section(FILE *fd, slang_T *slang)
     char_u	*from, *to;
     int		res;
 
-    slang->sl_sofo = TRUE;
-
     // <sofofromlen> <sofofrom>
     from = read_cnt_string(fd, 2, &cnt);
     if (cnt < 0)
@@ -1423,6 +1421,8 @@ set_sofo(slang_T *lp, char_u *from, char_u *to)
 
     if (has_mbyte)
     {
+	free_sal_items(&lp->sl_sal);
+
 	// Use "sl_sal" as an array with 256 pointers to a list of wide
 	// characters.  The index is the low byte of the character.
 	// The list contains from-to pairs with a terminating NUL.
@@ -1433,9 +1433,12 @@ set_sofo(slang_T *lp, char_u *from, char_u *to)
 	    return SP_OTHERERROR;
 	vim_memset(gap->ga_data, 0, sizeof(int *) * 256);
 	gap->ga_len = 256;
+	lp->sl_sofo = TRUE;
 
 	// First count the number of items for each list.  Temporarily use
-	// sl_sal_first[] for this.
+	// sl_sal_first[] for this.  Reset it first: a preceding SN_SAL section
+	// may have set the entries to -1 via set_sal_first().
+	vim_memset(lp->sl_sal_first, 0, sizeof(salfirst_T) * 256);
 	for (p = from, s = to; *p != NUL && *s != NUL; )
 	{
 	    c = mb_cptr2char_adv(&p);
@@ -1489,6 +1492,7 @@ set_sofo(slang_T *lp, char_u *from, char_u *to)
 	for (i = 0; to[i] != NUL; ++i)
 	    lp->sl_sal_first[from[i]] = to[i];
 	lp->sl_sal.ga_len = 1;		// indicates we have soundfolding
+	lp->sl_sofo = TRUE;
     }
 
     return 0;
@@ -1670,7 +1674,7 @@ read_tree_node(
     if (len <= 0)
 	return SP_TRUNCERROR;
 
-    if (startidx + len >= maxidx)
+    if (len >= maxidx - startidx)
 	return SP_FORMERROR;
     byts[idx++] = len;
 
@@ -5742,7 +5746,7 @@ sug_filltree(spellinfo_T *spin, slang_T *slang)
 		    ++curi[depth];
 		}
 	    }
-	    else
+	    else if (depth < MAXWLEN - 1)
 	    {
 		// Normal char, go one level deeper.
 		tword[depth++] = c;

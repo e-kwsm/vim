@@ -1739,7 +1739,7 @@ add_to_showcmd(int c)
 	K_RIGHTMOUSE, K_RIGHTDRAG, K_RIGHTRELEASE,
 	K_MOUSEDOWN, K_MOUSEUP, K_MOUSELEFT, K_MOUSERIGHT,
 	K_X1MOUSE, K_X1DRAG, K_X1RELEASE, K_X2MOUSE, K_X2DRAG, K_X2RELEASE,
-	K_CURSORHOLD,
+	K_CURSORHOLD, K_COMMAND, K_SCRIPT_COMMAND,
 	0
     };
 
@@ -1834,24 +1834,30 @@ pop_showcmd(void)
     display_showcmd();
 }
 
+    void
+showcmd_update_clear_state(void)
+{
+    showcmd_is_clear = (showcmd_buf[0] == NUL);
+}
+
     static void
 display_showcmd(void)
 {
     int	    len = vim_strsize(showcmd_buf);
 
-    showcmd_is_clear = (len == 0);
+    showcmd_update_clear_state();
     cursor_off();
 
     if (*p_sloc == 's')
     {
-	if (showcmd_is_clear)
+	if (showcmd_is_clear && !vgetc_busy)
 	    curwin->w_redr_status = true;
 	else
 	    win_redr_status(curwin, FALSE);
     }
     else if (*p_sloc == 't')
     {
-	if (showcmd_is_clear)
+	if (showcmd_is_clear && !vgetc_busy)
 	    redraw_tabline = TRUE;
 	else
 	    draw_tabline();
@@ -4621,6 +4627,30 @@ nv_brackets(cmdarg_T *cap)
 }
 
 /*
+ * Return true when 'comments' defines a C-style line ("//") or block comment.
+ * This is when "%" should skip matching parens in comments, like the "="
+ * operator does.
+ */
+    static bool
+buf_has_cstyle_comments(void)
+{
+    char_u	*list;
+    char_u	part_buf[COM_MAX_LEN];	// buffer for one 'comments' part
+
+    for (list = curbuf->b_p_com; *list; )
+    {
+	char_u	*string;
+
+	(void)copy_option_part(&list, part_buf, COM_MAX_LEN, ",");
+	string = vim_strchr(part_buf, ':');	// flags and comment leader
+	if (string != NULL && string[1] == '/'
+				    && (string[2] == '/' || string[2] == '*'))
+	    return true;
+    }
+    return false;
+}
+
+/*
  * Handle Normal mode "%" command.
  */
     static void
@@ -4659,9 +4689,23 @@ nv_percent(cmdarg_T *cap)
     }
     else		    // "%" : go to matching paren
     {
+	int	flags = 0;
+
+	// Skip matching parens inside C-style comments, like the "=" operator
+	// does, but not when "%" is in 'cpoptions' (Vi-compatible) or the
+	// cursor sits in a line comment (so a match there can still be found).
+	if (vim_strchr(p_cpo, CPO_MATCH) == NULL && buf_has_cstyle_comments())
+	{
+	    int	comment_col = check_linecomment(ml_get_curline());
+
+	    if (comment_col == MAXCOL
+			   || curwin->w_cursor.col < (colnr_T)comment_col)
+		flags = FM_SKIPCOMM;
+	}
+
 	cap->oap->motion_type = MCHAR;
 	cap->oap->use_reg_one = TRUE;
-	if ((pos = findmatch(cap->oap, NUL)) == NULL)
+	if ((pos = findmatchlimit(cap->oap, NUL, flags, 0)) == NULL)
 	    clearopbeep(cap->oap);
 	else
 	{
@@ -5541,13 +5585,12 @@ nv_visual(cmdarg_T *cap)
 	    }
 	    else if (VIsual_mode == Ctrl_V)
 	    {
-		// Update curswant on the original line, that is where "col" is
-		// valid.
-		linenr_T lnum = curwin->w_cursor.lnum;
-		curwin->w_cursor.lnum = VIsual.lnum;
+		// Update curswant at the original cursor position.
+		pos_T tmp_cursor = curwin->w_cursor;
+		curwin->w_cursor = VIsual;
 		update_curswant_force();
 		curwin->w_curswant += resel_VIsual_vcol * cap->count0 - 1;
-		curwin->w_cursor.lnum = lnum;
+		curwin->w_cursor = tmp_cursor;
 		if (*p_sel == 'e')
 		    ++curwin->w_curswant;
 		coladvance(curwin->w_curswant);
@@ -6561,7 +6604,10 @@ nv_pipe(cmdarg_T *cap)
 {
     cap->oap->motion_type = MCHAR;
     cap->oap->inclusive = FALSE;
-    beginline(0);
+    // Not using beginline(), the columns to skip for 'smoothscroll' must be
+    // adjusted for the column we end up in, not for column zero.
+    curwin->w_cursor.col = 0;
+    curwin->w_cursor.coladd = 0;
     if (cap->count0 > 0)
     {
 	coladvance((colnr_T)(cap->count0 - 1));
@@ -6572,6 +6618,7 @@ nv_pipe(cmdarg_T *cap)
     // keep curswant at the column where we wanted to go, not where
     // we ended; differs if line is too short
     curwin->w_set_curswant = false;
+    adjust_skipcol();
 }
 
 /*
