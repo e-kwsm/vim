@@ -3,7 +3,7 @@ vim9script
 # Vim runtime support library
 #
 # Maintainer:   The Vim Project <https://github.com/vim/vim>
-# Last Change:  2026 May 06
+# Last Change:  2026 Jul 01
 
 export def IsSafeExecutable(filetype: string, executable: string): bool
   if empty(exepath(executable))
@@ -89,15 +89,15 @@ if has('win32unix')
 # Windows
 elseif has('win32')
   os_viewer = '' # Use :!start
+# MacOS
+elseif has('osx')
+  os_viewer = 'open'
 # WSL
 elseif executable('explorer.exe')
   os_viewer = 'explorer.exe'
 # Linux / BSD
 elseif executable('xdg-open')
   os_viewer = 'xdg-open'
-# MacOS
-elseif executable('open')
-  os_viewer = 'open'
 endif
 
 def Viewer(): string
@@ -131,13 +131,12 @@ enddef
 export def Open(file: string)
   # disable shellslash for shellescape, required on Windows #17995
   if exists('+shellslash') && &shellslash
-    &shellslash = false
     defer setbufvar('%', '&shellslash', true)
+    &shellslash = false
   endif
   if &shell == 'pwsh' || &shell == 'powershell'
-    const shell = &shell
+    defer setbufvar('%', '&shell', &shell)
     setlocal shell&
-    defer setbufvar('%', '&shell', shell)
   endif
   if has('unix') && !has('win32unix') && !exists('$WSL_DISTRO_NAME')
     Launch($"{Viewer()} {shellescape(file)}")
