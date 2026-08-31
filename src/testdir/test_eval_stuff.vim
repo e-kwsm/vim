@@ -765,13 +765,19 @@ func s:Paste(reg)
     else
       return ("c", [])
     endif
+  endif
 
+  if exists("g:vim_paste_recursive")
+    call getreg(a:reg)
   endif
 endfunc
 
 func s:Copy(reg, type, lines)
   if exists("g:vim_copy_count")
     let g:vim_copy_count[a:reg] += 1
+  endif
+  if exists("g:vim_copy_recursive")
+    call setreg(a:reg, a:lines)
   endif
 
   let g:vim_copy = {
@@ -1127,6 +1133,52 @@ func Test_clipboard_provider_accessed_once()
 
   bw!
 
+  new
+  " Emitting TextPutPre/TextPutPost/TextYankPost may cause a clipboard access
+  "
+  " Note that TextPutPost will always cause a second clipboard access, since a
+  " TextPutPre may have changed the clipboard, meaning another "paste" call is
+  " needed to make sure everything is up to date.
+  augroup TextAutocmd
+    autocmd!
+    autocmd TextPutPost * let g:putpost = 1
+    autocmd TextPutPre * let g:putpre = 1
+    autocmd TextYankPost * let g:yankpost = 1
+  augroup END
+
+  let g:putpost = 0
+  let g:putpre = 0
+  let g:yankpost = 0
+
+  let g:vim_paste_count = {'*': 0, '+': 0}
+  let g:vim_copy_count = {'*': 0, '+': 0}
+
+  call setline(1, "hello world!")
+
+  yank +
+
+  yank *
+
+  put +
+
+  put *
+
+  call assert_equal(2, g:vim_paste_count['+'])
+  call assert_equal(1, g:vim_copy_count['+'])
+
+  call assert_equal(2, g:vim_paste_count['*'])
+  call assert_equal(1, g:vim_copy_count['*'])
+
+  call assert_equal(1, g:putpost)
+  call assert_equal(1, g:putpre)
+  call assert_equal(1, g:yankpost)
+
+  bw!
+  unlet g:putpost
+  unlet g:putpre
+  unlet g:yankpost
+  autocmd! TextAutocmd
+
   set clipmethod&
   set clipboard&
 endfunc
@@ -1301,6 +1353,97 @@ func Test_clipboard_provider_clipboard_option()
 
   set clipmethod&
   set clipboard&
+endfunc
+
+" Test that callback aren't called recursively
+func Test_clipboard_provider_recursive()
+  let v:clipproviders["test"] = {
+        \ "paste": {
+        \       '+': function("s:Paste"),
+        \       '*': function("s:Paste")
+        \   },
+        \ "copy": {
+        \       '+': function("s:Copy"),
+        \       '*': function("s:Copy")
+        \   }
+        \ }
+  set clipmethod=test
+
+  let g:vim_paste = "count"
+  let g:vim_paste_count = {'*': 0, '+': 0}
+  let g:vim_copy_count = {'*': 0, '+': 0}
+  let g:vim_paste_recursive = 1
+  let g:vim_copy_recursive = 1
+
+  call getreg('+')
+  call assert_equal(1, g:vim_paste_count['+'])
+  call setreg('+', 'test')
+  call assert_equal(1, g:vim_copy_count['+'])
+
+  set clipmethod&
+  unlet g:vim_paste_recursive
+  unlet g:vim_copy_recursive
+endfunc
+
+" Test that caching the compiled pattern of "=~" and the match functions
+" does not change the semantics.
+func Test_eval_pattern_cache()
+  let save_ic = &ignorecase
+  defer execute('let &ignorecase = ' .. save_ic)
+
+  " "~" in a pattern stands for the previous substitute string, a compiled
+  " program must not be reused across a :substitute
+  new
+  call setline(1, 'one')
+  s/one/AAA/
+  call assert_true('xAAAy' =~ 'x~y')
+  call assert_false('xBBBy' =~ 'x~y')
+  call setline(1, 'AAA')
+  s/AAA/BBB/
+  call assert_true('xBBBy' =~ 'x~y')
+  call assert_false('xAAAy' =~ 'x~y')
+  bwipe!
+
+  " 'ignorecase' is applied at execution time, also with a cached program
+  set noignorecase
+  call assert_false('ABC' =~ 'abc')
+  set ignorecase
+  call assert_true('ABC' =~ 'abc')
+  call assert_true('ABC' =~ 'abc')
+  set noignorecase
+  call assert_false('ABC' =~ 'abc')
+
+  " changing 'regexpengine' compiles the pattern again
+  for re in [0, 1, 2]
+    exe 'set re=' .. re
+    call assert_true('abc123' =~ 'a\+bc\d\+')
+    call assert_false('xyz' =~ 'a\+bc\d\+')
+  endfor
+  set re&
+
+  " \%.l, \%.c and \%.v compile the current cursor position into the
+  " program, such a pattern must not be reused after the cursor moved
+  new
+  call setline(1, 'abcdef')
+  call cursor(1, 4)
+  call assert_true('abcdef' =~# '\%.cd')
+  call cursor(1, 2)
+  call assert_false('abcdef' =~# '\%.cd')
+  call assert_true('abcdef' =~# '\%.cb')
+  bwipe!
+
+  " when the automatic engine replaces the program by falling back to the
+  " backtracking engine, the replaced program is the one that is kept
+  call test_override('nfa_fail', 1)
+  defer test_override('nfa_fail', 0)
+  for i in range(3)
+    call assert_true('fallback' =~ 'fall\%(back\)\?')
+    call assert_false('nomatch' =~ 'fall\%(back\)\?')
+  endfor
+  call test_override('nfa_fail', 0)
+  for i in range(3)
+    call assert_true('fallback' =~ 'fall\%(back\)\?')
+  endfor
 endfunc
 
 " vim: shiftwidth=2 sts=2 expandtab

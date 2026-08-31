@@ -137,10 +137,12 @@ static termrequest_T rfg_status = TERMREQUEST_INIT;
 static int fg_r = 0;
 static int fg_g = 0;
 static int fg_b = 0;
+# endif
+// Background color values from the OSC 11 response, also used by the
+// image backend to flatten RGBA alpha onto the actual terminal background.
 static int bg_r = 255;
 static int bg_g = 255;
 static int bg_b = 255;
-# endif
 
 // Request background color report:
 static termrequest_T rbg_status = TERMREQUEST_INIT;
@@ -5182,7 +5184,6 @@ handle_version_response(int first, int *arg, int argc, char_u *tp)
 		may_adjust_color_count(256);
 	    // Libvterm can handle SGR mouse reporting.
 	    term_props[TPR_MOUSE].tpr_status = TPR_MOUSE_SGR;
-	    term_props[TPR_DECRQM].tpr_status = TPR_YES;
 	}
 
 	if (version == 95)
@@ -5228,7 +5229,6 @@ handle_version_response(int first, int *arg, int argc, char_u *tp)
 		term_props[TPR_MOUSE].tpr_status = TPR_MOUSE_SGR;
 	    else if (version >= 95)
 		term_props[TPR_MOUSE].tpr_status = TPR_MOUSE_XTERM2;
-	    term_props[TPR_DECRQM].tpr_status = TPR_YES;
 	}
 
 	// Detect terminals that set $TERM to something like
@@ -5243,13 +5243,11 @@ handle_version_response(int first, int *arg, int argc, char_u *tp)
 	if (arg[1] >= 2500)
 	{
 	    term_props[TPR_UNDERLINE_RGB].tpr_status = TPR_YES;
-	    term_props[TPR_DECRQM].tpr_status = TPR_YES;
 	}
 
 	else if (version == 136 && arg[2] == 0)
 	{
 	    term_props[TPR_UNDERLINE_RGB].tpr_status = TPR_YES;
-	    term_props[TPR_DECRQM].tpr_status = TPR_YES;
 
 	    // PuTTY sends 0;136;0
 	    if (arg[0] == 0)
@@ -5272,6 +5270,13 @@ handle_version_response(int first, int *arg, int argc, char_u *tp)
 	    term_props[TPR_KITTY].tpr_set_by_termresponse = TRUE;
 
 	    // Kitty can handle SGR mouse reporting.
+	    term_props[TPR_MOUSE].tpr_status = TPR_MOUSE_SGR;
+	    term_props[TPR_DECRQM].tpr_status = TPR_YES;
+	}
+
+	// foot terminal sends 1;12700;0
+	if (arg[0] == 1 && version == 12700 && arg[2] == 0)
+	{
 	    term_props[TPR_MOUSE].tpr_status = TPR_MOUSE_SGR;
 	    term_props[TPR_DECRQM].tpr_status = TPR_YES;
 	}
@@ -5438,8 +5443,13 @@ put_key_modifiers_in_typebuf(
     modifiers = may_remove_shift_modifier(modifiers, key);
 
     // Produce modifiers with K_SPECIAL KS_MODIFIER {mod}
-    char_u string[MAX_KEY_CODE_LEN + 1];
+    // worst-case: 3-byte modifier + 4 byte multi-char key + NUL
+    char_u string[MAX_KEY_CODE_LEN + 2];
     int new_slen = modifiers2keycode(modifiers, &key, string);
+
+    // reject overlong key that would overflow string
+    if (key > 0x10FFFF)
+	return -1;
 
     // Add the bytes for the key.
     new_slen += add_key_to_buf(key, string + new_slen);
@@ -5708,7 +5718,9 @@ handle_csi(
 			return -1;
 		    if (!VIM_ISDIGIT(*ap))
 			break;
-		    arg[argc] = arg[argc] * 10 + (*ap - '0');
+		    // avoid overflow
+		    if (arg[argc] <= (INT_MAX - 9) / 10)
+			arg[argc] = arg[argc] * 10 + (*ap - '0');
 		    ++ap;
 		}
 		++argc;
@@ -5991,7 +6003,7 @@ check_for_color_response(char_u *resp, int len)
 		    char_u *tp_r = resp + j + 7;
 		    char_u *tp_g = resp + j + (is_4digit ? 12 : 10);
 		    char_u *tp_b = resp + j + (is_4digit ? 17 : 13);
-#if defined(FEAT_TERMRESPONSE) && defined(FEAT_TERMINAL)
+#ifdef FEAT_TERMRESPONSE
 		    int rval, gval, bval;
 
 		    rval = hexhex2nr(tp_r);
@@ -6003,14 +6015,12 @@ check_for_color_response(char_u *resp, int len)
 			char *new_bg_val = (3 * '6' < *tp_r + *tp_g +
 					     *tp_b) ? "light" : "dark";
 
-			LOG_TRN("Received RBG response: %s", tp);
+			LOG_TRN("Received RBG response: r=%d g=%d b=%d", rval, gval, bval);
 #ifdef FEAT_TERMRESPONSE
 			rbg_status.tr_progress = STATUS_GOT;
-# ifdef FEAT_TERMINAL
 			bg_r = rval;
 			bg_g = gval;
 			bg_b = bval;
-# endif
 #endif
 			if (!option_was_set((char_u *)"bg")
 				      && STRCMP(p_bg, new_bg_val) != 0)
@@ -6025,7 +6035,7 @@ check_for_color_response(char_u *resp, int len)
 #if defined(FEAT_TERMRESPONSE) && defined(FEAT_TERMINAL)
 		    else
 		    {
-			LOG_TRN("Received RFG response: %s", tp);
+			LOG_TRN("Received RFG response: r=%d g=%d b=%d", rval, gval, bval);
 			rfg_status.tr_progress = STATUS_GOT;
 			fg_r = rval;
 			fg_g = gval;
@@ -6946,19 +6956,23 @@ term_get_fg_color(char_u *r, char_u *g, char_u *b)
     *g = fg_g;
     *b = fg_b;
 }
+#endif
 
+#ifdef FEAT_TERMRESPONSE
 /*
- * Get the text background color, if known.
+ * Get the text background color, if known.  Returns OK when the OSC 11
+ * response has been parsed and *r, *g, *b are populated; FAIL otherwise.
  */
-    void
+    int
 term_get_bg_color(char_u *r, char_u *g, char_u *b)
 {
     if (rbg_status.tr_progress != STATUS_GOT)
-	return;
+	return FAIL;
 
     *r = bg_r;
     *g = bg_g;
     *b = bg_b;
+    return OK;
 }
 #endif
 
@@ -8093,6 +8107,17 @@ term_set_win_resize(bool state)
     }
 }
 #endif
+
+    int
+sync_output_active(void)
+{
+#ifdef FEAT_GUI
+    if (gui.in_use)
+	return TRUE;
+#endif
+    return p_tsy && (sync_output_setting == 1 || sync_output_setting == 2)
+	&& *T_BSU != NUL && *T_ESU != NUL;
+}
 
 /*
  * Enable or disable synchronized output if possible. Specification can be found
