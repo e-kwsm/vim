@@ -135,10 +135,10 @@ fuzzy_match(
 	if (has_match(pat, str))
 	{
 	    fzy_score = match_positions(pat, str, matches + numMatches);
-	    score = (fzy_score == SCORE_MIN) ? INT_MIN + 1
-		: (fzy_score == SCORE_MAX) ? INT_MAX
-		: (fzy_score < 0) ? (int)ceil(fzy_score * SCORE_SCALE - 0.5)
-		: (int)floor(fzy_score * SCORE_SCALE + 0.5);
+	    if (fzy_score != SCORE_MIN)
+		score = (fzy_score == SCORE_MAX) ? INT_MAX
+		    : (fzy_score < 0) ? (int)ceil(fzy_score * SCORE_SCALE - 0.5)
+		    : (int)floor(fzy_score * SCORE_SCALE + 0.5);
 	}
 
 	if (score == FUZZY_SCORE_NONE)
@@ -865,11 +865,15 @@ search_for_fuzzy_match(
 		}
 		else
 		{
-		    if (fuzzy_match_str(*ptr, pattern) != FUZZY_SCORE_NONE)
+		    char_u *line = *ptr;
+		    char_u *p = skipwhite(line);
+		    if (fuzzy_match_str(p, pattern) != FUZZY_SCORE_NONE)
 		    {
 			found_new_match = TRUE;
 			*pos = current_pos;
-			*len = (int)ml_get_buf_len(buf, current_pos.lnum);
+			*ptr = p;
+			*len = (int)ml_get_buf_len(buf, current_pos.lnum) -
+								(int)(p - line);
 			break;
 		    }
 		}
@@ -1133,8 +1137,6 @@ match_positions(char_u *needle, char_u *haystack, int_u *positions)
     if (m > MATCH_MAX_LEN || n > m)
     {
 	// Unreasonably large candidate: return no score
-	// If it is a valid match it will still be returned, it will
-	// just be ranked below any reasonably sized candidates
 	return SCORE_MIN;
     }
     else if (n == m)
@@ -1142,12 +1144,26 @@ match_positions(char_u *needle, char_u *haystack, int_u *positions)
 	// Since this method can only be called with a haystack which
 	// matches needle. If the lengths of the strings are equal the
 	// strings themselves must also be equal (ignoring case).
-	if (positions)
+	// After truncation to MATCH_MAX_LEN n == m can also happen for
+	// unequal strings, so check before taking the shortcut.
+	bool equal = true;
+	for (int i = 0; i < n; i++)
 	{
-	    for (int i = 0; i < n; i++)
-		positions[i] = i;
+	    if (match.lower_needle[i] != match.lower_haystack[i])
+	    {
+		equal = false;
+		break;
+	    }
 	}
-	return SCORE_MAX;
+	if (equal)
+	{
+	    if (positions)
+	    {
+		for (int i = 0; i < n; i++)
+		    positions[i] = i;
+	    }
+	    return SCORE_MAX;
+	}
     }
 
     // ensure n * MATCH_MAX_LEN * 2 won't overflow

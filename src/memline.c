@@ -810,6 +810,12 @@ ml_open_file(buf_T *buf)
 	// and creating it, another Vim creates the file.  In that case the
 	// creation will fail and we will use another directory.
 	fname = findswapname(buf, &dirp, NULL); // allocates fname
+	// autocmd may have freed mfp, grr!
+	if (buf->b_ml.ml_mfp != mfp)
+	{
+	    vim_free(fname);
+	    return;
+	}
 	if (dirp == NULL)
 	    break;  // out of memory
 	if (fname == NULL)
@@ -1679,6 +1685,20 @@ ml_recover(int checkext)
 		     * Append all the lines in this block.
 		     */
 		    has_error = FALSE;
+
+		    // Verify the cached block's actual size matches the
+		    // pointer entry's pe_page_count.  mf_get() cache hits
+		    // return the original block without resizing, so a
+		    // crafted swap file referencing the same block twice
+		    // with different pe_page_count values would cause an
+		    // OOB write below.
+		    if (hp->bh_page_count != page_count)
+		    {
+			++error;
+			ml_append(lnum++, (char_u *)_("??? BLOCK PAGE COUNT MISMATCH"),
+							    (colnr_T)0, TRUE);
+			page_count = hp->bh_page_count;
+		    }
 
 		    // Check the length of the block.
 		    // If wrong, use the length given in the pointer block.
@@ -3808,6 +3828,11 @@ adjust_text_props_for_delete(
 		uint16_t pc;
 
 		mch_memmove(&pc, text + textlen, PROP_COUNT_SIZE);
+		if (!text_prop_count_valid(pc, (size_t)(line_size - (long)textlen)))
+		{
+		    internal_error("text property count too large");
+		    return;
+		}
 		this_props_len = pc * (int)sizeof(textprop_T);
 	    }
 
@@ -4046,6 +4071,8 @@ theend:
 	mch_memmove(&pc, textprop_save, PROP_COUNT_SIZE);
 	props_data = textprop_save + PROP_COUNT_SIZE;
 	props_bytes = pc * (int)sizeof(textprop_T);
+	if (!text_prop_count_valid(pc, (size_t)textprop_len))
+	    props_bytes = 0;
 
 	// Adjust text properties in the line above and below.
 	if (lnum > 1)
