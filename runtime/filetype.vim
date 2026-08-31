@@ -1,7 +1,7 @@
 " Vim support file to detect file types
 "
 " Maintainer:		The Vim Project <https://github.com/vim/vim>
-" Last Change:		2026 Apr 20
+" Last Change:		2026 Aug 25
 " Former Maintainer:	Bram Moolenaar <Bram@vim.org>
 
 " If the filetype can be detected from extension or file name(the final path component),
@@ -91,6 +91,9 @@ au BufNewFile,BufRead */.aptitude/config       setf aptconf
 " Arch Inventory file
 au BufNewFile,BufRead .arch-inventory,=tagging-method	setf arch
 
+" atlas or kawasaki_as
+au BufNewFile,BufRead *.as call dist#ft#FTas()
+
 " Active Server Pages (with Visual Basic Script)
 au BufNewFile,BufRead *.asa
 	\ if exists("g:filetype_asa") |
@@ -121,6 +124,9 @@ au BufNewFile,BufRead *.demo,*.dm{1,2,3,t},*.wxm,maxima-init.mac setf maxima
 
 " ObjectScript routine or assembly
 au BufNewFile,BufRead *.mac			call dist#ft#FTmac()
+
+" Argo CD configuration
+au BufNewFile,BufRead */argocd/config		setf yaml
 
 " Assembly (all kinds)
 " *.lst is not pure assembly, it has two extra columns (address, byte codes)
@@ -178,6 +184,9 @@ if has("fname_case")
   " There is another check for BUILD and BUCK further below.
   au BufNewFile,BufRead *.BUILD,BUILD,BUCK		setf bzl
 endif
+
+" Bazel rc file, the workspace location used before Bazel 0.17
+au BufNewFile,BufRead */tools/bazel.rc			setf bazelrc
 
 " Bundle config
 au BufNewFile,BufRead */.bundle/config			setf yaml
@@ -278,7 +287,7 @@ au BufNewFile,BufRead *.cpy
 
 " Dockerfile; Podman uses the same syntax with name Containerfile
 " Also see Dockerfile.* below.
-au BufNewFile,BufRead Containerfile,Dockerfile,dockerfile,*.[dD]ockerfile	setf dockerfile
+au BufNewFile,BufRead Containerfile,Dockerfile,dockerfile	setf dockerfile
 
 " Enlightenment configuration files
 au BufNewFile,BufRead *enlightenment/*.cfg	setf c
@@ -859,7 +868,10 @@ if has("fname_case")
 else
   au BufNewFile,BufRead *.pl				call dist#ft#FTpl()
 endif
-au BufNewFile,BufRead *.plx,*.al,*.psgi			setf perl
+au BufNewFile,BufRead *.plx,*.psgi			setf perl
+
+" Perl AutoLoader or AL (Dynamics 365 Business Central)
+au BufNewFile,BufRead *.al				call dist#ft#FTal()
 
 " Perl, XPM or XPM2
 au BufNewFile,BufRead *.pm
@@ -1035,6 +1047,7 @@ au BufNewFile,BufRead *.decl,*.dcl,*.dec
 " Gentoo ebuilds and Arch Linux PKGBUILDs are actually bash scripts.
 " NOTE: Patterns ending in a star are further down, these have lower priority.
 au BufNewFile,BufRead .bashrc,bashrc,bash.bashrc,.bash[_-]profile,.bash[_-]logout,.bash[_-]aliases,.bash[_-]history,bash-fc[-.],*.ebuild,*.bash,*.eclass,PKGBUILD,*.bats,*.cygport call dist#ft#SetFileTypeSH("bash")
+au BufNewFile,BufRead ~/.x{init,server}rc,/etc/X11/xinit/x{initrc{,.d/*},serverrc} setf sh
 au BufNewFile,BufRead .kshrc,*.ksh call dist#ft#SetFileTypeSH("ksh")
 au BufNewFile,BufRead */etc/profile,.profile,*.sh,*.envrc,.envrc.* call dist#ft#SetFileTypeSH(getline(1))
 " Shell script (Arch Linux) or PHP file (Drupal)
@@ -1058,7 +1071,7 @@ au BufNewFile,BufRead .zshrc,.zshenv,.zlogin,.zlogout,.zcompdump,.zsh_history se
 au BufNewFile,BufRead *.zsh,*.zsh-theme,*.zunit		setf zsh
 
 " Scheme, Supertux configuration, Lips.js history, Guile init file ("racket" patterns are now separate, see above)
-au BufNewFile,BufRead *.scm,*.ss,*.sld,*.stsg,*/supertux2/config,.lips_repl_history,.guile	setf scheme
+au BufNewFile,BufRead *.scm,*.ss,*.sld,*.stwm,*.stl,*.stxt,*.sprite,*.strf,*.satc,*.stcd,*.stf,*.stcp,*.music,*.stsg,*/supertux2/config,*/supertux2/*/info,.lips_repl_history,.guile	setf scheme
 
 " SiSU
 au BufNewFile,BufRead *.sst.meta,*.-sst.meta,*._sst.meta setf sisu
@@ -1102,6 +1115,12 @@ au BufNewFile,BufRead */etc/ssh/ssh_config.d/*.conf		setf sshconfig
 
 " OpenSSH server configuration
 au BufNewFile,BufRead */etc/ssh/sshd_config.d/*.conf	setf sshdconfig
+
+" OpenSSH public keys, authorized keys, signing keys, host keys
+au BufNewFile,BufRead */.ssh/?*.pub,/etc/ssh/?*.pub               setf sshpublickey
+au BufNewFile,BufRead */.ssh/authorized_keys                      setf sshauthorizedkeys
+au BufNewFile,BufRead */.ssh/known_hosts,/etc/ssh/ssh_known_hosts setf sshknownhosts
+au BufNewFile,BufRead allowed_signers,*.allowed_signers           setf sshallowedsigners
 
 " OpenVPN configuration
 au BufNewFile,BufRead */openvpn/*/*.conf	setf openvpn
