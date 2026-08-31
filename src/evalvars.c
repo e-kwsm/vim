@@ -37,7 +37,7 @@ static hashtab_T	compat_hashtab;
 #define VV_RO		2	// read-only
 #define VV_RO_SBX	4	// read-only in the sandbox
 
-#define VV_NAME(s, t)	s, {{t, 0, {0}}, 0, {0}}
+#define VV_NAME(s, t)	s, {{t, 0, {0}}, 0, {s}}
 
 typedef struct vimvar vimvar_T;
 
@@ -216,12 +216,6 @@ evalvars_init(void)
     for (i = 0; i < VV_LEN; ++i)
     {
 	p = &vimvars[i];
-	if (STRLEN(p->vv_name) > DICTITEM16_KEY_LEN)
-	{
-	    iemsg("Name too long, increase size of dictitem16_T");
-	    getout(1);
-	}
-	STRCPY(p->vv_di.di_key, p->vv_name);
 	if (p->vv_flags & VV_RO)
 	    p->vv_di.di_flags = DI_FLAGS_RO | DI_FLAGS_FIX;
 	else if (p->vv_flags & VV_RO_SBX)
@@ -418,7 +412,7 @@ eval_charconvert(
     return OK;
 }
 
-#if defined(FEAT_POSTSCRIPT)
+#if defined(FEAT_POSTSCRIPT) || defined(FEAT_PRINT_PANGO)
     int
 eval_printexpr(char_u *fname, char_u *args)
 {
@@ -1369,7 +1363,11 @@ ex_let_vars(
 
 		    copy_tv(TUPLE_ITEM(tuple, idx), &new_tv);
 		    if (tuple_append_tv(new_tuple, &new_tv) == FAIL)
+		    {
+			clear_tv(&new_tv);
+			tuple_unref(new_tuple);
 			return FAIL;
+		    }
 		    idx++;
 		}
 
@@ -3910,6 +3908,35 @@ delete_var(hashtab_T *ht, hashitem_T *hi)
 
     clear_tv(&di->di_tv);
     vim_free(di);
+}
+
+/*
+ * Delete the exported variables of a reloaded Vim9 autoload script.  They live
+ * in the global namespace with the autoload prefix (e.g. "foo#bar") and are
+ * recreated when the script body runs again.
+ */
+    void
+delete_autoload_export_vars(char_u *prefix)
+{
+    if (prefix == NULL)
+	return;
+    size_t  prefixlen = STRLEN(prefix);
+
+    hash_lock(&globvarht);
+    int	todo = (int)globvarht.ht_used;
+
+    for (hashitem_T *hi = globvarht.ht_array; todo > 0; ++hi)
+	if (!HASHITEM_EMPTY(hi))
+	{
+	    dictitem_T	*di = HI2DI(hi);
+
+	    --todo;
+	    // Keep a class or enum: existing objects still refer to it.
+	    if (di->di_tv.v_type != VAR_CLASS
+		    && STRNCMP(di->di_key, prefix, prefixlen) == 0)
+		delete_var(&globvarht, hi);
+	}
+    hash_unlock(&globvarht);
 }
 
 /*

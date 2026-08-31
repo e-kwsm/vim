@@ -318,7 +318,7 @@ func Test_set_completion()
 
   " Expand abbreviation of options.
   call feedkeys(":set ts\<C-A>\<C-B>\"\<CR>", 'tx')
-  call assert_equal('"set tabstop termsync thesaurus thesaurusfunc ttyscroll', @:)
+  call assert_equal('"set tabstop tagsecure termsync thesaurus thesaurusfunc ttyscroll', @:)
 
   " Expand current value
   call feedkeys(":set suffixes=\<C-A>\<C-B>\"\<CR>", 'tx')
@@ -663,11 +663,38 @@ func Test_set_completion_string_values()
   call feedkeys(":set completepopup=height:10,align:\<Tab>\<C-B>\"\<CR>", 'xt')
   call assert_equal('"set completepopup=height:10,align:item', @:)
   call assert_equal([], getcompletion('set completepopup=bogusname:', 'cmdline'))
+  " a name ending in a known sub-option name is not a sub-option
+  call assert_equal([], getcompletion('set completepopup=invalid_close:', 'cmdline'))
+  call assert_equal([], getcompletion('set completepopup=xborder:', 'cmdline'))
+  call assert_equal([], getcompletion('set completepopup=xhighlight:', 'cmdline'))
+  call assert_equal(['on', 'off'],
+        \ getcompletion('set completepopup=border:on,close:', 'cmdline'))
+  call assert_equal(['on', 'off'], getcompletion('set completepopup=close:', 'cmdline'))
+  call assert_equal(['on', 'off'], getcompletion('set completepopup=close:o', 'cmdline'))
+  call assert_equal(['off'], getcompletion('set previewpopup=close:of', 'cmdline'))
+
+  " opacity: numeric, 0..100 only
+  call assert_true(index(getcompletion('set completepopup=', 'cmdline'),
+        \ 'opacity:') >= 0)
+  call assert_true(index(getcompletion('set previewpopup=', 'cmdline'),
+        \ 'opacity:') >= 0)
+  set completepopup=border:on,opacity:0
+  set completepopup=border:on,opacity:50
+  set completepopup=border:on,opacity:100
+  call assert_fails('set completepopup=opacity:101', 'E474:')
+  call assert_fails('set completepopup=opacity:abc', 'E474:')
+  call assert_fails('set completepopup=opacity:-10', 'E474:')
+  set previewpopup=opacity:30
+  call assert_fails('set previewpopup=opacity:200', 'E474:')
+  call assert_fails('set previewpopup=opacity:-10', 'E474:')
+
   set previewpopup& completepopup&
 
   " diffopt: special handling of algorithm:<alg_list> and inline:<inline_type>
   call assert_equal('filler', getcompletion('set diffopt+=', 'cmdline')[0])
   call assert_equal([], getcompletion('set diffopt+=iblank,foldcolumn:', 'cmdline'))
+  call assert_equal([], getcompletion('set diffopt+=Xalgorithm:', 'cmdline'))
+  call assert_equal([], getcompletion('set diffopt+=iblank,Xinline:', 'cmdline'))
   call assert_equal('patience', getcompletion('set diffopt+=iblank,algorithm:pat*', 'cmdline')[0])
   call assert_equal('char', getcompletion('set diffopt+=iwhite,inline:ch*', 'cmdline')[0])
 
@@ -791,6 +818,32 @@ func Test_set_completion_string_values()
   set ww=b,h
   call assert_equal(['b','h'], getcompletion('set ww-=', 'cmdline'))
   set ww&
+endfunc
+
+func Test_set_pumopt_and_pumborder_completion()
+  let Chk = {cmd, completions ->
+            \ assert_equal(sort(completions),
+            \              sort(getcompletion(cmd, 'cmdline')))}
+
+  " opacity can be any integer from 0 to 100; no completions are offered.
+  call Chk('set pumopt=opacity:', [])
+
+  set encoding=utf-8 ambiwidth=single
+  call Chk('set pumborder=',
+        \ ['ascii', 'custom:', 'double', 'margin', 'round', 'shadow', 'single'])
+  call Chk('set pumborder=s', ['shadow', 'single'])
+  call Chk('set pumopt=shadow,border:',
+        \ ['ascii', 'custom:', 'double', 'round', 'single'])
+
+  for [&encoding, &ambiwidth] in
+        \ [['utf-8', 'double'], ['latin1', 'single'], ['latin1', 'double']]
+    call Chk('set pumborder=', ['ascii', 'custom:', 'margin', 'shadow'])
+    call Chk('set pumborder=s', ['shadow'])
+    call Chk('set pumopt=shadow,border:', ['ascii', 'custom:'])
+  endfor
+
+  set encoding&
+  set ambiwidth&
 endfunc
 
 func Test_set_option_errors()
@@ -1434,7 +1487,7 @@ func Test_shortmess_F3()
   if has('nanotime')
     sleep 10m
   else
-    sleep 2
+    sleep 3
   endif
   call writefile(['bar'], 'X_dummy')
   bprev
@@ -1444,7 +1497,7 @@ func Test_shortmess_F3()
   if has('nanotime')
     sleep 10m
   else
-    sleep 2
+    sleep 3
   endif
   call writefile(['baz'], 'X_dummy')
   checktime
@@ -1680,7 +1733,7 @@ endfunc
 
 " Test for changing options in a sandbox
 func Test_opt_sandbox()
-  for opt in ['backupdir', 'cdpath', 'exrc', 'findfunc']
+  for opt in ['backupdir', 'cdpath', 'exrc', 'findfunc', 'tagsecure']
     call assert_fails('sandbox set ' .. opt .. '?', 'E48:')
     call assert_fails('sandbox let &' .. opt .. ' = 1', 'E48:')
   endfor
@@ -2456,6 +2509,13 @@ func Test_opt_scrolljump()
          \            'topline':5, 'coladd':0, 'skipcol':0, 'curswant':0},
          \           winsaveview())
 
+  norm! 100Gzt
+  set scrolljump=-100
+  norm! 20k
+  call assert_equal({'lnum':80, 'leftcol':0, 'col':0, 'topfill':0,
+        \            'topline':71, 'coladd':0, 'skipcol':0, 'curswant':0},
+        \           winsaveview())
+
   set scrolljump&
   bw
 endfunc
@@ -2642,6 +2702,8 @@ func Test_string_option_revert_on_failure()
         \ ['selection', 'exclusive', 'a123'],
         \ ['selectmode', 'cmd', 'a123'],
         \ ['sessionoptions', 'options', 'a123'],
+        \ ['shellpipe', '>%s', "%s%s%s"],
+        \ ['shellredir', '>%s', "%s%s%s"],
         \ ['shortmess', 'w', '2'],
         \ ['showbreak', '>>', "\x01"],
         \ ['showcmdloc', 'statusline', 'a123'],
@@ -3137,6 +3199,124 @@ func Test_comma_option_key_value()
   call assert_equal('multispace:AB,eol:$,space:x', &lcs)
 
   set lcs&
+endfunc
+
+func Test_insecure_flag_copied_to_new_buffer_indentexpr()
+  let modeline = &modeline
+  let modelineexpr = &modelineexpr
+  let modelinestrict = &modelinestrict
+
+  func! Xindentexprpwn(findstart, base)
+    if a:findstart
+      sandbox setglobal indentexpr=writefile(['leak'],\ 'Xindentexpr_proof')
+      return 0
+    endif
+    return []
+  endfunc
+
+  try
+    set modeline modelineexpr nomodelinestrict
+
+    call writefile([
+          \ 'vim: set complete=FXindentexprpwn :',
+          \ 'body',
+          \ ], 'Xindentexpr_attack', 'D')
+    call delete('Xindentexpr_proof')
+    edit Xindentexpr_attack
+    call cursor(2, 1)
+    call feedkeys("i\<C-N>\<Esc>", 'xt')
+    bwipe!
+
+    " A brand new buffer now inherits the poisoned 'indentexpr' via
+    " buf_copy_options().  It must still be evaluated in the sandbox.
+    enew!
+    call setline(1, ['{', 'x', '}'])
+    normal! 2G==
+    call assert_false(filereadable('Xindentexpr_proof'))
+    bwipe!
+  finally
+    let &modeline = modeline
+    let &modelineexpr = modelineexpr
+    let &modelinestrict = modelinestrict
+    set indentexpr&
+    call delete('Xindentexpr_proof')
+    delfunc Xindentexprpwn
+  endtry
+endfunc
+
+func Test_insecure_flag_not_cleared_by_other_buffer_complete()
+  let modeline = &modeline
+  let modelineexpr = &modelineexpr
+  let modelinestrict = &modelinestrict
+
+  func! Xcompletepwn(findstart, base)
+    if a:findstart
+      call writefile(['leak'], 'Xcomplete_cross_proof')
+      return 0
+    endif
+    return ['match']
+  endfunc
+
+  try
+    set modeline modelineexpr nomodelinestrict
+
+    call writefile([
+          \ 'vim: set complete=FXcompletepwn :',
+          \ 'body',
+          \ ], 'Xcomplete_cross_attack', 'D')
+    call delete('Xcomplete_cross_proof')
+    edit Xcomplete_cross_attack
+    let bufA = bufnr('%')
+
+    " An unrelated buffer does a completely ordinary, trusted reset.
+    new
+    setlocal complete=.,w,b,u,t
+    bwipe!
+
+    " Back in the modeline-tainted buffer: must still be sandboxed.
+    exe 'buffer ' .. bufA
+    call cursor(2, 1)
+    call assert_fails('call feedkeys("i\<C-N>\<Esc>", "xt")', 'E48:')
+    call assert_false(filereadable('Xcomplete_cross_proof'))
+    bwipe!
+  finally
+    let &modeline = modeline
+    let &modelineexpr = modelineexpr
+    let &modelinestrict = modelinestrict
+    call delete('Xcomplete_cross_proof')
+    delfunc Xcompletepwn
+  endtry
+endfunc
+
+func Test_formatexpr_insecure_copied_to_new_buffer()
+  new
+  sandbox setglobal formatexpr=writefile(['leak'],\ 'Xleak_fex')
+  enew!
+  call setline(1, ['some text to format'])
+  set textwidth=10
+  silent! normal! gqq
+  call assert_false(filereadable('Xleak_fex'))
+  call delete('Xleak_fex')
+  set formatexpr& textwidth&
+  bwipe!
+endfunc
+
+" includeexpr: triggered via gf / find_pattern_in_path (used by [i, gf, etc.)
+func Test_includeexpr_insecure_copied_to_new_buffer()
+  func Xleakinclude(fname)
+    call writefile(['leak'], 'Xleak_inex')
+    return a:fname
+  endfunc
+  new
+  sandbox setglobal includeexpr=Xleakinclude(v:fname)
+  enew!
+  call setline(1, ['#include "foo.h"'])
+  silent! normal! [i
+  call assert_false(filereadable('Xleak_inex'))
+  call delete('Xleak_inex')
+  set includeexpr&
+  delfunc Xleakinclude
+  bwipe!
 endfunc
 
 " vim: shiftwidth=2 sts=2 expandtab
