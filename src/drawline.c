@@ -2479,7 +2479,11 @@ win_line(
 		    // displaying that character.
 		    // Or when not wrapping and at the rightmost column.
 
-		    int only_below_follows = !wp->w_p_wrap && wlv.col == wp->w_width - 1;
+		    // Use the displayed width so a double-width or <Tab> last
+		    // character filling the rightmost column is detected too.
+		    int only_below_follows = !wp->w_p_wrap
+				 && wlv.col + win_chartabsize(wp, ptr, wlv.vcol)
+								>= wp->w_width;
 		    int suffix_flags = text_prop_suffix_flags[text_prop_next];
 
 		    text_prop_follows = (suffix_flags
@@ -2868,13 +2872,6 @@ win_line(
 #endif
 		// no more cells to skip
 		skip_cells = 0;
-#ifdef FEAT_TERMINAL
-		if (term_show_buffer(wp->w_buffer)
-		    && wlv.vcol == 0
-		    && wlv.win_attr == term_get_attr(wp, lnum, -1))
-		    // reset highlighting attribute
-		    wlv.win_attr = 0;
-#endif
 	    }
 
 	    if (has_mbyte)
@@ -3318,8 +3315,9 @@ win_line(
 		}
 	    }
 
-	    // Handling of non-printable characters.
-	    if (!vim_isprintc(c))
+	    // Handling of non-printable characters. 'isprint' does not apply
+	    // to a UTF-8 leading byte, the character was checked above.
+	    if (!vim_isprintc(c) && !(enc_utf8 && c >= 0x80))
 	    {
 		// when getting a character from the file, we may have to
 		// turn it into something else on the way to putting it
@@ -3327,7 +3325,9 @@ win_line(
 		if (c == TAB && (!wp->w_p_list || wp->w_lcs_chars.tab1))
 		{
 		    int	    tab_len = 0;
-		    long    vcol_adjusted = wlv.vcol; // removed showbreak len
+		    // Virtual text and 'showbreak' do not count for the size
+		    // of a Tab.
+		    long    vcol_adjusted = wlv.vcol - wlv.vcol_off_tp;
 		    int	    lcs_tab1 = wp->w_lcs_chars.tab1;
 		    int	    lcs_tab2 = wp->w_lcs_chars.tab2;
 		    int	    lcs_tab3 = wp->w_lcs_chars.tab3;
@@ -3346,7 +3346,7 @@ win_line(
 		    // only adjust the tab_len, when at the first column
 		    // after the showbreak value was drawn
 		    if (*sbr != NUL && wlv.vcol == wlv.vcol_sbr && wp->w_p_wrap)
-			vcol_adjusted = wlv.vcol - MB_CHARLEN(sbr);
+			vcol_adjusted -= MB_CHARLEN(sbr);
 #endif
 		    // tab amount depends on current column
 #ifdef FEAT_VARTABS
@@ -3689,6 +3689,17 @@ win_line(
 			else if (wlv.line_attr)
 			    wlv.char_attr = hl_combine_attr(
 						 wlv.char_attr, wlv.line_attr);
+			// Show a Visual or search highlight on the first cell
+			// of an empty line, on top of the background color.
+			if (wlv.vcol == 0)
+			{
+			    if (area_attr != 0)
+				wlv.char_attr = hl_combine_attr(
+						     wlv.char_attr, area_attr);
+			    else if (search_attr != 0)
+				wlv.char_attr = hl_combine_attr(
+						   wlv.char_attr, search_attr);
+			}
 		    }
 # endif
 		}
@@ -3795,6 +3806,10 @@ win_line(
 	    else
 # endif
 		wp->w_wcol = wlv.col - wlv.boguscols;
+	    // Screen cells concealed before the cursor on this screen line, so
+	    // pum_display() can line the menu up with the visible text;
+	    // "skip_cells" is the concealed cell at the cursor not yet counted.
+	    wp->w_wcol_conceal_off = wlv.vcol_off_co + skip_cells;
 	    if (wlv.vcol + skip_cells < wp->w_virtcol)
 		// Cursor beyond end of the line with 'virtualedit'.
 		wp->w_wcol += wp->w_virtcol - wlv.vcol - skip_cells;

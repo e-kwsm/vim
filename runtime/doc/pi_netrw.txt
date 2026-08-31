@@ -1368,7 +1368,7 @@ Associated setting variables: |g:netrw_chgperm|
 
 CHANGING TO A BOOKMARKED PATH			*netrw-gb*  {{{2
 
-To change to a bookmarked path, use
+To change to a bookmarked path, use >
 
 	[{cnt}]gb
 
@@ -2609,7 +2609,7 @@ your browsing preferences.  (see also: |netrw-settings|)
 				 otherwise                     "dir"
 
   *g:netrw_glob_escape*		='[]*?`{~$'  (unix)
-				='[]*?`{$'  (windows
+				='[]*?`{$'  (windows)
 				These characters in directory names are
 				escaped before applying glob()
 
