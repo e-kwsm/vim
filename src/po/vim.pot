@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Vim\n"
 "Report-Msgid-Bugs-To: vim-dev@vim.org\n"
-"POT-Creation-Date: 2026-05-23 19:49+0000\n"
+"POT-Creation-Date: 2026-08-18 20:22+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -956,6 +956,15 @@ msgstr ""
 msgid "_Close"
 msgstr ""
 
+msgid "Close Tab"
+msgstr ""
+
+msgid "New Tab"
+msgstr ""
+
+msgid "Open Tab..."
+msgstr ""
+
 msgid "Direction:"
 msgstr ""
 
@@ -969,9 +978,6 @@ msgid "Close tab"
 msgstr ""
 
 msgid "New tab"
-msgstr ""
-
-msgid "Open Tab..."
 msgstr ""
 
 msgid "Vim: Main window unexpectedly destroyed\n"
@@ -1817,6 +1823,11 @@ msgstr ""
 
 msgid ""
 "\n"
+"Arguments recognised by gvim (GTK4 version):\n"
+msgstr ""
+
+msgid ""
+"\n"
 "Arguments recognised by gvim (GTK+ version):\n"
 msgstr ""
 
@@ -1970,6 +1981,9 @@ msgid "???ILLEGAL BLOCK NUMBER"
 msgstr ""
 
 msgid "???BLOCK MISSING"
+msgstr ""
+
+msgid "??? BLOCK PAGE COUNT MISMATCH"
 msgstr ""
 
 msgid "??? from here until ???END lines may be messed up"
@@ -3103,6 +3117,16 @@ msgstr ""
 msgid "syncing on C-style comments"
 msgstr ""
 
+msgid ""
+"\n"
+"--- Syntax sync items ---"
+msgstr ""
+
+msgid ""
+"\n"
+"syncing on items"
+msgstr ""
+
 msgid "no syncing"
 msgstr ""
 
@@ -3113,16 +3137,6 @@ msgid "syncing starts "
 msgstr ""
 
 msgid " lines before top line"
-msgstr ""
-
-msgid ""
-"\n"
-"--- Syntax sync items ---"
-msgstr ""
-
-msgid ""
-"\n"
-"syncing on items"
 msgstr ""
 
 msgid ""
@@ -6669,9 +6683,8 @@ msgstr ""
 msgid "E882: Uniq compare function failed"
 msgstr ""
 
-msgid ""
-"E883: Search pattern and expression register may not contain two or more "
-"lines"
+#, c-format
+msgid "E883: Register '%c' cannot contain multiple lines"
 msgstr ""
 
 #, c-format
@@ -8881,6 +8894,15 @@ msgid "E1577: Invalid format string, only one \"%s\" is allowed"
 msgstr ""
 
 msgid "E1578: Too many postponed prefixes and/or compound flags"
+msgstr ""
+
+msgid "E1579: -completeopt=escape cannot be used with -nargs=_"
+msgstr ""
+
+msgid "E1580: Too many text properties on a single line"
+msgstr ""
+
+msgid "E1581: Cannot extend a null blob"
 msgstr ""
 
 #. type of cmdline window or 0

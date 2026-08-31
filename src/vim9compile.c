@@ -1170,9 +1170,15 @@ compile_nested_function(exarg_T *eap, cctx_T *cctx, garray_T *lines_to_free)
 	lvar = reserve_local(cctx, func_name, name_end - name_start,
 					    ASSIGN_CONST, ufunc->uf_func_type);
 	if (lvar == NULL)
+	{
+	    func_ptr_unref(ufunc);
 	    goto theend;
+	}
 	if (generate_FUNCREF(cctx, ufunc, NULL, FALSE, 0, &funcref_isn_idx) == FAIL)
+	{
+	    func_ptr_unref(ufunc);
 	    goto theend;
+	}
 	r = generate_STORE(cctx, ISN_STORE, lvar->lv_idx, NULL);
     }
 
@@ -1475,7 +1481,7 @@ valid_dest_reg(int name)
 {
     if (name == '@')
        name = '"';
-    if (name == '/' || name == '=' || valid_yank_reg(name, TRUE))
+    if (name == '/' || name == '=' || name == '#' || valid_yank_reg(name, TRUE))
 	return TRUE;
     emsg_invreg(name);
     return FAIL;
@@ -1949,7 +1955,8 @@ compile_lhs_var_dest(
     int		cmdidx,
     char_u	*var_start,
     char_u	*var_end,
-    int		is_decl)
+    int		is_decl,
+    int		has_cmd)	// "var" before "var_start"
 {
     int	    declare_error = FALSE;
 
@@ -2004,8 +2011,8 @@ compile_lhs_var_dest(
 		char_u *p = skipwhite(lhs->lhs_end);
 		if (p[0] == '.' && p[1] == '=')
 		    emsg(_(e_dot_equal_not_supported_with_script_version_two));
-		else if (p[0] == ':')
-		    // type specified in a non-var assignment
+		else if (p[0] == ':' && !has_cmd)
+		    // type specified in an assignment without "var"
 		    semsg(_(e_trailing_characters_str), p);
 		else
 		    semsg(_(e_variable_already_declared_str), lhs->lhs_name);
@@ -2258,8 +2265,10 @@ compile_lhs_set_member_type(
 	lhs->lhs_varlen = after - var_start;
 	lhs->lhs_dest = dest_expr;
 	// We don't know the type before evaluating the expression,
-	// use "any" until then.
+	// use "any" until then.  The member index is for the first name,
+	// not for the last index.
 	lhs->lhs_type = &t_any;
+	lhs->lhs_member_idx = -1;
     }
 
     int use_class = lhs->lhs_type != NULL
@@ -2309,7 +2318,7 @@ compile_lhs(
     {
 	// compile the LHS destination
 	if (compile_lhs_var_dest(cctx, lhs, cmdidx, var_start, var_end,
-							is_decl) == FAIL)
+						is_decl, has_cmd) == FAIL)
 	    return FAIL;
     }
 
@@ -2616,7 +2625,17 @@ compile_load_lhs_with_index(lhs_T *lhs, char_u *var_start, cctx_T *cctx)
 
     if (lhs->lhs_has_index)
     {
-	int range = FALSE;
+	int	range = FALSE;
+	type_T	*type = get_type_on_stack(cctx, 0);
+
+	// A member of an object or class is not obtained by indexing it.
+	if (type->tt_type == VAR_CLASS
+		|| (type->tt_type == VAR_OBJECT && type != &t_object_any))
+	{
+	    char_u *p = var_start + lhs->lhs_varlen;
+
+	    return compile_class_object_index(cctx, &p, type);
+	}
 
 	// Get member from list or dict.  First compile the
 	// index value.
@@ -2666,7 +2685,10 @@ compile_assign_unlet(
 	return FAIL;
     }
 
-    if (lhs->lhs_type == NULL || lhs->lhs_type == &t_any)
+    // For "expr[idx]" the index is compiled before the expression, thus the
+    // resulting type cannot be used here.
+    if (lhs->lhs_dest == dest_expr
+	    || lhs->lhs_type == NULL || lhs->lhs_type == &t_any)
     {
 	// Index on variable of unknown type: check at runtime.
 	dest_type = VAR_ANY;
@@ -3052,6 +3074,11 @@ compile_assign_list_check_rhs_type(cctx_T *cctx, cac_T *cac)
 		  stacktype->tt_type == VAR_TUPLE ? &t_tuple_any : &t_list_any,
 		  TYPECHK_TUPLE_OK, -1, 0, cctx, FALSE, FALSE) == FAIL)
 	return FAIL;
+
+    // The check accepts both a list and a tuple. Keep "any", making it a list
+    // would reject a tuple later on.
+    if (stacktype->tt_type == VAR_ANY)
+	set_type_on_stack(cctx, &t_any, 0);
 
     if (stacktype->tt_type == VAR_TUPLE)
     {
@@ -4312,7 +4339,10 @@ compile_def_function_body(
 	    {
 		line = vim_strsave(line);
 		if (ga_add_string(lines_to_free, line) == FAIL)
+		{
+		    vim_free(line);
 		    return FAIL;
+		}
 	    }
 	}
 
@@ -4747,6 +4777,7 @@ compile_def_function_body(
 	    case CMD_change:
 	    case CMD_insert:
 	    case CMD_k:
+	    case CMD_open:
 	    case CMD_t:
 	    case CMD_xit:
 		    not_in_vim9(&ea);
@@ -5231,7 +5262,7 @@ delete_def_function_contents(dfunc_T *dfunc, int mark_deleted)
     void
 unlink_def_function(ufunc_T *ufunc)
 {
-    if (ufunc->uf_dfunc_idx <= 0)
+    if (ufunc->uf_dfunc_idx <= 0 || def_functions.ga_data == NULL)
 	return;
 
     dfunc_T *dfunc = ((dfunc_T *)def_functions.ga_data)
