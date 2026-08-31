@@ -133,6 +133,7 @@ typedef struct
     gboolean draw; // If cursor should be drawn
     int width;
     int height;
+    int n_cells; // Cells covered, 2 for a double width character
     GdkRGBA bg_color;
     GdkRGBA fg_color;
 } DrawCursor;
@@ -162,7 +163,9 @@ struct _VimDrawArea
 #endif
 };
 
+#ifdef FEAT_IMAGE_GDK
 static void draw_image_free(DrawImage *dimg);
+#endif
 static void draw_row_init(DrawRow *drow, int row, int cols);
 static void draw_row_clear(DrawRow *drow);
 static void draw_row_dirty_layer(DrawRow *drow, DrawLayerType dlayer_t);
@@ -691,8 +694,8 @@ draw_layer_get_texture(
 
     // Scale texture to actual size
     node = gsk_texture_scale_node_new(texture,
-	    &GRAPHENE_RECT_INIT(FILL_X(0), FILL_Y(row),
-		(da->n_cols + bleed) * gui.char_width, gui.char_height),
+		&GRAPHENE_RECT_INIT(FILL_X(0), FILL_Y(row),
+		(da->n_cols + bleed) * gui.char_width, gui.char_height + bleed),
 	    GSK_SCALING_FILTER_NEAREST);
     if (bleed)
     {
@@ -701,7 +704,7 @@ draw_layer_get_texture(
 	new = gsk_clip_node_new(node,
 		&GRAPHENE_RECT_INIT(FILL_X(0), FILL_Y(row),
 		    da->n_cols * gui.char_width + da->bleed_right,
-		    gui.char_height));
+		    gui.char_height + 1));
 	gsk_render_node_unref(node);
 	node = new;
     }
@@ -1034,6 +1037,7 @@ draw_row_render_text(DrawRow *drow, VimDrawArea *da)
 	    empty_cells++;
 	    continue;
 	}
+#if defined(FEAT_NETBEANS_INTG) || defined(FEAT_SIGN_ICONS)
 	else if (dglyphs->font == NULL)
 	{
 	    // Add sign icon
@@ -1055,6 +1059,7 @@ draw_row_render_text(DrawRow *drow, VimDrawArea *da)
 			// loop
 	    continue;
 	}
+#endif
 	else if (dglyphs->font != cur_font || cur_fg != dglyphs->fg_color)
 	{
 	    FLUSH_NODE();
@@ -1157,7 +1162,7 @@ draw_row_render_special(DrawRow *drow, VimDrawArea *da)
     {
 	dlayer->node = gsk_container_node_new(nodes, 2);
 	// gsk_container_node_new() takes its own ref
-	for (int i = 0; i < ARRAY_LENGTH(nodes); i++)
+	for (int i = 0; i < (int)ARRAY_LENGTH(nodes); i++)
 	    gsk_render_node_unref(nodes[i]);
     }
 
@@ -1594,6 +1599,9 @@ vim_draw_area_set_cursor(VimDrawArea *self, int w, int h)
     self->cursor.draw = TRUE;
     self->cursor.width = w;
     self->cursor.height = h;
+    // Remember this now: the snapshot runs later, when the drawing position
+    // has moved on.
+    self->cursor.n_cells = 1 + mb_lefthalve(gui.cursor_row, gui.cursor_col);
     self->cursor.bg_color = *gui.bgcolor;
     self->cursor.fg_color = *gui.fgcolor;
 }
@@ -1869,8 +1877,7 @@ vim_draw_area_snapshot_cursor(
 
     if (cursor->width <= 0 && cursor->height <= 0)
     {
-	// Double width if double width character
-	w += gui.char_width * (1 + mb_lefthalve(gui.row, gui.col));
+	w += gui.char_width * cursor->n_cells;
 	h = gui.char_height;
     }
 

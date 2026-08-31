@@ -347,7 +347,7 @@ inside_class_hierarchy(cctx_T *cctx_arg, class_T *cl)
 /*
  * Compile ".member" coming after an object or class.
  */
-    static int
+    int
 compile_class_object_index(cctx_T *cctx, char_u **arg, type_T *type)
 {
     int		m_idx;
@@ -2550,7 +2550,7 @@ compile_subscript(
 	    if (next != NULL &&
 		    ((next[0] == '-' && next[1] == '>'
 				 && (next[2] == '{'
-				       || next[2] == '('
+				       || *skipwhite(next + 2) == '('
 				       || ASCII_ISALPHA(*skipwhite(next + 2))))
 		    || (next[0] == '.' && eval_isdictc(next[1]))))
 	    {

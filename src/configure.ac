@@ -2473,6 +2473,42 @@ else
   AC_MSG_RESULT(no)
 fi
 
+AC_MSG_CHECKING(for cairo)
+have_cairo="no"
+if "$PKG_CONFIG" --exists 'cairo-ps'; then
+  if "$PKG_CONFIG" --exists 'cairo-pdf'; then
+    have_cairo="yes"
+    AC_MSG_RESULT([yes])
+
+    CAIRO_CFLAGS=`$PKG_CONFIG --cflags-only-other cairo-ps cairo-pdf`
+    CAIRO_CPPFLAGS=`$PKG_CONFIG --cflags-only-I cairo-ps cairo-pdf`
+    CAIRO_LIBS=`$PKG_CONFIG --libs cairo-ps cairo-pdf`
+  else
+    AC_MSG_RESULT(no, pdf backend not enabled)
+  fi
+else
+  AC_MSG_RESULT(no, postscript backend not enabled)
+fi
+
+AC_MSG_CHECKING(for pango)
+have_pango="no"
+if "$PKG_CONFIG" --exists 'pango' && "$PKG_CONFIG" --exists 'pangocairo'; then
+dnl pango_font_metrics_get_height() requires Pango 1.44.
+  if "$PKG_CONFIG" --exists 'pango >= 1.44'; then
+    have_pango="yes"
+    AC_MSG_RESULT([yes])
+
+    PANGO_CFLAGS=`$PKG_CONFIG --cflags-only-other pango pangocairo`
+    PANGO_CPPFLAGS=`$PKG_CONFIG --cflags-only-I pango pangocairo`
+    PANGO_LIBS=`$PKG_CONFIG --libs pango pangocairo`
+  else
+    have_pango="old"
+    AC_MSG_RESULT([no, version 1.44 or later is required])
+  fi
+else
+  AC_MSG_RESULT(no)
+fi
+
 dnl GTK4 does not use X11 APIs directly, so skip X11 detection entirely.
 dnl This avoids pulling libICE/libSM/libX11/libXt into build dependencies
 dnl for GTK4-only builds, even when --with-x=yes is passed (e.g. by a
@@ -3076,6 +3112,7 @@ if test "x$GUITYPE" = "xGTK"; then
 	AC_MSG_RESULT([usable.])
 	AC_DEFINE(USE_GRESOURCE)
 	GRESOURCE_SRC="auto/gui_gtk_gresources.c"
+    GRESOURCE_PRO="proto/gui_gtk_gresources.pro"
 	GRESOURCE_OBJ="objects/gui_gtk_gresources.o"
       fi
     else
@@ -3117,9 +3154,65 @@ if test "x$GUITYPE" = "xGTK"; then
 fi
 AC_SUBST(GLIB_COMPILE_RESOURCES)
 AC_SUBST(GRESOURCE_SRC)
+AC_SUBST(GRESOURCE_PRO)
 AC_SUBST(GRESOURCE_OBJ)
 AC_SUBST(GTK_UPDATE_ICON_CACHE)
 AC_SUBST(UPDATE_DESKTOP_DATABASE)
+
+AC_MSG_CHECKING(--enable-hardcopy-pango argument)
+AC_ARG_ENABLE(hardcopy-pango,
+	[  --enable-hardcopy-pango     Use Pango 1.44 or later and Cairo for improved hardcopy printing. [default=yes when GTK GUI enabled]],
+	[],
+	[enable_hardcopy_pango="auto"])
+
+if test "x$have_pango" != "xyes" || test "x$have_cairo" = "xno"; then
+  if test "$fail_if_missing" = "yes" -a "$enable_hardcopy_pango" = "yes"; then
+    AC_MSG_ERROR([could not configure hardcopy-pango])
+  fi
+  enable_hardcopy_pango="no"
+  if test "x$have_pango" = "xold"; then
+    AC_MSG_RESULT([no, Pango is older than 1.44])
+  else
+    AC_MSG_RESULT([no, Pango or Cairo not found])
+  fi
+else
+  if test "x$enable_hardcopy_pango" = "xauto"; then
+    if test "x$GUITYPE" = "xGTK" || test "x$GUITYPE" = "xGTK4"; then
+      enable_hardcopy_pango="yes"
+      AC_MSG_RESULT([yes, GTK GUI enabled])
+    else
+      enable_hardcopy_pango="no"
+      AC_MSG_RESULT([no])
+    fi
+  elif test "$enable_hardcopy_pango" = "yes"; then
+    AC_MSG_RESULT([yes])
+  else
+    AC_MSG_RESULT([no])
+  fi
+fi
+
+if test "$enable_hardcopy_pango" = "yes"; then
+  cppflags_save=$CPPFLAGS
+  cflags_save=$CFLAGS
+
+  AC_DEFINE(FEAT_PRINT_PANGO)
+
+  CPPFLAGS="$CPPFLAGS $PANGO_CPPFLAGS"
+  CFLAGS="$CFLAGS $PANGO_CFLAGS"
+  AC_SUBST(PANGO_LIBS)
+  AC_SUBST(PANGO_CFLAGS)
+  AC_SUBST(PANGO_CPPFLAGS)
+
+  CPPFLAGS="$CPPFLAGS $CAIRO_CPPFLAGS"
+  CFLAGS="$CFLAGS $CAIRO_CFLAGS"
+  AC_SUBST(CAIRO_LIBS)
+  AC_SUBST(CAIRO_CFLAGS)
+  AC_SUBST(CAIRO_CPPFLAGS)
+
+  CPPFLAGS=$cppflags_save
+  CFLAGS=$cflags_save
+fi
+
 
 dnl Check for Motif include files location.
 dnl The LAST one found is used, this makes the highest version to be used,

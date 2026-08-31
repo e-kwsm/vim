@@ -136,6 +136,7 @@ def s:GetFilenameChecks(): dict<list<string>>
     b: ['file.mch', 'file.ref', 'file.imp'],
     basic: ['file.bas', 'file.bi', 'file.bm'],
     bass: ['file.bass'],
+    bazelrc: ['.bazelrc', 'user.bazelrc', 'file.bazelrc', '/tools/bazel.rc', 'any/tools/bazel.rc'],
     bc: ['file.bc'],
     bdf: ['file.bdf'],
     beancount: ['file.beancount', 'file.bean'],
@@ -271,6 +272,7 @@ def s:GetFilenameChecks(): dict<list<string>>
     dylanlid: ['file.lid'],
     earthfile: ['Earthfile'],
     ecd: ['file.ecd'],
+    ed: ['file.ed'],
     edif: ['file.edf', 'file.edif', 'file.edo'],
     editorconfig: ['.editorconfig'],
     eelixir: ['file.eex', 'file.leex'],
@@ -380,6 +382,7 @@ def s:GetFilenameChecks(): dict<list<string>>
     hgcommit: ['hg-editor-file.txt'],
     hip: ['file.hip'],
     hjson: ['file.hjson'],
+    hlsl: ['file.hlsl'],
     hlsplaylist: ['file.m3u', 'file.m3u8'],
     hog: ['file.hog', 'snort.conf', 'vision.conf'],
     hollywood: ['file.hws'],
@@ -431,6 +434,7 @@ def s:GetFilenameChecks(): dict<list<string>>
     json5: ['file.json5'],
     jsonc: ['file.jsonc', '.babelrc', '.eslintrc', '.jsfmtrc', '.jshintrc', '.jscsrc', '.vsconfig', '.hintrc', '.swrc', 'jsconfig.json', 'osquery.conf', 'tsconfig.json', 'tsconfig.test.json', 'tsconfig-test.json', '.luaurc', 'bun.lock', expand("$HOME/.config/VSCodium/User/settings.json"), '/home/user/.config/waybar/config' ],
     jsonl: ['file.jsonl'],
+    jsonld: ['file.jsonld'],
     jsonnet: ['file.jsonnet', 'file.libsonnet'],
     jsp: ['file.jsp'],
     julia: ['file.jl'],
@@ -633,7 +637,7 @@ def s:GetFilenameChecks(): dict<list<string>>
     pcmk: ['file.pcmk'],
     pdf: ['file.pdf'],
     pem: ['file.pem', 'file.cer', 'file.crt', 'file.csr'],
-    perl: ['file.plx', 'file.al', 'file.psgi', 'gitolite.rc', '.gitolite.rc', 'example.gitolite.rc', '.latexmkrc', 'latexmkrc'],
+    perl: ['file.plx', 'file.psgi', 'gitolite.rc', '.gitolite.rc', 'example.gitolite.rc', '.latexmkrc', 'latexmkrc'],
     pf: ['pf.conf'],
     pfmain: ['main.cf', 'main.cf.proto'],
     php: ['file.php', 'file.php9', 'file.phtml', 'file.ctp', 'file.phpt', 'file.theme'],
@@ -687,6 +691,7 @@ def s:GetFilenameChecks(): dict<list<string>>
     r: ['file.r', '.Rhistory', '.Rprofile', 'Rprofile', 'Rprofile.site'],
     racket: ['file.rkt', 'file.rktd', 'file.rktl'],
     radiance: ['file.rad', 'file.mat'],
+    radvd: ['radvd.conf', '/etc/radvd.conf', 'any/etc/radvd.conf'],
     raku: ['file.pm6', 'file.p6', 'file.t6', 'file.pod6', 'file.raku', 'file.rakumod', 'file.rakudoc', 'file.rakutest'],
     raml: ['file.raml'],
     rapid: ['file.sysx', 'file.Sysx', 'file.SysX', 'file.SYSx', 'file.SYSX', 'file.modx', 'file.Modx', 'file.ModX', 'file.MODx', 'file.MODX'],
@@ -1004,7 +1009,7 @@ def s:GetFilenameChecks(): dict<list<string>>
     xslt: ['file.xsl', 'file.xslt'],
     yacc: ['file.yy', 'file.yxx', 'file.y++'],
     yaml: ['file.yaml', 'file.yml', 'file.eyaml', 'file.kyaml', 'file.kyml', 'any/.bundle/config', '.clangd', '.clang-format', '.clang-tidy', 'file.mplstyle', 'matplotlibrc', 'yarn.lock',
-           '/home/user/.kube/config', '/home/user/.kube/kuberc', '.condarc', 'condarc', '.mambarc', 'mambarc', 'pixi.lock', 'buf.lock', 'file.ksy'],
+           '/home/user/.kube/config', '/home/user/.kube/kuberc', '.condarc', 'condarc', '.mambarc', 'mambarc', 'pixi.lock', 'buf.lock', 'file.ksy', 'any/argocd/config'],
     yang: ['file.yang'],
     yara: ['file.yara', 'file.yar'],
     yuck: ['file.yuck'],
@@ -1161,6 +1166,7 @@ def s:GetScriptChecks(): dict<list<list<string>>>
     dart:   [['#!/path/dart']],
     bpftrace:  [['#!/path/bpftrace']],
     vim:    [['#!/path/vim']],
+    ed:     [['#!/usr/bin/ed -f']],
   }
 enddef
 
@@ -1264,6 +1270,57 @@ endfunc
 " Tests for specific extensions and filetypes.
 " Keep sorted.
 """""""""""""""""""""""""""""""""""""""""""""""""
+
+func Test_al_file()
+  filetype on
+
+  " AL object declaration
+  call writefile(['codeunit 50100 "My Codeunit"', '{', '}'], 'Xfile.al', 'D')
+  split Xfile.al
+  call assert_equal('al', &filetype)
+  bwipe!
+
+  " AL namespace and using declarations before the object
+  call writefile(['namespace Microsoft.Sales;', '', 'using Microsoft.Foundation;'], 'Xfile.al')
+  split Xfile.al
+  call assert_equal('al', &filetype)
+  bwipe!
+
+  " Perl AutoLoader chunk
+  call writefile(['# NOTE: Derived from blib/lib/Net/SSLeay.pm.', 'package Net::SSLeay;', 'sub do_https {'], 'Xfile.al')
+  split Xfile.al
+  call assert_equal('perl', &filetype)
+  bwipe!
+
+  " AL DotNet alias object, which is a bare keyword on its own line
+  call writefile(['dotnet', '{', '    assembly("mscorlib")', '}'], 'Xfile.al')
+  split Xfile.al
+  call assert_equal('al', &filetype)
+  bwipe!
+
+  " Perl code containing AL object kinds as ordinary words
+  call writefile(['sub value {', '  my $table = shift;', '  # report page interface', '}'], 'Xfile.al')
+  split Xfile.al
+  call assert_equal('perl', &filetype)
+  bwipe!
+
+  " Perl documentation containing AL object kinds at the start of a line
+  call writefile(['package Foo;', '=pod', 'Table of contents', 'using the -x option', 'table of contents follows'], 'Xfile.al')
+  split Xfile.al
+  call assert_equal('perl', &filetype)
+  bwipe!
+
+  " Test dist#ft#FTal()
+
+  let g:filetype_al = 'perl'
+  call writefile(['codeunit 50100 "My Codeunit"'], 'Xfile.al')
+  split Xfile.al
+  call assert_equal('perl', &filetype)
+  bwipe!
+  unlet g:filetype_al
+
+  filetype off
+endfunc
 
 " Since dist#ft#FTm4() looks around for configure.ac
 " the test needs to isolate itself in a fresh temporary project tree,
