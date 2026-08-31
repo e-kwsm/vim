@@ -2334,6 +2334,53 @@ func Test_adjust_lnum()
   call Xadjust_qflnum('l')
 endfunc
 
+func Xqf_undo_after_delete(cchar)
+  call s:setup_commands(a:cchar)
+
+  enew | only
+
+  let fname = 'Xqfundofile' . a:cchar
+  call s:create_test_file(fname)
+  exe 'edit ' . fname
+
+  Xgetexpr [fname . ':5:Line5',
+	      \ fname . ':10:Line10',
+	      \ fname . ':15:Line15']
+
+  " Delete the line of the second error and undo the deletion.
+  10delete
+  let l = g:Xgetlist()
+  call assert_equal(5, l[0].lnum)
+  call assert_equal(10, l[1].lnum)
+  call assert_equal(14, l[2].lnum)
+
+  undo
+  call assert_equal('Line10', getline(10))
+  let l = g:Xgetlist()
+  call assert_equal(5, l[0].lnum)
+  call assert_equal(10, l[1].lnum)
+  call assert_equal(15, l[2].lnum)
+
+  " Redo and undo again to make sure the line number does not drift.
+  redo
+  call assert_equal(14, g:Xgetlist()[2].lnum)
+  undo
+  let l = g:Xgetlist()
+  call assert_equal(10, l[1].lnum)
+  call assert_equal(15, l[2].lnum)
+
+  call g:Xsetlist([], 'f')
+  enew!
+  call delete(fname)
+endfunc
+
+func Test_qf_undo_after_delete()
+  call setloclist(0, [])
+  call Xqf_undo_after_delete('c')
+  call setqflist([])
+  call Xqf_undo_after_delete('l')
+endfunc
+
 " Tests for the :grep/:lgrep and :grepadd/:lgrepadd commands
 func s:test_xgrep(cchar)
   call s:setup_commands(a:cchar)
@@ -5004,6 +5051,34 @@ func Test_viscol()
   set efm&
 endfunc
 
+" Test that '%v' is not affected by 'tabstop': a <tab> is always counted as
+" 8 screen columns, matching the column numbers reported by compilers.
+func Test_viscol_tabstop()
+  enew
+  call writefile(["\tABCDEFGH"], 'Xfile1', 'D')
+  edit Xfile1
+  set efm=%f:%l:%v:%m
+
+  " gcc reports column 9 for 'A' (the <tab> expands to 8 columns).  The jump
+  " must land on 'A' (byte 2) for any 'tabstop' value.
+  for ts in [8, 4, 2, 13]
+    exe 'setlocal tabstop=' .. ts
+    cexpr "Xfile1:1:9:XX"
+    call assert_equal(2, col('.'), 'tabstop=' .. ts)
+  endfor
+
+  " A multi-byte character after the tab: 'ä' is 2 bytes but 1 screen cell,
+  " so screen column 10 is the next character 'b' (byte 4).
+  call writefile(["\täbc"], 'Xfile1')
+  edit! Xfile1
+  setlocal tabstop=4
+  cexpr "Xfile1:1:10:XX"
+  call assert_equal(4, col('.'))
+
+  enew | only
+  set efm&
+endfunc
+
 " Test for the quickfix window buffer
 func Xqfbuf_test(cchar)
   call s:setup_commands(a:cchar)
@@ -7060,6 +7135,22 @@ endfunc
 func Test_set_qftf_in_sandbox()
   call Xtest_set_qftf_in_sandbox('c')
   call Xtest_set_qftf_in_sandbox('l')
+endfunc
+
+" Test for the 'statusline' height remaining at one when the quickfix buffer
+" is wiped out when quickfix window is the only window open.
+func Test_qf_statusline_height()
+  %bw!
+  copen
+  wincmd p
+  let prev_wh = winheight('.')
+  wincmd p
+  only
+  bw!
+  copen
+  wincmd p
+  call assert_equal(prev_wh, winheight('.'))
+  %bw!
 endfunc
 
 " vim: shiftwidth=2 sts=2 expandtab

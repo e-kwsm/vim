@@ -1270,32 +1270,35 @@ gui_mch_browse(int saving,
 
 	gfilter = gtk_file_filter_new();
 	patt = alloc(STRLEN(filter));
-	while (p != NULL && *p != NUL)
+	if (patt != NULL)
 	{
-	    if (*p == '\n' || *p == ';' || *p == '\t')
+	    while (p != NULL && *p != NUL)
 	    {
-		STRNCPY(patt, filter, i);
-		patt[i] = '\0';
-		if (*p == '\t')
-		    gtk_file_filter_set_name(gfilter, (gchar *)patt);
+		if (*p == '\n' || *p == ';' || *p == '\t')
+		{
+		    STRNCPY(patt, filter, i);
+		    patt[i] = '\0';
+		    if (*p == '\t')
+			gtk_file_filter_set_name(gfilter, (gchar *)patt);
+		    else
+		    {
+			gtk_file_filter_add_pattern(gfilter, (gchar *)patt);
+			if (*p == '\n')
+			{
+			    gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(fc),
+				    gfilter);
+			    if (*(p + 1) != NUL)
+				gfilter = gtk_file_filter_new();
+			}
+		    }
+		    filter = ++p;
+		    i = 0;
+		}
 		else
 		{
-		    gtk_file_filter_add_pattern(gfilter, (gchar *)patt);
-		    if (*p == '\n')
-		    {
-			gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(fc),
-								     gfilter);
-			if (*(p + 1) != NUL)
-			    gfilter = gtk_file_filter_new();
-		    }
+		    p++;
+		    i++;
 		}
-		filter = ++p;
-		i = 0;
-	    }
-	    else
-	    {
-		p++;
-		i++;
 	    }
 	}
 	vim_free(patt);
@@ -1706,11 +1709,11 @@ gui_mch_dialog(int	type,	    // type of dialog
     int		response;
     DialogInfo  dialoginfo;
 
+    ++gui.dialogs_active;
+
     dialog = create_message_dialog(type, title, message);
     dialoginfo.dialog = GTK_DIALOG(dialog);
     dialog_add_buttons(GTK_DIALOG(dialog), buttons);
-    gtk_window_set_type_hint(GTK_WINDOW(dialog),
-			     GDK_WINDOW_TYPE_HINT_POPUP_MENU);
 
     if (textfield != NULL)
     {
@@ -1793,6 +1796,8 @@ gui_mch_dialog(int	type,	    // type of dialog
 	gtk_widget_destroy(dialog);
     }
 
+    if (gui.dialogs_active > 0)
+	--gui.dialogs_active;
     return response > 0 ? response : 0;
 }
 
@@ -2611,3 +2616,12 @@ recent_func_log_func(const gchar *log_domain UNUSED,
     // http://bugzilla.gnome.org/show_bug.cgi?id=664587
 }
 #endif
+
+    void
+gui_mch_set_fullscreen(int flag)
+{
+    if (flag)
+	gtk_window_fullscreen(GTK_WINDOW(gui.mainwin));
+    else
+	gtk_window_unfullscreen(GTK_WINDOW(gui.mainwin));
+}
