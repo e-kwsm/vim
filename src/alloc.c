@@ -447,6 +447,7 @@ free_all_mem(void)
     free_signs();
 # endif
 # ifdef FEAT_EVAL
+    free_eval_regcomp_cache();
     set_expr_line(NULL, NULL);
 # endif
 # ifdef FEAT_DIFF
@@ -473,6 +474,10 @@ free_all_mem(void)
 
 # ifdef FEAT_QUICKFIX
     free_quickfix();
+# endif
+
+# ifdef FEAT_IMAGE_SIXEL
+    sixel_free_all();
 # endif
 
     // Close all script inputs.
@@ -746,6 +751,8 @@ ga_grow_inner(garray_T *gap, int n)
     if (n < gap->ga_len / 2)
 	n = gap->ga_len / 2;
 
+    if (n > 0 && (size_t)(gap->ga_len + n) > SIZE_MAX / gap->ga_itemsize)
+	return FAIL;
     new_len = (size_t)gap->ga_itemsize * (gap->ga_len + n);
     pp = vim_realloc(gap->ga_data, new_len);
     if (pp == NULL)

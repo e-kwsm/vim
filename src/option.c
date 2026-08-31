@@ -56,7 +56,7 @@ static int find_key_option(char_u *arg_arg, int has_lt);
 static void showoptions(int all, int opt_flags);
 static int optval_default(struct vimoption *, char_u *varp, int compatible);
 static void showoneopt(struct vimoption *, int opt_flags);
-static int put_setstring(FILE *fd, char *cmd, char *name, char_u **valuep, long_u flags);
+static int put_setstring(FILE *fd, bool legacy, char *cmd, char *name, char_u **valuep, long_u flags);
 static int put_setnum(FILE *fd, char *cmd, char *name, long *valuep);
 static int put_setbool(FILE *fd, char *cmd, char *name, int value);
 static int istermoption(struct vimoption *p);
@@ -323,7 +323,7 @@ set_init_default_printencoding(void)
 #endif
 }
 
-#ifdef FEAT_POSTSCRIPT
+#if defined(FEAT_POSTSCRIPT) || defined(FEAT_PRINT_PANGO)
 /*
  * Initialize the 'printexpr' option to a default value.
  */
@@ -494,6 +494,64 @@ set_init_expand_env(void)
     }
 }
 
+#if defined(MSWIN) && defined(FEAT_GETTEXT)
+/*
+ * Get the display language of Windows and the languages to fall back on, as a
+ * colon separated list for gettext, e.g. "ja_JP:en_US".  The list stops after
+ * English, untranslated messages are English already.
+ * Returns NULL when it cannot be obtained.  The result must be freed.
+ */
+    static char_u *
+get_ui_langs(void)
+{
+    ULONG	num_languages = 0;
+    ULONG	bufsize = 0;
+    WCHAR	*buffer;
+    char_u	*langs = NULL;
+
+    if (!GetUserPreferredUILanguages(MUI_LANGUAGE_NAME, &num_languages, NULL,
+								    &bufsize)
+	    || bufsize == 0)
+	return NULL;
+
+    buffer = ALLOC_MULT(WCHAR, bufsize);
+    if (buffer == NULL)
+	return NULL;
+
+    if (GetUserPreferredUILanguages(MUI_LANGUAGE_NAME, &num_languages, buffer,
+								    &bufsize))
+    {
+	// The list is NUL separated, the result needs the same room.
+	langs = alloc(bufsize);
+	if (langs != NULL)
+	{
+	    char_u	*d = langs;
+	    WCHAR	*s = buffer;
+
+	    while (*s != L'\0')
+	    {
+		bool	english = s[0] == L'e' && s[1] == L'n'
+					&& (s[2] == L'\0' || s[2] == L'-');
+
+		if (d > langs)
+		    *d++ = ':';
+		// Locale names are ASCII, "en-US" becomes "en_US".
+		for ( ; *s != L'\0'; ++s)
+		    *d++ = *s == L'-' ? '_' : (char_u)*s;
+		++s;
+
+		if (english)
+		    break;
+	    }
+	    *d = NUL;
+	}
+    }
+    vim_free(buffer);
+
+    return langs;
+}
+#endif
+
 /*
  * Initialize the 'LANG' environment variable to a default value.
  */
@@ -501,32 +559,27 @@ set_init_expand_env(void)
 set_init_lang_env(void)
 {
 #if defined(MSWIN) && defined(FEAT_GETTEXT)
-    // If $LANG isn't set, try to get a good value for it.  This makes the
-    // right language be used automatically.  Don't do this for English.
-    if (mch_getenv((char_u *)"LANG") == NULL)
+    // If the language isn't set in the environment, use the display language
+    // of Windows.  Not the regional format, which is what the CRT would use
+    // for setlocale(LC_ALL, "").
+    if (mch_getenv((char_u *)"LANG") == NULL
+	    && mch_getenv((char_u *)"LANGUAGE") == NULL
+	    && mch_getenv((char_u *)"LC_ALL") == NULL
+	    && mch_getenv((char_u *)"LC_MESSAGES") == NULL)
     {
-	char	buf[20];
-	long_u	n;
+	char_u	*langs = get_ui_langs();
 
-	// Could use LOCALE_SISO639LANGNAME, but it's not in Win95.
-	// LOCALE_SABBREVLANGNAME gives us three letters, like "enu", we use
-	// only the first two.
-	n = GetLocaleInfo(LOCALE_USER_DEFAULT, LOCALE_SABBREVLANGNAME,
-							     (LPTSTR)buf, 20);
-	if (n >= 2 && STRNICMP(buf, "en", 2) != 0)
+	if (langs != NULL && *langs != NUL)
 	{
-	    // There are a few exceptions (probably more)
-	    if (STRNICMP(buf, "cht", 3) == 0 || STRNICMP(buf, "zht", 3) == 0)
-		STRCPY(buf, "zh_TW");
-	    else if (STRNICMP(buf, "chs", 3) == 0
-					      || STRNICMP(buf, "zhc", 3) == 0)
-		STRCPY(buf, "zh_CN");
-	    else if (STRNICMP(buf, "jp", 2) == 0)
-		STRCPY(buf, "ja");
-	    else
-		buf[2] = NUL;		// truncate to two-letter code
-	    vim_setenv((char_u *)"LANG", (char_u *)buf);
+	    char_u	*colon = vim_strchr(langs, ':');
+
+	    // $LANGUAGE is the list gettext picks from, $LANG the language.
+	    vim_setenv((char_u *)"LANGUAGE", langs);
+	    if (colon != NULL)
+		*colon = NUL;
+	    vim_setenv((char_u *)"LANG", langs);
 	}
+	vim_free(langs);
     }
 #elif defined(MACOS_CONVERT)
     // Moved to os_mac_conv.c to avoid dependency problems.
@@ -671,7 +724,7 @@ set_init_1(int clean_arg)
     set_init_default_maxmemtot();
     set_init_default_cdpath();
     set_init_default_printencoding();
-#ifdef FEAT_POSTSCRIPT
+#if defined(FEAT_POSTSCRIPT) || defined(FEAT_PRINT_PANGO)
     set_init_default_printexpr();
 #endif
 
@@ -696,7 +749,7 @@ set_init_1(int clean_arg)
 	set_option_value_give_err((char_u *)"bg", 0L, (char_u *)"dark", 0);
 #endif
 
-    curbuf->b_p_initialized = TRUE;
+    curbuf->b_p_initialized = true;
     curbuf->b_p_ac = -1;
     curbuf->b_p_ar = -1;	// no local 'autoread' value
 #ifdef HAVE_FSYNC
@@ -804,8 +857,9 @@ set_option_default(
 		long def_val = (long)(long_i)options[opt_idx].def_val[dvi];
 
 		if ((long *)varp == &curwin->w_p_so
-			|| (long *)varp == &curwin->w_p_siso)
-		    // 'scrolloff' and 'sidescrolloff' local values have a
+			|| (long *)varp == &curwin->w_p_siso
+			|| (long *)varp == &curwin->w_p_sop)
+		    // 'scrolloff', 'sidescrolloff', and 'scrolloffpad' local values have a
 		    // different default value than the global default.
 		    *(long *)varp = -1;
 		else
@@ -1543,13 +1597,57 @@ get_opt_op(char_u *arg)
     return op;
 }
 
+// Options that are allowed in a modeline when 'modelinestrict' is on.
+static char *modeline_whitelist[] =
+{
+    "autoindent",
+    "cindent",
+    "commentstring",
+    "expandtab",
+    "filetype",
+    "foldcolumn",
+    "foldenable",
+    "foldmarker",
+    "foldmethod",
+    "modifiable",
+    "readonly",
+    "rightleft",
+    "shiftwidth",
+    "smartindent",
+    "softtabstop",
+    "spell",
+    "spelllang",
+    "tabstop",
+    "textwidth",
+    "varsofttabstop",
+    "vartabstop",
+    NULL
+};
+
+/*
+ * Return TRUE if option "name" is in the modeline whitelist.
+ */
+    static bool
+is_modeline_whitelisted(char *name)
+{
+    for (int i = 0; modeline_whitelist[i] != NULL; i++)
+	if (STRCMP(name, modeline_whitelist[i]) == 0)
+	    return true;
+    return false;
+}
+
 /*
  * Validate whether the value of the option in "opt_idx" can be changed.
  * Returns FAIL if the option can be skipped or cannot be changed. Returns OK
  * if it can be changed.
  */
     static int
-validate_opt_idx(int opt_idx, int opt_flags, long_u flags, char **errmsg)
+validate_opt_idx(
+	int opt_idx,
+	int opt_flags,
+	long_u flags,
+	char **errmsg,
+	set_prefix_T prefix)
 {
     // Skip all options that are not window-local (used when showing
     // an already loaded buffer in a window).
@@ -1574,6 +1672,16 @@ validate_opt_idx(int opt_idx, int opt_flags, long_u flags, char **errmsg)
 	{
 	    *errmsg = e_not_allowed_in_modeline_when_modelineexpr_is_off;
 	    return FAIL;
+	}
+	// When 'modelinestrict' is on, only whitelisted options may be
+	// set from a modeline.  Silently skip others.
+	if (p_mlstr && opt_idx >= 0)
+	{
+	    // special case: allow disabling modeline
+	    if (options[opt_idx].indir == PV_ML && prefix == PREFIX_NO)
+		return OK;
+	    else if (!is_modeline_whitelisted(options[opt_idx].fullname))
+		return FAIL;
 	}
 #ifdef FEAT_DIFF
 	// In diff mode some options are overruled.  This avoids that
@@ -2538,8 +2646,9 @@ do_set_option_numeric(
 	    value = NO_LOCAL_UNDOLEVEL;
 	else if (opt_flags == OPT_LOCAL
 		    && ((long *)varp == &curwin->w_p_siso
-		     || (long *)varp == &curwin->w_p_so))
-	    // for 'scrolloff'/'sidescrolloff' -1 means using the global value
+		     || (long *)varp == &curwin->w_p_so
+		     || (long *)varp == &curwin->w_p_sop))
+	    // for 'scrolloff'/'sidescrolloff'/'scrolloffpad' -1 means using the global value
 	    value = -1;
 	else
 	    value = *(long *)get_varp_scope(&(options[opt_idx]), OPT_GLOBAL);
@@ -2580,6 +2689,12 @@ do_set_option_numeric(
 	value = *(long *)varp * value;
     else if (op == OP_REMOVING)
 	value = *(long *)varp - value;
+
+    if ((long *)varp == &curwin->w_p_sop && value < -1)
+    {
+	errmsg = e_invalid_argument;
+	goto skip;
+    }
 
     errmsg = set_num_option(opt_idx, varp, value, errbuf, errbuflen,
 								opt_flags);
@@ -2812,7 +2927,7 @@ do_set_option(
     }
 
     // Make sure the option value can be changed.
-    if (validate_opt_idx(opt_idx, opt_flags, flags, &errmsg) == FAIL)
+    if (validate_opt_idx(opt_idx, opt_flags, flags, &errmsg, prefix) == FAIL)
 	goto skip;
 
     int cp_val = p_cp;
@@ -3213,7 +3328,8 @@ option_expand(int opt_idx, char_u *val)
     char_u ** var = (char_u **)options[opt_idx].var;
     int esc = var == &p_tags || var == &p_path;
 
-    expand_env_esc(val, NameBuff, MAXPATHL, esc, FALSE,
+    expand_env_esc(val, NameBuff, MAXPATHL,
+	    esc ? (char_u *)" \t" : NULL, FALSE,
 #ifdef FEAT_SPELL
 	    var == &p_sps ? (char_u *)"file:" :
 #endif
@@ -3373,6 +3489,9 @@ insecure_flag(win_T *wp, int opt_idx, int opt_flags)
 #  ifdef FEAT_FIND_ID
 	    case PV_INEX:	return &wp->w_buffer->b_p_inex_flags;
 #  endif
+#  ifdef FEAT_COMPL_FUNC
+	    case PV_CPT:	return &wp->w_buffer->b_p_cpt_flags;
+#  endif
 # endif
 	}
     else
@@ -3435,6 +3554,14 @@ set_option_sctx_idx(int opt_idx, int opt_flags, sctx_T script_ctx)
     if (!(opt_flags & OPT_MODELINE))
 	new_script_ctx.sc_lnum += SOURCING_LNUM;
 
+    // ":legacy" and ":vim9cmd" change the execution context of an option.
+    if (cmdmod.cmod_flags & CMOD_VIM9CMD)
+	new_script_ctx.sc_version = SCRIPT_VERSION_VIM9;
+    if (cmdmod.cmod_flags & CMOD_LEGACY)
+	// It is a bit confusing, but "MAX" is actually the legacy Vim script
+	// version before Vim9.
+	new_script_ctx.sc_version = SCRIPT_VERSION_MAX;
+
     // Remember where the option was set.  For local options need to do that
     // in the buffer or window structure.
     if (both || (opt_flags & OPT_GLOBAL) || (indir & (PV_BUF|PV_WIN)) == 0)
@@ -3452,6 +3579,36 @@ set_option_sctx_idx(int opt_idx, int opt_flags, sctx_T script_ctx)
 								new_script_ctx;
 	}
     }
+}
+
+/*
+ * Returns true if an option value will be evaluated as a Vim9 script.
+ * Checks stored script context for the option.  For options that have values in
+ * multiple contexts, opt_flags selects the desired context with OPT_GLOBAL, or
+ * OPT_LOCAL, selecting global or buffer/window context, respectively.
+ */
+    bool
+is_option_value_vim9(int opt_idx, int opt_flags)
+{
+    int		indir = (int)options[opt_idx].indir;
+    sctx_T	*sctx = NULL;
+
+    if ((opt_flags & OPT_GLOBAL) || (indir & (PV_BUF|PV_WIN)) == 0)
+	sctx = &options[opt_idx].script_ctx;
+
+    if ((opt_flags & OPT_LOCAL) || (indir & (PV_BUF|PV_WIN)))
+    {
+	if (indir & PV_BUF)
+	    sctx = &curbuf->b_p_script_ctx[indir & PV_MASK];
+	else if (indir & PV_WIN)
+	    sctx = &curwin->w_p_script_ctx[indir & PV_MASK];
+    }
+
+    // If "sc_sid" is not set, it means the option value was not modified from
+    // the default yet.  As we move towards Vim9 all the default values should
+    // be valid Vim9.
+    return !SCRIPT_ID_VALID(sctx->sc_sid) ||
+	sctx->sc_version >= SCRIPT_VERSION_VIM9;
 }
 
 /*
@@ -4126,7 +4283,7 @@ did_set_modified(optset_T *args)
     if (!args->os_newval.boolean)
 	save_file_ff(curbuf);	// Buffer is unchanged
     redraw_titles();
-    curbuf->b_modified_was_set = args->os_newval.boolean;
+    curbuf->b_modified_was_set = !!args->os_newval.boolean;
     return NULL;
 }
 
@@ -4430,7 +4587,7 @@ did_set_readonly(optset_T *args)
 
     // when 'readonly' is set may give W10 again
     if (curbuf->b_p_ro)
-	curbuf->b_did_warn = FALSE;
+	curbuf->b_did_warn = false;
 
     redraw_titles();
 
@@ -4474,7 +4631,6 @@ did_set_maxsearchcount(optset_T *args UNUSED)
     return errmsg;
 #undef MAX_SEARCH_COUNT
 }
-
 
 #if defined(BACKSLASH_IN_FILENAME)
 /*
@@ -5232,7 +5388,7 @@ set_bool_option(
     if (curwin->w_curswant != MAXCOL
 		     && (options[opt_idx].flags & (P_CURSWANT | P_RALL)) != 0
 				   && (options[opt_idx].flags & P_HLONLY) == 0)
-	curwin->w_set_curswant = TRUE;
+	curwin->w_set_curswant = true;
 
     if ((opt_flags & OPT_NO_REDRAW) == 0)
 	check_redraw(options[opt_idx].flags);
@@ -5358,6 +5514,11 @@ check_num_option_bounds(
 	errmsg = e_argument_must_be_positive;
 	p_so = 0;
     }
+    if (p_sop < 0 && full_screen)
+    {
+	errmsg = e_invalid_argument;
+	p_sop = 0;
+    }
     if (p_siso < 0 && full_screen)
     {
 	errmsg = e_argument_must_be_positive;
@@ -5467,7 +5628,7 @@ set_num_option(
     if (curwin->w_curswant != MAXCOL
 		     && (options[opt_idx].flags & (P_CURSWANT | P_RALL)) != 0
 				   && (options[opt_idx].flags & P_HLONLY) == 0)
-	curwin->w_set_curswant = TRUE;
+	curwin->w_set_curswant = true;
 
     if ((opt_flags & OPT_NO_REDRAW) == 0)
 	check_redraw(options[opt_idx].flags);
@@ -5520,9 +5681,19 @@ findoption(char_u *arg)
     // letter.  There are 26 letters, plus the first "t_" option.
     if (quick_tab[1] == 0)
     {
+	// Make sure we do not leave any entries uninitialized, even if we have
+	// no options that start with a particular letter.
+	int last_opt_idx;
+	for (last_opt_idx = 0; options[last_opt_idx].fullname != NULL;
+		last_opt_idx++)
+	    ;
+	for (int tab_idx = 1; tab_idx < 27; tab_idx++)
+	    quick_tab[tab_idx] = last_opt_idx;
+
 	p = options[0].fullname;
-	for (opt_idx = 1; (s = options[opt_idx].fullname) != NULL; opt_idx++)
+	for (opt_idx = 1; opt_idx < last_opt_idx; opt_idx++)
 	{
+	    s = options[opt_idx].fullname;
 	    if (s[0] != p[0])
 	    {
 		if (s[0] == 't' && s[1] == '_')
@@ -6422,6 +6593,19 @@ makeset(FILE *fd, int opt_flags, int local_only)
 		else    // P_STRING
 		{
 		    int		do_endif = FALSE;
+		    bool	legacy;
+
+#ifdef FEAT_EVAL
+		    legacy = !is_option_value_vim9(p - &options[0],
+			    round == 1 ? opt_flags | OPT_GLOBAL : OPT_LOCAL);
+#else
+		    // I think none of the options that require expression
+		    // evaluation will be present if expression evaluation is
+		    // disabled.  For example, 'includeexpr' is set to NULL if
+		    // FEAT_EVAL is not present.  So it should be safe to use
+		    // normal "set" and "setlocal" in the session file.
+		    legacy = false;
+#endif
 
 		    // Don't set 'syntax' and 'filetype' again if the value is
 		    // already right, avoids reloading the syntax file.
@@ -6437,8 +6621,8 @@ makeset(FILE *fd, int opt_flags, int local_only)
 			    return FAIL;
 			do_endif = TRUE;
 		    }
-		    if (put_setstring(fd, cmd, p->fullname, (char_u **)varp,
-							     p->flags) == FAIL)
+		    if (put_setstring(fd, legacy, cmd, p->fullname,
+					    (char_u **)varp, p->flags) == FAIL)
 			return FAIL;
 		    if (do_endif)
 		    {
@@ -6460,14 +6644,23 @@ makeset(FILE *fd, int opt_flags, int local_only)
     int
 makefoldset(FILE *fd)
 {
-    if (put_setstring(fd, "setlocal", "fdm", &curwin->w_p_fdm, 0) == FAIL
 # ifdef FEAT_EVAL
-	    || put_setstring(fd, "setlocal", "fde", &curwin->w_p_fde, 0)
-								       == FAIL
+    sctx_T	*fde_script_ctx = &curwin->w_p_script_ctx[WV_FDE];
+    // Similarly to the check in is_option_value_vim9(), if "sc_id" is not set
+    // we have a default value, so it is safe to avoid the ":legacy" prefix.
+    bool	fde_is_legacy = SCRIPT_ID_VALID(fde_script_ctx->sc_sid)
+			&& fde_script_ctx->sc_version < SCRIPT_VERSION_VIM9;
 # endif
-	    || put_setstring(fd, "setlocal", "fmr", &curwin->w_p_fmr, 0)
+
+    if (put_setstring(fd, false, "setlocal", "fdm", &curwin->w_p_fdm, 0)
 								       == FAIL
-	    || put_setstring(fd, "setlocal", "fdi", &curwin->w_p_fdi, 0)
+# ifdef FEAT_EVAL
+	    || put_setstring(fd, fde_is_legacy, "setlocal", "fde",
+						  &curwin->w_p_fde, 0) == FAIL
+# endif
+	    || put_setstring(fd, false, "setlocal", "fmr", &curwin->w_p_fmr, 0)
+								       == FAIL
+	    || put_setstring(fd, false, "setlocal", "fdi", &curwin->w_p_fdi, 0)
 								       == FAIL
 	    || put_setnum(fd, "setlocal", "fdl", &curwin->w_p_fdl) == FAIL
 	    || put_setnum(fd, "setlocal", "fml", &curwin->w_p_fml) == FAIL
@@ -6483,6 +6676,7 @@ makefoldset(FILE *fd)
     static int
 put_setstring(
     FILE	*fd,
+    bool	legacy,
     char	*cmd,
     char	*name,
     char_u	**valuep,
@@ -6493,6 +6687,8 @@ put_setstring(
     char_u	*part = NULL;
     char_u	*p;
 
+    if (legacy && fprintf(fd, "legacy ") < 0)
+	return FAIL;
     if (fprintf(fd, "%s %s=", cmd, name) < 0)
 	return FAIL;
     if (*valuep != NULL)
@@ -6535,6 +6731,8 @@ put_setstring(
 		p = buf;
 		while (*p != NUL)
 		{
+		    if (legacy && fprintf(fd, "legacy ") < 0)
+			return FAIL;
 		    // for each comma separated option part, append value to
 		    // the option, :set rtp+=value
 		    if (fprintf(fd, "%s %s+=", cmd, name) < 0)
@@ -6775,6 +6973,9 @@ unset_global_local_option(char_u *name, void *from)
 	case PV_SO:
 	    curwin->w_p_so = -1;
 	    break;
+	case PV_SOP:
+	    curwin->w_p_sop = -1;
+	    break;
 # ifdef FEAT_FIND_ID
 	case PV_DEF:
 	    clear_string_option(&buf->b_p_def);
@@ -6916,6 +7117,7 @@ get_varp_scope(struct vimoption *p, int scope)
 	    case PV_TC:   return (char_u *)&(curbuf->b_p_tc);
 	    case PV_SISO: return (char_u *)&(curwin->w_p_siso);
 	    case PV_SO:   return (char_u *)&(curwin->w_p_so);
+	    case PV_SOP:  return (char_u *)&(curwin->w_p_sop);
 #ifdef FEAT_FIND_ID
 	    case PV_DEF:  return (char_u *)&(curbuf->b_p_def);
 	    case PV_INC:  return (char_u *)&(curbuf->b_p_inc);
@@ -7001,6 +7203,8 @@ get_varp(struct vimoption *p)
 				    ? (char_u *)&(curwin->w_p_siso) : p->var;
 	case PV_SO:	return curwin->w_p_so >= 0
 				    ? (char_u *)&(curwin->w_p_so) : p->var;
+	case PV_SOP:	return curwin->w_p_sop != -1
+				    ? (char_u *)&(curwin->w_p_sop) : p->var;
 #ifdef FEAT_FIND_ID
 	case PV_DEF:	return *curbuf->b_p_def != NUL
 				    ? (char_u *)&(curbuf->b_p_def) : p->var;
@@ -7402,6 +7606,7 @@ copy_winopt(winopt_T *from, winopt_T *to)
     to->wo_crb_save = from->wo_crb_save;
     to->wo_siso = from->wo_siso;
     to->wo_so = from->wo_so;
+    to->wo_sop = from->wo_sop;
 #ifdef FEAT_SPELL
     to->wo_spell = from->wo_spell;
 #endif
@@ -7584,6 +7789,8 @@ clear_winopt(winopt_T *wop UNUSED)
 // Index into the options table for a buffer-local option enum.
 static int buf_opt_idx[BV_COUNT];
 # define COPY_OPT_SCTX(buf, bv) buf->b_p_script_ctx[bv] = options[buf_opt_idx[bv]].script_ctx
+# define COPY_OPT_INSECURE(flagsfield, bv) \
+	(flagsfield) = (options[buf_opt_idx[bv]].flags & P_INSECURE)
 
 /*
  * Initialize buf_opt_idx[] if not done already.
@@ -7603,6 +7810,7 @@ init_buf_opt_idx(void)
 }
 #else
 # define COPY_OPT_SCTX(buf, bv)
+# define COPY_OPT_INSECURE(flagsfield, bv)
 #endif
 
 /*
@@ -7725,6 +7933,7 @@ buf_copy_options(buf_T *buf, int flags)
 	    buf->b_p_cpt = vim_strsave(p_cpt);
 	    COPY_OPT_SCTX(buf, BV_CPT);
 #ifdef FEAT_COMPL_FUNC
+	    COPY_OPT_INSECURE(buf->b_p_cpt_flags, BV_CPT);
 	    set_buflocal_cpt_callbacks(buf);
 #endif
 #ifdef BACKSLASH_IN_FILENAME
@@ -7818,6 +8027,7 @@ buf_copy_options(buf_T *buf, int flags)
 #if defined(FEAT_EVAL)
 	    buf->b_p_inde = vim_strsave(p_inde);
 	    COPY_OPT_SCTX(buf, BV_INDE);
+	    COPY_OPT_INSECURE(buf->b_p_inde_flags, BV_INDE);
 	    buf->b_p_indk = vim_strsave(p_indk);
 	    COPY_OPT_SCTX(buf, BV_INDK);
 #endif
@@ -7825,6 +8035,7 @@ buf_copy_options(buf_T *buf, int flags)
 #if defined(FEAT_EVAL)
 	    buf->b_p_fex = vim_strsave(p_fex);
 	    COPY_OPT_SCTX(buf, BV_FEX);
+	    COPY_OPT_INSECURE(buf->b_p_fex_flags, BV_FEX);
 #endif
 #ifdef FEAT_CRYPT
 	    buf->b_p_key = vim_strsave(p_key);
@@ -7879,6 +8090,7 @@ buf_copy_options(buf_T *buf, int flags)
 # ifdef FEAT_EVAL
 	    buf->b_p_inex = vim_strsave(p_inex);
 	    COPY_OPT_SCTX(buf, BV_INEX);
+	    COPY_OPT_INSECURE(buf->b_p_inex_flags, BV_INEX);
 # endif
 #endif
 	    buf->b_p_cot = empty_option;
@@ -7935,7 +8147,7 @@ buf_copy_options(buf_T *buf, int flags)
 		else
 		    buf->b_p_vts_array = NULL;
 #endif
-		buf->b_help = FALSE;
+		buf->b_help = false;
 		if (buf->b_p_bt[0] == 'h')
 		    clear_string_option(&buf->b_p_bt);
 		buf->b_p_ma = p_ma;
@@ -7946,7 +8158,7 @@ buf_copy_options(buf_T *buf, int flags)
 	// When the options should be copied (ignoring BCO_ALWAYS), set the
 	// flag that indicates that the options have been initialized.
 	if (should_copy)
-	    buf->b_p_initialized = TRUE;
+	    buf->b_p_initialized = true;
     }
 
     check_buf_options(buf);	    // make sure we don't have NULLs
@@ -9027,6 +9239,16 @@ can_bs(
 get_scrolloff_value(void)
 {
     return curwin->w_p_so < 0 ? p_so : curwin->w_p_so;
+}
+
+/*
+ * Return the effective 'scrolloffpad' value for the current window, using the
+ * global value when appropriate.
+ */
+    long
+get_scrolloffpad_value(void)
+{
+    return curwin->w_p_sop == -1 ? p_sop : curwin->w_p_sop;
 }
 
 /*

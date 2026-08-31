@@ -3,6 +3,7 @@
 
 CheckFeature textprop
 
+source util/view_util.vim
 source util/screendump.vim
 import './util/vim9.vim' as v9
 
@@ -3228,6 +3229,27 @@ func Test_prop_with_text_above_below_empty()
   call StopVimInTerminal(buf)
 endfunc
 
+func Test_prop_with_text_below_empty_truncated()
+  " Use a fixed size, the virtual text must be wider than the text area.
+  call NewWindow(12, 40)
+  setlocal number
+  call setline(1, ['11111', '', '33333', '', '55555'])
+
+  call prop_type_add('belowprop', #{highlight: 'Directory'})
+  for ln in range(1, 5)
+    call prop_add(ln, 0, #{type: 'belowprop',
+	  \ text: repeat('+', winwidth(0)), text_align: 'below'})
+  endfor
+  normal! G
+  redraw
+
+  " Every line takes two screen lines: the line and the virtual text below it.
+  call assert_equal(9, winline())
+
+  call prop_type_delete('belowprop')
+  bwipe!
+endfunc
+
 func Test_prop_multiple_lines_above()
   CheckScreendump
   CheckRunVimInTerminal
@@ -3565,11 +3587,61 @@ func Test_props_with_text_after_nowrap()
   let buf = RunVimInTerminal('-S XscriptPropsAfterNowrap', #{rows: 12, cols: 60})
   call VerifyScreenDump(buf, 'Test_prop_with_text_after_nowrap_1', {})
 
-  call term_sendkeys(buf, ":set signcolumn=yes foldcolumn=3 cursorline\<CR>")
+  call term_sendkeys(buf, ":set signcolumn=yes foldcolumn=3 cursorline\<CR>\<C-L>")
   call VerifyScreenDump(buf, 'Test_prop_with_text_after_nowrap_2', {})
 
   call term_sendkeys(buf, "j")
   call VerifyScreenDump(buf, 'Test_prop_with_text_after_nowrap_3', {})
+
+  call StopVimInTerminal(buf)
+endfunc
+
+func Test_props_with_text_after_wide_char_at_end()
+  CheckScreendump
+  CheckRunVimInTerminal
+
+  " The buffer line ends with a double-width character exactly at the window
+  " width and has wrapping "after" virtual text.  This must not leave blank
+  " lines or "@@@", see issue #20384.
+  let lines =<< trim END
+      vim9script
+      set nowrap
+      setline(1, [repeat('x', 43) .. '口', 'second line', 'third line'])
+      prop_type_add('errtype', {highlight: 'WarningMsg', text_wrap: 'wrap'})
+      prop_add(1, 0, {type: 'errtype', text_padding_left: 3, text: 'E>'})
+  END
+  call writefile(lines, 'XscriptPropsAfterWideChar', 'D')
+  let buf = RunVimInTerminal('-S XscriptPropsAfterWideChar', #{rows: 8, cols: 45})
+  call VerifyScreenDump(buf, 'Test_prop_with_text_after_wide_char_1', {})
+
+  call StopVimInTerminal(buf)
+endfunc
+
+func Test_props_with_text_after_wide_char_overflow()
+  CheckScreendump
+  CheckRunVimInTerminal
+
+  " Like above, but the last character reaches the rightmost column without
+  " starting on it: a double-width character that does not fit in the last
+  " column, and a <Tab> that expands up to the window width.  Both must be
+  " detected as filling the line so the wrapping "after" text does not cause
+  " blank lines, "@@@" or a spurious wrap with 'nowrap'.
+  let lines =<< trim END
+      vim9script
+      set nowrap tabstop=8 noexpandtab
+      setline(1, [
+          repeat('x', 39) .. '口',
+          'between line',
+          repeat('x', 32) .. "\t",
+          'last line',
+      ])
+      prop_type_add('errtype', {highlight: 'WarningMsg', text_wrap: 'wrap'})
+      prop_add(1, 0, {type: 'errtype', text_padding_left: 3, text: 'E>'})
+      prop_add(3, 0, {type: 'errtype', text_padding_left: 3, text: 'E>'})
+  END
+  call writefile(lines, 'XscriptPropsAfterWideOverflow', 'D')
+  let buf = RunVimInTerminal('-S XscriptPropsAfterWideOverflow', #{rows: 8, cols: 40})
+  call VerifyScreenDump(buf, 'Test_prop_with_text_after_wide_char_2', {})
 
   call StopVimInTerminal(buf)
 endfunc
@@ -3729,6 +3801,48 @@ func Test_prop_above_with_indent()
 
   bwipe!
   call prop_type_delete('indented')
+endfunc
+
+" A Tab in the line is not affected by virtual text above it.
+func Test_prop_above_with_tab()
+  " Use a width that is not a multiple of 'tabstop', otherwise counting the
+  " virtual text for the size of a Tab happens to give the right result.
+  call NewWindow(10, 45)
+  setlocal tabstop=8
+  call setline(1, ["\tX"])
+  call prop_type_add('above', #{highlight: 'Search'})
+
+  " Get the column of the "X" without and with the virtual text.
+  redraw
+  let col_without = 0
+  for col in range(1, winwidth(0))
+    if screenstring(1, col) == 'X'
+      let col_without = col
+      break
+    endif
+  endfor
+  call assert_equal(9, col_without)
+
+  call prop_add(1, 0, #{type: 'above', text: 'text above', text_align: 'above'})
+  redraw
+  let col_with = 0
+  for col in range(1, winwidth(0))
+    if screenstring(2, col) == 'X'
+      let col_with = col
+      break
+    endif
+  endfor
+  call assert_equal(col_without, col_with)
+
+  " The cursor is placed on the character, also with a second Tab.
+  call setline(1, ["\t\tX"])
+  redraw
+  normal! 0fX
+  call assert_equal('X', screenstring(winline(), wincol()))
+
+  only!
+  bwipe!
+  call prop_type_delete('above')
 endfunc
 
 func Test_prop_above_with_number()
@@ -3975,15 +4089,15 @@ func Test_removed_prop_with_text_cleans_up_array()
   call setline(1, 'some text here')
   call prop_type_add('some', #{highlight: 'ErrorMsg'})
   let id1 = prop_add(1, 5, #{type: 'some', text: "SOME"})
-  call assert_equal(-1, id1)
+  call assert_true(id1 < 0)
   let id2 = prop_add(1, 10, #{type: 'some', text: "HERE"})
-  call assert_equal(-2, id2)
+  call assert_true(id2 < id1)
 
-  " removing the props resets the index
+  " IDs are not recycled after removal; new IDs keep decreasing.
   call prop_remove(#{id: id1})
   call prop_remove(#{id: id2})
-  let id1 = prop_add(1, 5, #{type: 'some', text: "SOME"})
-  call assert_equal(-1, id1)
+  let id3 = prop_add(1, 5, #{type: 'some', text: "SOME"})
+  call assert_true(id3 < id2)
 
   call prop_type_delete('some')
   bwipe!
@@ -4672,7 +4786,7 @@ func Test_error_when_using_negative_id()
 
   " Negative id is always rejected.  Before the fix, prop_add() with a negative
   " id succeeded when no virtual text existed, then prop_list() would dereference
-  " a NULL pointer (b_textprop_text.ga_data) and crash.
+  " a NULL pointer and crash.
   call assert_fails("call prop_add(1, 1, #{type: 'test1', length: 1, id: -1})", 'E1293:')
   call assert_equal([], prop_list(1))
 
@@ -4905,6 +5019,93 @@ func Test_textprop_materialize_list()
 	call assert_equal([], prop_list(1, #{ids: ids}))
 
 	call assert_equal([], prop_list(1, #{ids: 3->range()}))
+endfunc
+
+func Test_prop_find_floating_vtext()
+  new
+  call setline(1, ['111', '222', '333'])
+  let tn = 'test'
+  call prop_type_add(tn, {'highlight': 'Search'})
+  for ln in range(1, 3)
+    call prop_add(ln, 0, {'type': tn, 'text': '-----', 'text_align': 'above'})
+  endfor
+  " forward search must find the virtual text on the starting line
+  let found = prop_find({'type': tn, 'lnum': 1, 'col': 1})
+  call assert_equal(1, found.lnum)
+  call assert_equal('-----', found.text)
+  " backward search must also find the virtual text on the starting line
+  let found = prop_find({'type': tn, 'lnum': 1, 'col': 1}, 'b')
+  call assert_equal(1, found.lnum)
+  call assert_equal('-----', found.text)
+  bwipe!
+  call prop_type_delete(tn)
+  " Also cover 'below' and 'right' aligned virtual text (also tp_col==MAXCOL)
+  for align in ['below', 'right']
+    new
+    call setline(1, ['aaa', 'bbb'])
+    call prop_type_add(tn, {'highlight': 'Search'})
+    call prop_add(1, 0, {'type': tn, 'text': 'VT', 'text_align': align})
+    let found = prop_find({'type': tn, 'lnum': 1, 'col': 1})
+    call assert_equal(1, found.lnum, 'forward, align=' .. align)
+    call assert_equal('VT', found.text, 'forward, align=' .. align)
+    let found = prop_find({'type': tn, 'lnum': 1, 'col': 1}, 'b')
+    call assert_equal(1, found.lnum, 'backward, align=' .. align)
+    call assert_equal('VT', found.text, 'backward, align=' .. align)
+    bwipe!
+    call prop_type_delete(tn)
+  endfor
+endfunc
+
+func Test_textprop_below_truncated_with_ellipsis()
+  enew!
+  set ff=unix
+
+  let visible_width = 20
+  call NewWindow(5, visible_width)
+
+  call setline(1, ['foo'])
+
+  call prop_type_add('virtual_text_prop', #{highlight: 'ErrorMsg', bufnr: bufnr()})
+
+  let virtual_text = 'some long virtual text'
+  call prop_add(1, 0, #{
+    \ type: 'virtual_text_prop',
+    \ text: virtual_text,
+    \ text_align: 'below',
+    \})
+
+  " virtual text should be trimmed with '…':
+  let expected_lines = [
+    \'foo                 ',
+    \'some long virtual t…',
+    \'~                   ',
+  \]
+  let actual_lines = ScreenLines([1, expected_lines->len()], visible_width)
+  call assert_equal(expected_lines, actual_lines)
+
+  call prop_clear(1)
+  call prop_type_delete('virtual_text_prop', #{bufnr: bufnr()})
+  only!
+  enew!
+  set ff&
+endfunc
+
+" Adding more than 65535 text properties to one line must be rejected instead
+" of wrapping the uint16_t property count and overflowing the allocation.
+func Test_prop_add_over_uint16_max()
+  CheckNotAsan
+  CheckNotValgrind
+  new
+  call setline(1, 'x')
+  call prop_type_add('overflow', {})
+  for _ in range(0xffff)
+    call prop_add(1, 1, {'type': 'overflow', 'length': 0})
+  endfor
+  call assert_equal(0xffff, prop_list(1)->len())
+  call assert_fails("call prop_add(1, 1, {'type': 'overflow', 'length': 0})", 'E1580:')
+  call assert_equal(0xffff, prop_list(1)->len())
+  call prop_type_delete('overflow')
+  bwipe!
 endfunc
 
 " vim: shiftwidth=2 sts=2 expandtab

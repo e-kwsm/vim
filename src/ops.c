@@ -1719,7 +1719,7 @@ op_insert(oparg_T *oap, long count1)
 	if (oap->block_mode && curwin->w_cursor.coladd == 0)
 	{
 	    // Move the cursor to the character right of the block.
-	    curwin->w_set_curswant = TRUE;
+	    curwin->w_set_curswant = true;
 	    while (*ml_get_cursor() != NUL
 		    && (curwin->w_cursor.col < bd.textcol + bd.textlen))
 		++curwin->w_cursor.col;
@@ -2172,10 +2172,6 @@ do_join(
     int		remove_comments = (use_formatoptions == TRUE)
 				  && has_format_option(FO_REMOVE_COMS);
     int		prev_was_comment;
-#ifdef FEAT_PROP_POPUP
-    int		propcount = 0;	// number of props over all joined lines
-    int		props_remaining;
-#endif
 
     if (save_undo && u_save((linenr_T)(curwin->w_cursor.lnum - 1),
 			    (linenr_T)(curwin->w_cursor.lnum + count)) == FAIL)
@@ -2205,10 +2201,6 @@ do_join(
     for (t = 0; t < count; ++t)
     {
 	curr = curr_start = ml_get((linenr_T)(curwin->w_cursor.lnum + t));
-#ifdef FEAT_PROP_POPUP
-	propcount += count_props((linenr_T) (curwin->w_cursor.lnum + t),
-							t > 0, t + 1 == count);
-#endif
 	if (t == 0 && setmark && (cmdmod.cmod_flags & CMOD_LOCKMARKS) == 0)
 	{
 	    // Set the '[ mark.
@@ -2295,9 +2287,6 @@ do_join(
 
     // allocate the space for the new line
     newp_len = sumsize + 1;
-#ifdef FEAT_PROP_POPUP
-    newp_len += propcount * sizeof(textprop_T);
-#endif
     newp = alloc(newp_len);
     if (newp == NULL)
     {
@@ -2316,8 +2305,15 @@ do_join(
      * should not really be a problem.
      */
 #ifdef FEAT_PROP_POPUP
-    props_remaining = propcount;
+    unpacked_memline_T um = um_open_at_no_props(
+				curwin->w_buffer, curwin->w_cursor.lnum, 0);
+    // um_open_at_no_props may have invalidated "curr".
+    int curr_off = (int)(curr - curr_start);
+
+    curr = curr_start = ml_get((linenr_T)(curwin->w_cursor.lnum + count - 1));
+    curr += curr_off;
 #endif
+
     for (t = count - 1; ; --t)
     {
 	int spaces_removed;
@@ -2338,9 +2334,8 @@ do_join(
 	mark_col_adjust(curwin->w_cursor.lnum + t, (colnr_T)0, -t,
 			 (long)(cend - newp - spaces_removed), spaces_removed);
 #ifdef FEAT_PROP_POPUP
-	prepend_joined_props(newp + sumsize + 1, propcount, &props_remaining,
-		curwin->w_cursor.lnum + t, t == count - 1,
-		(long)(cend - newp), spaces_removed);
+	prepend_joined_props(&um, curwin->w_cursor.lnum + t,
+		t == count - 1, (long)(cend - newp), spaces_removed);
 #endif
 	if (t == 0)
 	    break;
@@ -2352,6 +2347,16 @@ do_join(
 	currsize = (int)STRLEN(curr);
     }
 
+#ifdef FEAT_PROP_POPUP
+    if (um.buf != NULL)
+    {
+	um_set_text(&um, newp);
+	um_reverse_props(&um);
+	um_close(&um);
+	newp = NULL;  // um_set_text took ownership
+    }
+    else
+#endif
     ml_replace_len(curwin->w_cursor.lnum, newp, (colnr_T)newp_len, TRUE, FALSE);
 
     if (setmark && (cmdmod.cmod_flags & CMOD_LOCKMARKS) == 0)
@@ -2385,7 +2390,7 @@ do_join(
     check_cursor_col();
 
     curwin->w_cursor.coladd = 0;
-    curwin->w_set_curswant = TRUE;
+    curwin->w_set_curswant = true;
 
 theend:
     vim_free(spaces);
@@ -3268,7 +3273,7 @@ theend:
     if (visual)
 	curwin->w_cursor = save_cursor;
     else if (did_change)
-	curwin->w_set_curswant = TRUE;
+	curwin->w_set_curswant = true;
     else if (virtual_active())
 	curwin->w_cursor.coladd = save_coladd;
 
@@ -4265,7 +4270,7 @@ do_pending_operator(cmdarg_T *cap, int old_col, int gui_yank)
 	    if (l > 1)
 		oap->end.col += l - 1;
 	}
-	curwin->w_set_curswant = TRUE;
+	curwin->w_set_curswant = true;
 
 	// oap->empty is set when start and end are the same.  The inclusive
 	// flag affects this too, unless yanking and the end is on a NUL.

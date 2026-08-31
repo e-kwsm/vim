@@ -383,7 +383,8 @@ transstr(char_u *s)
     if (res == NULL)
 	return NULL;
 
-    *res = NUL;
+    char_u *d = res;
+
     p = s;
     while (*p != NUL)
     {
@@ -391,14 +392,27 @@ transstr(char_u *s)
 	{
 	    c = (*mb_ptr2char)(p);
 	    if (vim_isprintc(c))
-		STRNCAT(res, p, l);	// append printable multi-byte char
+	    {
+		mch_memmove(d, p, (size_t)l);
+		d += l;
+	    }
 	    else
-		transchar_hex(res + STRLEN(res), c);
+	    {
+		transchar_hex(d, c);
+		d += STRLEN(d);
+	    }
 	    p += l;
 	}
 	else
-	    STRCAT(res, transchar_byte(*p++));
+	{
+	    char_u	*trs = transchar_byte(*p++);
+	    size_t	trs_len = STRLEN(trs);
+
+	    mch_memmove(d, trs, trs_len);
+	    d += trs_len;
+	}
     }
+    *d = NUL;
     return res;
 }
 
@@ -921,9 +935,10 @@ win_linetabsize_cts(chartabsize_T *cts, colnr_T len)
 	int head = 0;
 	(void)win_lbr_chartabsize(cts, &head, NULL);
 	vcol += cts->cts_cur_text_width + head;
-	// when properties are above or below the empty line must also be
-	// counted
-	if (cts->cts_ptr == cts->cts_line && cts->cts_prop_lines > 0)
+	// When properties are above the empty line must also be counted.  For
+	// a property below the width already includes filling up the line.
+	if (cts->cts_ptr == cts->cts_line && cts->cts_prop_lines > 0
+							 && !cts->cts_has_below)
 	    ++vcol;
 	cts->cts_vcol = vcol > MAXCOL ? MAXCOL : (int)vcol;
     }
@@ -1140,6 +1155,22 @@ init_chartabsize_arg(
 					cts->cts_text_props[text_prop_idxs[i]];
 			vim_free(text_prop_idxs);
 		    }
+
+		    // Convert tp_text_offset to tp_text pointer.
+		    char_u *count_ptr = prop_start - PROP_COUNT_SIZE;
+
+		    for (i = 0; i < count; ++i)
+		    {
+			textprop_T *tp = &cts->cts_text_props[i];
+
+			if (tp->tp_id < 0 && tp->u.tp_text_offset > 0)
+			{
+			    tp->u.tp_text = count_ptr + tp->u.tp_text_offset;
+			    tp->tp_flags |= TP_FLAG_VTEXT_PTR;
+			}
+			else
+			    tp->u.tp_text = NULL;
+		    }
 		}
 	    }
 	}
@@ -1244,6 +1275,7 @@ win_lbr_chartabsize(
 
 #if defined(FEAT_PROP_POPUP)
     cts->cts_cur_text_width = 0;
+    cts->cts_has_below = false;
     cts->cts_first_char = 0;
 #endif
 
@@ -1269,11 +1301,18 @@ win_lbr_chartabsize(
 
 #if defined(FEAT_LINEBREAK) || defined(FEAT_PROP_POPUP)
     int has_lcs_eol = wp->w_p_list && wp->w_lcs_chars.eol != NUL;
+    // Virtual text above the line is on its own screen line, it does not count
+    // for the size of a Tab.
+    colnr_T tab_vcol = vcol;
+
+# ifdef FEAT_PROP_POPUP
+    tab_vcol -= cts->cts_above_width;
+# endif
 
     /*
      * First get the normal size, without 'linebreak' or text properties
      */
-    size = win_chartabsize(wp, s, vcol);
+    size = win_chartabsize(wp, s, tab_vcol);
 # ifdef FEAT_LINEBREAK
     if (*s == NUL)
     {
@@ -1294,7 +1333,7 @@ win_lbr_chartabsize(
 	int	    charlen = *s == NUL ? 1 : mb_ptr2len(s);
 	int	    i;
 	int	    col = (int)(s - line);
-	garray_T    *gap = &wp->w_buffer->b_textprop_text;
+
 
 	// The "$" for 'list' mode will go between the EOL and
 	// the text prop, account for that.
@@ -1318,9 +1357,9 @@ win_lbr_chartabsize(
 			   && ((tp->tp_flags & TP_FLAG_ALIGN_ABOVE)
 				? col == 0
 				: s[0] == NUL && cts->cts_with_trailing)))
-		    && -tp->tp_id - 1 < gap->ga_len)
+		    && tp->u.tp_text != NULL)
 	    {
-		char_u *p = ((char_u **)gap->ga_data)[-tp->tp_id - 1];
+		char_u *p = tp->u.tp_text;
 
 		if (p != NULL)
 		{
@@ -1351,14 +1390,19 @@ win_lbr_chartabsize(
 		    {
 			// tab size changes because of the inserted text
 			size -= tab_size;
-			tab_size = win_chartabsize(wp, s, vcol + size);
+			tab_size = win_chartabsize(wp, s,
+					vcol + size - cts->cts_above_width);
 			size += tab_size;
 		    }
 #  endif
 		    if (tp->tp_col == MAXCOL && (tp->tp_flags
 				& (TP_FLAG_ALIGN_ABOVE | TP_FLAG_ALIGN_BELOW)))
+		    {
 			// count extra line for property above/below
 			++cts->cts_prop_lines;
+			if (tp->tp_flags & TP_FLAG_ALIGN_BELOW)
+			    cts->cts_has_below = true;
+		    }
 		}
 	    }
 	    if (tp->tp_col != MAXCOL && tp->tp_col - 1 > col)
@@ -1452,7 +1496,8 @@ win_lbr_chartabsize(
 
 		if (max_head_vcol == 0 || vcol + size + added < max_head_vcol)
 		    head += cnt * head_mid;
-		else if (max_head_vcol > vcol + head_prev + prev_rem)
+		else if (width2 > 0
+			   && max_head_vcol > vcol + head_prev + prev_rem)
 		    head += (max_head_vcol - (vcol + head_prev + prev_rem)
 					     + width2 - 1) / width2 * head_mid;
 		else if (max_head_vcol < 0)
@@ -1532,6 +1577,10 @@ win_lbr_chartabsize(
 	*tailp = size - size_before_lbr;
 
 #  ifdef FEAT_PROP_POPUP
+    if (cts->cts_first_char > 0)
+	// Remember the width for the size of a Tab later in the line.  Use
+	// assignment, this may be called more than once for a character.
+	cts->cts_above_width = cts->cts_first_char;
     size += cts->cts_first_char;
 #  endif
 # endif

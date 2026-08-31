@@ -305,9 +305,9 @@ ml_open(buf_T *buf)
      * When 'updatecount' is non-zero swap file may be opened later.
      */
     if (p_uc && buf->b_p_swf)
-	buf->b_may_swap = TRUE;
+	buf->b_may_swap = true;
     else
-	buf->b_may_swap = FALSE;
+	buf->b_may_swap = false;
 
     /*
      * Open the memfile.  No swap file is created yet.
@@ -793,7 +793,7 @@ ml_open_file(buf_T *buf)
 	fname = vim_tempname('s', FALSE);
 	if (fname != NULL)
 	    (void)mf_open_file(mfp, fname);	// consumes fname!
-	buf->b_may_swap = FALSE;
+	buf->b_may_swap = false;
 	return;
     }
 #endif
@@ -810,6 +810,12 @@ ml_open_file(buf_T *buf)
 	// and creating it, another Vim creates the file.  In that case the
 	// creation will fail and we will use another directory.
 	fname = findswapname(buf, &dirp, NULL); // allocates fname
+	// autocmd may have freed mfp, grr!
+	if (buf->b_ml.ml_mfp != mfp)
+	{
+	    vim_free(fname);
+	    return;
+	}
 	if (dirp == NULL)
 	    break;  // out of memory
 	if (fname == NULL)
@@ -851,7 +857,7 @@ ml_open_file(buf_T *buf)
     }
 
     // don't try to open a swap file again
-    buf->b_may_swap = FALSE;
+    buf->b_may_swap = false;
 }
 
 /*
@@ -1021,7 +1027,7 @@ set_b0_fname(ZERO_BL *b0p, buf_T *buf)
 	forward_slash(b0p->b0_fname);
 # endif
 #else
-	size_t	flen, ulen;
+	size_t	flen;
 	char_u	uname[B0_UNAME_SIZE];
 
 	/*
@@ -1031,11 +1037,12 @@ set_b0_fname(ZERO_BL *b0p, buf_T *buf)
 	 * First replace home dir path with "~/" with home_replace().
 	 * Then insert the user name to get "~user/".
 	 */
-	home_replace(NULL, buf->b_ffname, b0p->b0_fname,
+	flen = home_replace(NULL, buf->b_ffname, b0p->b0_fname,
 						   B0_FNAME_SIZE_CRYPT, TRUE);
 	if (b0p->b0_fname[0] == '~')
 	{
-	    flen = STRLEN(b0p->b0_fname);
+	    size_t  ulen;
+
 	    // If there is no user name or it is too long, don't use "~/"
 	    if (get_user_name(uname, B0_UNAME_SIZE) == FAIL
 		   || (ulen = STRLEN(uname)) + flen > B0_FNAME_SIZE_CRYPT - 1)
@@ -1679,6 +1686,20 @@ ml_recover(int checkext)
 		     */
 		    has_error = FALSE;
 
+		    // Verify the cached block's actual size matches the
+		    // pointer entry's pe_page_count.  mf_get() cache hits
+		    // return the original block without resizing, so a
+		    // crafted swap file referencing the same block twice
+		    // with different pe_page_count values would cause an
+		    // OOB write below.
+		    if (hp->bh_page_count != page_count)
+		    {
+			++error;
+			ml_append(lnum++, (char_u *)_("??? BLOCK PAGE COUNT MISMATCH"),
+							    (colnr_T)0, TRUE);
+			page_count = hp->bh_page_count;
+		    }
+
 		    // Check the length of the block.
 		    // If wrong, use the length given in the pointer block.
 		    if (page_count * mfp->mf_page_size != dp->db_txt_end)
@@ -1690,6 +1711,15 @@ ml_recover(int checkext)
 			dp->db_txt_end = page_count * mfp->mf_page_size;
 		    }
 
+		    if (dp->db_txt_start < HEADER_SIZE
+			    || dp->db_txt_start > dp->db_txt_end)
+		    {
+			ml_append(lnum++, (char_u *)_("??? block header corrupted"),
+								    (colnr_T)0, TRUE);
+			++error;
+			has_error = TRUE;
+			dp->db_txt_start = dp->db_txt_end;
+		    }
 		    // Make sure there is a NUL at the end of the block so we
 		    // don't go over the end when copying text.
 		    *((char_u *)dp + dp->db_txt_end - 1) = NUL;
@@ -2225,9 +2255,11 @@ get_b0_dict(char_u *fname, dict_T *d)
 	if (read_eintr(fd, &b0, sizeof(b0)) == sizeof(b0))
 	{
 	    if (ml_check_b0_id(&b0) == FAIL)
-		dict_add_string(d, "error", (char_u *)"Not a swap file");
+		dict_add_string_len(d, "error",
+		    (char_u *)"Not a swap file", STRLEN_LITERAL("Not a swap file"));
 	    else if (b0_magic_wrong(&b0))
-		dict_add_string(d, "error", (char_u *)"Magic number mismatch");
+		dict_add_string_len(d, "error",
+		    (char_u *)"Magic number mismatch", STRLEN_LITERAL("Magic number mismatch"));
 	    else
 	    {
 		// we have swap information
@@ -2245,11 +2277,11 @@ get_b0_dict(char_u *fname, dict_T *d)
 	    }
 	}
 	else
-	    dict_add_string(d, "error", (char_u *)"Cannot read file");
+	    dict_add_string_len(d, "error", (char_u *)"Cannot read file", STRLEN_LITERAL("Cannot read file"));
 	close(fd);
     }
     else
-	dict_add_string(d, "error", (char_u *)"Cannot open file");
+	dict_add_string_len(d, "error", (char_u *)"Cannot open file", STRLEN_LITERAL("Cannot open file"));
 }
 #endif
 
@@ -2442,9 +2474,9 @@ recov_file_names(char_u **names, char_u *path, int prepend_dot)
     char_u	*p;
     int		i;
 #ifndef MSWIN
-    int	    shortname = curbuf->b_shortname;
+    bool    shortname = curbuf->b_shortname;
 
-    curbuf->b_shortname = FALSE;
+    curbuf->b_shortname = false;
 #endif
     string_T	ret;
 
@@ -2493,7 +2525,7 @@ recov_file_names(char_u **names, char_u *path, int prepend_dot)
     /*
      * Also try with 'shortname' set, in case the file is on a DOS filesystem.
      */
-    curbuf->b_shortname = TRUE;
+    curbuf->b_shortname = true;
 # ifdef VMS
     names[num_names] = modname(path, (char_u *)"_sw%", FALSE);
 # else
@@ -2930,13 +2962,19 @@ add_text_props_for_append(
     {
 	if (round == 2)
 	{
+	    uint16_t pc;
+
 	    if (new_prop_count == 0)
 		return;  // nothing to do
-	    new_len = *len + new_prop_count * sizeof(textprop_T);
+	    new_len = *len + (int)PROP_COUNT_SIZE
+			     + new_prop_count * (int)sizeof(textprop_T);
 	    new_line = alloc(new_len);
 	    if (new_line == NULL)
 		return;
 	    mch_memmove(new_line, *line, *len);
+	    // Write prop_count header.
+	    pc = (uint16_t)new_prop_count;
+	    mch_memmove(new_line + *len, &pc, PROP_COUNT_SIZE);
 	    new_prop_count = 0;
 	}
 
@@ -2954,8 +2992,10 @@ add_text_props_for_append(
 		    prop.tp_flags |= TP_FLAG_CONT_PREV;
 		    prop.tp_col = 1;
 		    prop.tp_len = *len;  // not exactly the right length
-		    mch_memmove(new_line + *len + new_prop_count
-			      * sizeof(textprop_T), &prop, sizeof(textprop_T));
+		    prop.u.tp_text_offset = 0;
+		    mch_memmove(new_line + *len + (int)PROP_COUNT_SIZE
+			    + new_prop_count * sizeof(textprop_T),
+			    &prop, sizeof(textprop_T));
 		}
 		++new_prop_count;
 	    }
@@ -3772,34 +3812,53 @@ adjust_text_props_for_delete(
 		textlen = STRLEN(text) + 1;
 		if ((long)textlen >= line_size)
 		{
+		    // No properties on this line.
 		    if (above)
 			internal_error("no text property above deleted line");
 		    else
 			internal_error("no text property below deleted line");
 		    return;
 		}
-		this_props_len = line_size - (int)textlen;
+		if ((long)textlen + (long)PROP_COUNT_SIZE > line_size)
+		{
+		    internal_error("text property data too short");
+		    return;
+		}
+
+		uint16_t pc;
+
+		mch_memmove(&pc, text + textlen, PROP_COUNT_SIZE);
+		if (!text_prop_count_valid(pc, (size_t)(line_size - (long)textlen)))
+		{
+		    internal_error("text property count too large");
+		    return;
+		}
+		this_props_len = pc * (int)sizeof(textprop_T);
 	    }
 
 	    found = FALSE;
-	    for (done_this = 0; done_this < this_props_len;
-					       done_this += sizeof(textprop_T))
 	    {
-		int	    flag = above ? TP_FLAG_CONT_NEXT
-							   : TP_FLAG_CONT_PREV;
-		textprop_T  prop_this;
+		char_u *props_start = text + textlen + PROP_COUNT_SIZE;
 
-		mch_memmove(&prop_this, text + textlen + done_this,
-							   sizeof(textprop_T));
-		if ((prop_this.tp_flags & flag)
-			&& prop_del.tp_id == prop_this.tp_id
-			&& prop_del.tp_type == prop_this.tp_type)
+		for (done_this = 0; done_this < this_props_len;
+					       done_this += sizeof(textprop_T))
 		{
-		    found = TRUE;
-		    prop_this.tp_flags &= ~flag;
-		    mch_memmove(text + textlen + done_this, &prop_this,
+		    int		flag = above ? TP_FLAG_CONT_NEXT
+							   : TP_FLAG_CONT_PREV;
+		    textprop_T	prop_this;
+
+		    mch_memmove(&prop_this, props_start + done_this,
 							   sizeof(textprop_T));
-		    break;
+		    if ((prop_this.tp_flags & flag)
+			    && prop_del.tp_id == prop_this.tp_id
+			    && prop_del.tp_type == prop_this.tp_type)
+		    {
+			found = TRUE;
+			prop_this.tp_flags &= ~flag;
+			mch_memmove(props_start + done_this, &prop_this,
+							   sizeof(textprop_T));
+			break;
+		    }
 		}
 	    }
 	    if (!found)
@@ -4003,13 +4062,25 @@ theend:
 #ifdef FEAT_PROP_POPUP
     if (textprop_save != NULL)
     {
+	// textprop_save is [prop_count][textprop_T...][vtext...].
+	// Skip prop_count header and pass only the textprop_T part.
+	uint16_t    pc;
+	char_u	    *props_data;
+	int	    props_bytes;
+
+	mch_memmove(&pc, textprop_save, PROP_COUNT_SIZE);
+	props_data = textprop_save + PROP_COUNT_SIZE;
+	props_bytes = pc * (int)sizeof(textprop_T);
+	if (!text_prop_count_valid(pc, (size_t)textprop_len))
+	    props_bytes = 0;
+
 	// Adjust text properties in the line above and below.
 	if (lnum > 1)
-	    adjust_text_props_for_delete(buf, lnum - 1, textprop_save,
-						      (int)textprop_len, TRUE);
+	    adjust_text_props_for_delete(buf, lnum - 1,
+					     props_data, props_bytes, TRUE);
 	if (lnum <= buf->b_ml.ml_line_count)
-	    adjust_text_props_for_delete(buf, lnum, textprop_save,
-						     (int)textprop_len, FALSE);
+	    adjust_text_props_for_delete(buf, lnum,
+					    props_data, props_bytes, FALSE);
     }
     vim_free(textprop_save);
 #endif
@@ -5076,7 +5147,7 @@ findswapname(
 		    vim_free(fname2);
 		    if (same)
 		    {
-			buf->b_shortname = TRUE;
+			buf->b_shortname = true;
 			vim_free(fname);
 			fname = makeswapname(buf_fname, buf->b_ffname,
 							       buf, dir_name);
@@ -5146,7 +5217,7 @@ findswapname(
 		fname[n - 1] = 'p';
 		if (r >= 0)		    // "file.swx" seems to exist
 		{
-		    buf->b_shortname = TRUE;
+		    buf->b_shortname = true;
 		    vim_free(fname);
 		    fname = makeswapname(buf_fname, buf->b_ffname,
 							       buf, dir_name);
@@ -5300,24 +5371,32 @@ findswapname(
 		    if (swap_exists_action != SEA_NONE
 						  && choice == SEA_CHOICE_NONE)
 		    {
-			char_u	*name;
-			int	dialog_result;
-			size_t  len = STRLEN(_("Swap file \""));
+			string_T    prefix = {(char_u *)_("Swap file \""), 0};
+			string_T    suffix = {(char_u *)_("\" already exists!"), 0};
+			size_t	    message_size;
+			string_T    message;
+			char_u	    *tofree;
+			int	    dialog_result;
 
-			name = alloc(STRLEN(fname)
-				+ len
-				+ STRLEN(_("\" already exists!")) + 5);
-			if (name != NULL)
+			prefix.length = STRLEN(prefix.string);
+			suffix.length = STRLEN(suffix.string);
+			message_size = prefix.length
+				+ STRLEN(fname)
+				+ suffix.length + 5;
+			message.string = tofree = alloc(message_size);
+			if (message.string != NULL)
 			{
-			    STRCPY(name, _("Swap file \""));
-			    home_replace(NULL, fname, name + len, 1000, TRUE);
-			    STRCAT(name, _("\" already exists!"));
+			    STRCPY(message.string, prefix.string);
+			    message.length = prefix.length;
+			    message.length += home_replace(NULL, fname,
+				message.string + message.length, (int)(message_size - message.length), TRUE);
+			    STRCPY(message.string + message.length, suffix.string);
 			}
+			else
+			    message.string = (char_u *)_("Swap file already exists!");
 			dialog_result = do_dialog(VIM_WARNING,
 				    (char_u *)_("VIM - ATTENTION"),
-				    name == NULL
-					?  (char_u *)_("Swap file already exists!")
-					: name,
+				    message.string,
 # ifdef HAVE_PROCESS_STILL_RUNNING
 				    process_still_running
 					? (char_u *)_("&Open Read-Only\n&Edit anyway\n&Recover\n&Quit\n&Abort") :
@@ -5330,7 +5409,7 @@ findswapname(
 			    dialog_result++;
 # endif
 			choice = dialog_result;
-			vim_free(name);
+			vim_free(tofree);
 
 			// pretend screen didn't scroll, need redraw anyway
 			msg_scrolled = 0;
@@ -6202,7 +6281,7 @@ goto_byte(long cnt)
 	curwin->w_cursor.lnum = lnum;
 	curwin->w_cursor.col = (colnr_T)boff;
 	curwin->w_cursor.coladd = 0;
-	curwin->w_set_curswant = TRUE;
+	curwin->w_set_curswant = true;
     }
     check_cursor();
 

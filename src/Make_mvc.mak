@@ -531,7 +531,7 @@ CFLAGS = -c /W3 /GF /nologo -I. -Iproto -DHAVE_PATHDEF -DWIN32 -DHAVE_STDINT_H \
 	$(CSCOPE_DEFS) $(TERM_DEFS) $(SOUND_DEFS) $(NETBEANS_DEFS) \
 	$(NBDEBUG_DEFS) $(XPM_DEFS) $(SOD_DEFS) $(SOD_INC) $(CHANNEL_DEFS) \
 	$(DEFINES) $(CI_CFLAGS) -DWINVER=$(WINVER) -D_WIN32_WINNT=$(WINVER) \
-	/source-charset:utf-8
+	/utf-8
 
 RCFLAGS = -DVIM_VERSION_PATCHLEVEL=$(PATCHLEVEL)
 
@@ -729,6 +729,7 @@ OBJ = \
 	$(OUTDIR)\gc.obj \
 	$(OUTDIR)\gui_xim.obj \
 	$(OUTDIR)\hardcopy.obj \
+	$(OUTDIR)\hardcopy_postscript.obj \
 	$(OUTDIR)\hashtab.obj \
 	$(OUTDIR)\help.obj \
 	$(OUTDIR)\highlight.obj \
@@ -772,6 +773,10 @@ OBJ = \
 	$(OUTDIR)\session.obj \
 	$(OUTDIR)\sha256.obj \
 	$(OUTDIR)\sign.obj \
+	$(OUTDIR)\sixel.obj \
+	$(OUTDIR)\kitty.obj \
+	$(OUTDIR)\cairo.obj \
+	$(OUTDIR)\socketserver.obj \
 	$(OUTDIR)\spell.obj \
 	$(OUTDIR)\spellfile.obj \
 	$(OUTDIR)\spellsuggest.obj \
@@ -785,6 +790,7 @@ OBJ = \
 	$(OUTDIR)\textobject.obj \
 	$(OUTDIR)\textprop.obj \
 	$(OUTDIR)\time.obj \
+	$(OUTDIR)\strptime.obj \
 	$(OUTDIR)\tuple.obj \
 	$(OUTDIR)\typval.obj \
 	$(OUTDIR)\ui.obj \
@@ -1617,6 +1623,8 @@ $(OUTDIR)/gui_xim.obj: $(OUTDIR) gui_xim.c $(INCL)
 
 $(OUTDIR)/hardcopy.obj: $(OUTDIR) hardcopy.c $(INCL) version.h
 
+$(OUTDIR)/hardcopy_postscript.obj: $(OUTDIR) hardcopy_postscript.c $(INCL) version.h
+
 $(OUTDIR)/hashtab.obj: $(OUTDIR) hashtab.c $(INCL)
 
 $(OUTDIR)/help.obj: $(OUTDIR) help.c $(INCL)
@@ -1766,6 +1774,14 @@ $(OUTDIR)/sha256.obj: $(OUTDIR) sha256.c $(INCL)
 
 $(OUTDIR)/sign.obj: $(OUTDIR) sign.c $(INCL)
 
+$(OUTDIR)/sixel.obj: $(OUTDIR) sixel.c $(INCL)
+
+$(OUTDIR)/kitty.obj: $(OUTDIR) kitty.c $(INCL)
+
+$(OUTDIR)/cairo.obj: $(OUTDIR) cairo.c $(INCL)
+
+$(OUTDIR)/socketserver.obj: $(OUTDIR) socketserver.c $(INCL)
+
 $(OUTDIR)/spell.obj: $(OUTDIR) spell.c $(INCL)
 
 $(OUTDIR)/spellfile.obj: $(OUTDIR) spellfile.c $(INCL)
@@ -1791,6 +1807,8 @@ $(OUTDIR)/textobject.obj: $(OUTDIR) textobject.c $(INCL)
 $(OUTDIR)/textprop.obj: $(OUTDIR) textprop.c $(INCL)
 
 $(OUTDIR)/time.obj: $(OUTDIR) time.c $(INCL)
+
+$(OUTDIR)/strptime.obj: $(OUTDIR) strptime.c $(INCL)
 
 $(OUTDIR)/tuple.obj: $(OUTDIR) tuple.c $(INCL)
 
@@ -1972,6 +1990,8 @@ proto.h: \
 	proto/gc.pro \
 	proto/gui_xim.pro \
 	proto/hardcopy.pro \
+	proto/hardcopy_pango.pro \
+	proto/hardcopy_postscript.pro \
 	proto/hashtab.pro \
 	proto/help.pro \
 	proto/highlight.pro \
@@ -2014,6 +2034,7 @@ proto.h: \
 	proto/session.pro \
 	proto/sha256.pro \
 	proto/sign.pro \
+	proto/socketserver.pro \
 	proto/spell.pro \
 	proto/spellfile.pro \
 	proto/spellsuggest.pro \

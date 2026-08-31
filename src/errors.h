@@ -569,7 +569,7 @@ EXTERN char e_font_str_is_not_fixed_width[]
 	INIT(= N_("E236: Font \"%s\" is not fixed-width"));
 # endif
 #endif
-#ifdef MSWIN
+#if defined(MSWIN) || defined(FEAT_PRINT_PANGO)
 EXTERN char e_printer_selection_failed[]
 	INIT(= N_("E237: Printer selection failed"));
 EXTERN char e_print_error_str[]
@@ -815,7 +815,7 @@ EXTERN char e_line_number_out_of_range_nr_past_the_end[]
 	INIT(= "E322: Line number out of range: %ld past the end");
 EXTERN char e_line_count_wrong_in_block_nr[]
 	INIT(= "E323: Line count wrong in block %ld");
-#ifdef FEAT_POSTSCRIPT
+#if defined(FEAT_POSTSCRIPT) || defined(FEAT_PRINT_PANGO)
 EXTERN char e_cant_open_postscript_output_file[]
 	INIT(= N_("E324: Can't open PostScript output file"));
 #endif
@@ -915,7 +915,7 @@ EXTERN char e_pattern_uses_more_memory_than_maxmempattern[]
 EXTERN char e_library_call_failed_for_str[]
 	INIT(= N_("E364: Library call failed for \"%s()\""));
 #endif
-#ifdef FEAT_POSTSCRIPT
+#if defined(FEAT_POSTSCRIPT) || defined(FEAT_PRINT_PANGO)
 EXTERN char e_failed_to_print_postscript_file[]
 	INIT(= N_("E365: Failed to print PostScript file"));
 #endif
@@ -1138,11 +1138,8 @@ EXTERN char e_cant_find_postscript_resource_file_str_ps[]
 EXTERN char e_cant_read_postscript_resource_file_str[]
 	INIT(= N_("E457: Can't read PostScript resource file \"%s\""));
 #endif
-#ifdef FEAT_GUI_X11
-EXTERN char e_cannot_allocate_colormap_entry_some_colors_may_be_incorrect[]
-	INIT(= N_("E458: Cannot allocate colormap entry, some colors may be incorrect"));
-#endif
-#if defined(UNIX) || defined(FEAT_SESSION)
+// E458 unused
+#if defined(UNIX) || defined(FEAT_SESSION) || defined(FEAT_SOCKETSERVER)
 EXTERN char e_cannot_go_back_to_previous_directory[]
 	INIT(= N_("E459: Cannot go back to previous directory"));
 #endif
@@ -1571,7 +1568,7 @@ EXTERN char e_using_special_as_number[]
 EXTERN char e_too_many_signs_defined[]
 	INIT(= N_("E612: Too many signs defined"));
 #endif
-#if defined(MSWIN) && defined(FEAT_PRINTER)
+#if defined(FEAT_PRINTER) && (defined(MSWIN) || defined(FEAT_PRINT_PANGO))
 EXTERN char e_unknown_printer_font_str[]
 	INIT(= N_("E613: Unknown printer font: %s"));
 #endif
@@ -1664,7 +1661,8 @@ EXTERN char e_invalid_buffer_identifier_in_setdot[]
 	INIT(= N_("E647: Invalid buffer identifier in setDot"));
 EXTERN char e_invalid_buffer_identifier_in_close[]
 	INIT(= N_("E648: Invalid buffer identifier in close"));
-// E649 unused
+EXTERN char e_invalid_identifier_in_defineannotype[]
+	INIT(= N_("E649: Invalid identifier name in defineAnnoType"));
 EXTERN char e_invalid_buffer_identifier_in_defineannotype[]
 	INIT(= N_("E650: Invalid buffer identifier in defineAnnoType"));
 EXTERN char e_invalid_buffer_identifier_in_addanno[]
@@ -2289,8 +2287,8 @@ EXTERN char e_line_count_changed_unexpectedly[]
 #ifdef FEAT_EVAL
 EXTERN char e_uniq_compare_function_failed[]
 	INIT(= N_("E882: Uniq compare function failed"));
-EXTERN char e_search_pattern_and_expression_register_may_not_contain_two_or_more_lines[]
-	INIT(= N_("E883: Search pattern and expression register may not contain two or more lines"));
+EXTERN char e_register_char_cannot_contain_multiple_lines[]
+	INIT(= N_("E883: Register '%c' cannot contain multiple lines"));
 EXTERN char e_function_name_cannot_contain_colon_str[]
 	INIT(= N_("E884: Function name cannot contain a colon: %s"));
 #endif
@@ -2379,8 +2377,8 @@ EXTERN char e_using_job_as_number[]
 	INIT(= N_("E910: Using a Job as a Number"));
 EXTERN char e_using_job_as_float[]
 	INIT(= N_("E911: Using a Job as a Float"));
-EXTERN char e_cannot_use_evalexpr_sendexpr_with_raw_or_nl_channel[]
-	INIT(= N_("E912: Cannot use ch_evalexpr()/ch_sendexpr() with a raw or nl channel"));
+EXTERN char e_cannot_use_evalexpr_sendexpr_with_raw_nl_or_blob_channel[]
+	INIT(= N_("E912: Cannot use ch_evalexpr()/ch_sendexpr() with a raw, nl or blob channel"));
 EXTERN char e_using_channel_as_number[]
 	INIT(= N_("E913: Using a Channel as a Number"));
 EXTERN char e_using_channel_as_float[]
@@ -3430,9 +3428,8 @@ EXTERN char e_internal_error_shortmess_too_long[]
 #ifdef FEAT_EVAL
 EXTERN char e_class_variable_str_not_found_in_class_str[]
 	INIT(= N_("E1337: Class variable \"%s\" not found in class \"%s\""));
-// E1338 unused
 #endif
-// E1339 unused
+// E1338 and E1339 unused
 #ifdef FEAT_EVAL
 EXTERN char e_argument_already_declared_in_class_str[]
 	INIT(= N_("E1340: Argument already declared in the class: %s"));
@@ -3567,7 +3564,8 @@ EXTERN char e_abstract_cannot_be_used_in_interface[]
 	INIT(= N_("E1404: Abstract cannot be used in an interface"));
 EXTERN char e_using_class_as_value_str[]
 	INIT(= N_("E1405: Class \"%s\" cannot be used as a value"));
-// E1406 unused
+EXTERN char e_public_and_protected_member_have_same_name_str_str[]
+	INIT(= N_("E1406: Public and protected member have the same name: %s and _%s"));
 EXTERN char e_using_typealias_as_var_val[]
 	INIT(= N_("E1407: Cannot use a Typealias as a variable or value"));
 EXTERN char e_final_variable_not_supported_in_interface[]
@@ -3737,7 +3735,7 @@ EXTERN char e_no_quickfix_stack[]
 EXTERN char e_cannot_switch_to_a_closing_buffer[]
 	INIT(= N_("E1546: Cannot switch to a closing buffer"));
 EXTERN char e_cannot_not_support_redrawtabpanel[]
-	INIT(= N_("E1547: This version of Vim does support :redrawtabpanel"));
+	INIT(= N_("E1547: This version of Vim does not support :redrawtabpanel"));
 #ifdef FEAT_WAYLAND
 EXTERN char e_wayland_connection_unavailable[]
 	INIT(= N_("E1548: Wayland connection is unavailable"));
@@ -3779,16 +3777,14 @@ EXTERN char e_diff_anchors_with_hidden_windows[]
 	INIT(= N_("E1562: Diff anchors cannot be used with hidden diff windows"));
 #endif
 #ifdef FEAT_SOCKETSERVER
-EXTERN char e_socket_path_too_big[]
-	INIT(= N_("E1563: Socket path is too big"));
 EXTERN char e_socket_name_no_slashes[]
-	INIT(= N_("E1564: Socket name cannot have slashes in it without being a path"));
+	INIT(= N_("E1564: Socket name '%s' cannot have slashes in it without being a path"));
 EXTERN char e_socket_server_not_online[]
 	INIT(= N_("E1565: Socket server is not online, call remote_startserver() first"));
 EXTERN char e_socket_server_failed_connecting[]
-	INIT(= N_("E1566: Failed connecting to socket %s: %s"));
-EXTERN char e_socket_server_unavailable[]
-	INIT(= N_("E1567: Cannot start socket server, socket path is unavailable"));
+	INIT(= N_("E1566: Failed connecting to socket '%s'"));
+EXTERN char e_socket_server_version_mismatch[]
+	INIT(= N_("E1567: Socket server protocol version mismatch, check what Vim version you are using"));
 #endif
 EXTERN char e_osc_response_timed_out[]
 	INIT(= N_("E1568: OSC command response timed out: %.*s"));
@@ -3811,4 +3807,22 @@ EXTERN char e_gethostbyname_in_channel_listen[]
 #ifdef FEAT_EVAL
 EXTERN char e_cannot_create_pipes[]
 	INIT(= N_("E1575: Cannot create pipes"));
+#endif
+EXTERN char e_tag_file_entry_must_not_be_url[]
+	INIT(= N_("E1576: Tag file entry must not be a URL"));
+EXTERN char e_invalid_format_string_single_percent_s[]
+	INIT(= N_("E1577: Invalid format string, only one \"%s\" is allowed"));
+#ifdef FEAT_SPELL
+EXTERN char e_too_many_postponed_prefixes_spell[]
+	INIT(= N_("E1578: Too many postponed prefixes and/or compound flags"));
+#endif
+EXTERN char e_completeopt_escape_cannot_be_used_with_nargs_underscore[]
+	INIT(= N_("E1579: -completeopt=escape cannot be used with -nargs=_"));
+#ifdef FEAT_PROP_POPUP
+EXTERN char e_too_many_text_properties_on_a_single_line[]
+	INIT(= N_("E1580: Too many text properties on a single line"));
+#endif
+#ifdef FEAT_EVAL
+EXTERN char e_cannot_extend_null_blob[]
+	INIT(= N_("E1581: Cannot extend a null blob"));
 #endif
