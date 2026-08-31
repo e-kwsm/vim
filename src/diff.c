@@ -820,7 +820,7 @@ diff_write_buffer(buf_T *buf, diffin_T *din, linenr_T start, linenr_T end)
 	// Allocating memory failed.  This can happen, because we try to read
 	// the whole buffer text into memory.  Set the failed flag, the diff
 	// will be retried with external diff.  The flag is never reset.
-	buf->b_diff_failed = TRUE;
+	buf->b_diff_failed = true;
 	if (p_verbose > 0)
 	{
 	    verbose_enter();
@@ -2747,11 +2747,11 @@ diff_set_topline(win_T *fromwin, win_T *towin)
     }
 
     // safety check (if diff info gets outdated strange things may happen)
-    towin->w_botfill = FALSE;
+    towin->w_botfill = false;
     if (towin->w_topline > towin->w_buffer->b_ml.ml_line_count)
     {
 	towin->w_topline = towin->w_buffer->b_ml.ml_line_count;
-	towin->w_botfill = TRUE;
+	towin->w_botfill = true;
     }
     if (towin->w_topline < 1)
     {
@@ -4240,8 +4240,12 @@ ex_diffgetput(exarg_T *eap)
 	dfree = NULL;
 	lnum = dp->df_lnum[idx_to];
 	count = dp->df_count[idx_to];
+	// The empty line of an empty buffer is deleted below, include it in
+	// the undo information, otherwise undo leaves a line behind.
+	linenr_T undo_bot = lnum + count + (count == 0 && BUFEMPTY() ? 1 : 0);
+
 	if (dp->df_lnum[idx_cur] + dp->df_count[idx_cur] > eap->line1 + off
-		&& u_save(lnum - 1, lnum + count) != FAIL)
+		&& u_save(lnum - 1, undo_bot) != FAIL)
 	{
 	    // Inside the specified range and saving for undo worked.
 	    start_skip = 0;
@@ -5140,7 +5144,8 @@ f_diff(typval_T *argvars UNUSED, typval_T *rettv UNUSED)
 	    if (hunk_dict == NULL)
 		goto done;
 
-	    list_append_dict(l, hunk_dict);
+	    if (list_append_dict(l, hunk_dict) == FAIL)
+		dict_unref(hunk_dict);
 	}
     }
     else

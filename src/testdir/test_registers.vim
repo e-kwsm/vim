@@ -51,7 +51,7 @@ func Test_display_registers()
     " these commands work in the sandbox
     let a = execute('sandbox display')
     " When X11 connection is not available, there is a warning W23
-    " filter this out (we could also run the :display comamand twice)
+    " filter this out (we could also run the :display command twice)
     let a = substitute(a, 'W23.*0\n', '', '')
     let b = execute('sandbox registers')
 
@@ -76,6 +76,14 @@ func Test_display_registers()
     let a = execute('registers :')
     call assert_match('^\nType Name Content\n'
           \ .         '  c  ":   ls', a)
+
+    let a = execute('registers %')
+    call assert_match('^\nType Name Content\n'
+          \ .         '  c  "%   file2', a)
+
+    let a = execute('registers #')
+    call assert_match('^\nType Name Content\n'
+          \ .         '  c  "#   file1', a)
 
     bwipe!
 endfunc
@@ -396,6 +404,11 @@ func Test_set_register()
   call assert_equal('Xfile_alt_1', getreg('#'))
   call setreg('#', b2)
   call assert_equal('Xfile_alt_2', getreg('#'))
+  call setreg('#', '')
+  call assert_equal('', getreg('#'))
+  call setreg('#', 'alt_1')
+  let @# = ''
+  call assert_equal('', getreg('#'))
 
   let ab = 'regwrite'
   call setreg('=', '')
@@ -410,6 +423,7 @@ func Test_set_register()
   call assert_equal('', @=)
   call assert_fails("call setreg('/', ['a', 'b'])", 'E883:')
   call assert_fails("call setreg('=', ['a', 'b'])", 'E883:')
+  call assert_fails("call setreg('#', ['a', 'b'])", 'E883:')
   call assert_equal(0, setreg('_', ['a', 'b']))
 
   " Test for recording to a invalid register
@@ -582,20 +596,40 @@ func Test_clipboard_regs_both_unnamed()
   bwipe!
 endfunc
 
-" Test for restarting the current mode (insert or virtual replace) after
+" Test for restarting the current mode (insert or (virtual) replace) after
 " executing the contents of a register
-func Test_put_reg_restart_mode()
+func Test_exec_reg_restart_mode()
   new
-  call append(0, 'editor')
-  normal gg
+
   let @r = "ivim \<Esc>"
-  call feedkeys("i\<C-O>@r\<C-R>=mode()\<CR>", 'xt')
+
+  call setline(1, 'editor')
+  normal gg
+  call feedkeys("i\<C-O>@r\<C-R>=mode(1)\<CR>", 'xt')
   call assert_equal('vimi editor', getline(1))
 
   call setline(1, 'editor')
   normal gg
-  call feedkeys("gR\<C-O>@r\<C-R>=mode()\<CR>", 'xt')
+  call feedkeys("R\<C-O>@r\<C-R>=mode(1)\<CR>", 'xt')
   call assert_equal('vimReditor', getline(1))
+
+  call setline(1, 'editor')
+  normal gg
+  call feedkeys("gR\<C-O>@r\<C-R>=mode(1)\<CR>", 'xt')
+  call assert_equal('vimRvditor', getline(1))
+
+  " If the register doesn't return to Normal mode, Vim should stay in whatever
+  " mode the register ends up with, and should not insert extra text. #20085
+  for [s0, expected] in
+        \ [['i', 'vim editor,i'], ['R', 'vim or,R'], ['gR', 'vim or,Rv']]
+    let @r = $"{s0}vim "
+    for s1 in ['i', 'R', 'gR']
+      call setline(1, 'editor')
+      normal gg
+      call feedkeys($"{s1}\<C-O>@r\<End>,\<C-R>=mode(1)\<CR>", 'xt')
+      call assert_equal(expected, getline(1))
+    endfor
+  endfor
 
   bwipe!
 endfunc

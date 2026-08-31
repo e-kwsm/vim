@@ -248,6 +248,7 @@ static int nfa_re_flags; // re_flags passed to nfa_regcomp()
 static int *post_start;  // holds the postfix form of r.e.
 static int *post_end;
 static int *post_ptr;
+static int nfa_reg_parse_depth;	// nesting depth in nfa_reg()
 
 // Set when the pattern should use the NFA engine.
 // E.g. [[:upper:]] only allows 8bit characters for BT engine,
@@ -310,6 +311,7 @@ nfa_regcomp_start(
     wants_nfa = FALSE;
     rex.nfa_has_zend = FALSE;
     rex.nfa_has_backref = FALSE;
+    nfa_reg_parse_depth = 0;
 
     // shared with BT engine
     regcomp_start(expr, re_flags);
@@ -1105,7 +1107,7 @@ nfa_emit_equi_class(int c)
 		    EMIT2(0x12f) EMIT2(0x1d0) EMIT2(0x209)
 		    EMIT2(0x20b) EMIT2(0x268) EMIT2(0x1d96)
 		    EMIT2(0x1e2d) EMIT2(0x1e2f) EMIT2(0x1ec9)
-		    EMIT2(0x1ecb) EMIT2(0x1ecb)
+		    EMIT2(0x1ecb)
 		    return OK;
 
 	    case 'j': case 0x135: case 0x1f0: case 0x249:
@@ -2516,6 +2518,7 @@ nfa_reg(
     int		paren)	// REG_NOPAREN, REG_PAREN, REG_NPAREN or REG_ZPAREN
 {
     int		parno = 0;
+    int		status = FAIL;
 
     if (paren == REG_PAREN)
     {
@@ -2533,14 +2536,18 @@ nfa_reg(
     }
 #endif
 
+    if (nfa_reg_parse_depth >= REG_MAX_PAREN_DEPTH)
+	EMSG_RET_FAIL(_(e_command_too_complex));
+    ++nfa_reg_parse_depth;
+
     if (nfa_regbranch() == FAIL)
-	return FAIL;	    // cascaded error
+	goto theend;	    // cascaded error
 
     while (peekchr() == Magic('|'))
     {
 	skipchr();
 	if (nfa_regbranch() == FAIL)
-	    return FAIL;    // cascaded error
+	    goto theend;    // cascaded error
 	EMIT(NFA_OR);
     }
 
@@ -2548,17 +2555,23 @@ nfa_reg(
     if (paren != REG_NOPAREN && getchr() != Magic(')'))
     {
 	if (paren == REG_NPAREN)
-	    EMSG2_RET_FAIL(_(e_unmatched_str_percent_open),
-						       reg_magic == MAGIC_ALL);
+	    semsg(_(e_unmatched_str_percent_open),
+				       reg_magic == MAGIC_ALL ? "" : "\\");
 	else
-	    EMSG2_RET_FAIL(_(e_unmatched_str_open), reg_magic == MAGIC_ALL);
+	    semsg(_(e_unmatched_str_open),
+				       reg_magic == MAGIC_ALL ? "" : "\\");
+	rc_did_emsg = TRUE;
+	goto theend;
     }
     else if (paren == REG_NOPAREN && peekchr() != NUL)
     {
 	if (peekchr() == Magic(')'))
-	    EMSG2_RET_FAIL(_(e_unmatched_str_close), reg_magic == MAGIC_ALL);
+	    semsg(_(e_unmatched_str_close),
+				       reg_magic == MAGIC_ALL ? "" : "\\");
 	else
-	    EMSG_RET_FAIL(_(e_nfa_regexp_proper_termination_error));
+	    emsg(_(e_nfa_regexp_proper_termination_error));
+	rc_did_emsg = TRUE;
+	goto theend;
     }
     /*
      * Here we set the flag allowing back references to this set of
@@ -2574,7 +2587,11 @@ nfa_reg(
 	EMIT(NFA_ZOPEN + parno);
 #endif
 
-    return OK;
+    status = OK;
+
+theend:
+    --nfa_reg_parse_depth;
+    return status;
 }
 
 #ifdef DEBUG
@@ -5797,9 +5814,21 @@ nfa_regmatch(
     // Allocate memory for the lists of nodes.
     size = (prog->nstate + 1) * sizeof(nfa_thread_T);
 
-    list[0].t = alloc(size);
+    // Reuse cached list buffers from prog when available (top-level call).
+    // Recursive calls must allocate their own buffers.
+    if (toplevel && prog->listbuf[0] != NULL)
+    {
+	list[0].t = (nfa_thread_T *)prog->listbuf[0];
+	list[1].t = (nfa_thread_T *)prog->listbuf[1];
+	prog->listbuf[0] = NULL;
+	prog->listbuf[1] = NULL;
+    }
+    else
+    {
+	list[0].t = alloc(size);
+	list[1].t = alloc(size);
+    }
     list[0].len = prog->nstate + 1;
-    list[1].t = alloc(size);
     list[1].len = prog->nstate + 1;
     if (list[0].t == NULL || list[1].t == NULL)
 	goto theend;
@@ -5931,8 +5960,14 @@ nfa_regmatch(
 	for (listidx = 0; listidx < thislist->n; ++listidx)
 	{
 	    // If the list gets very long there probably is something wrong.
-	    // At least allow interrupting with CTRL-C.
-	    fast_breakcheck();
+	    // At least allow interrupting with CTRL-C.  Only check once in a
+	    // while, calling ui_breakcheck() for every state is too slow.
+	    static int	breakcheck_count = 0;  // using "static" makes it faster
+	    if (unlikely(++breakcheck_count >= 100000))
+	    {
+		ui_breakcheck();
+		breakcheck_count = 0;
+	    }
 	    if (got_int)
 		break;
 #ifdef FEAT_RELTIME
@@ -7240,7 +7275,32 @@ nfa_regmatch(
 	    }
 	    else
 	    {
-		if (addstate(nextlist, start, m, NULL, clen) == NULL)
+		char_u	    *save_line = rex.line;
+		char_u	    *save_input = rex.input;
+		linenr_T    save_lnum = rex.lnum;
+
+		// At the end of a line the match can only start on the next
+		// line, use that position instead of the line break.
+		if (REG_MULTI && clen == 0 && nfa_endp != NULL
+					 && rex.lnum < nfa_endp->se_u.pos.lnum)
+		{
+		    char_u  *next_line = reg_getline(rex.lnum + 1);
+
+		    if (next_line != NULL)
+		    {
+			rex.line = next_line;
+			rex.input = rex.line;
+			++rex.lnum;
+		    }
+		}
+
+		r = addstate(nextlist, start, m, NULL, clen);
+
+		rex.line = save_line;
+		rex.input = save_input;
+		rex.lnum = save_lnum;
+
+		if (r == NULL)
 		{
 		    nfa_match = NFA_TOO_EXPENSIVE;
 		    goto theend;
@@ -7287,9 +7347,18 @@ nextchar:
 #endif
 
 theend:
-    // Free memory
-    vim_free(list[0].t);
-    vim_free(list[1].t);
+    // Cache list buffers in prog for reuse, or free if prog already has
+    // cached buffers (recursive call case).
+    if (prog->listbuf[0] == NULL && list[0].t != NULL && list[1].t != NULL)
+    {
+	prog->listbuf[0] = list[0].t;
+	prog->listbuf[1] = list[1].t;
+    }
+    else
+    {
+	vim_free(list[0].t);
+	vim_free(list[1].t);
+    }
     vim_free(listids);
 #undef ADD_STATE_IF_MATCH
 #ifdef NFA_REGEXP_DEBUG_LOG
@@ -7644,6 +7713,8 @@ nfa_regcomp(char_u *expr, int re_flags)
 	goto fail;
     state_ptr = prog->state;
     prog->re_in_use = FALSE;
+    prog->listbuf[0] = NULL;
+    prog->listbuf[1] = NULL;
 
     /*
      * PASS 2
@@ -7707,6 +7778,8 @@ nfa_regfree(regprog_T *prog)
 
     vim_free(((nfa_regprog_T *)prog)->match_text);
     vim_free(((nfa_regprog_T *)prog)->pattern);
+    vim_free(((nfa_regprog_T *)prog)->listbuf[0]);
+    vim_free(((nfa_regprog_T *)prog)->listbuf[1]);
     vim_free(prog);
 }
 

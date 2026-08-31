@@ -147,6 +147,8 @@ alloc_type(type_T *type)
 	return type;
 
     ret = ALLOC_ONE(type_T);
+    if (ret == NULL)
+	return NULL;
     *ret = *type;
 
     if (ret->tt_member != NULL)
@@ -2371,7 +2373,8 @@ get_item_type(type_T *type)
 	    return type->tt_args[0];
     }
 
-    return type->tt_member;
+    // For "any" the item type is not known.
+    return type->tt_member == NULL ? &t_any : type->tt_member;
 }
 
 /*
@@ -2658,10 +2661,7 @@ type_name_class_or_obj(char *name, type_T *type, char **tofree)
 	    name = "enum";
     }
     else
-    {
-	class_name.string = (char_u *)"any";
-	class_name.length = 3;
-    }
+	STR_LITERAL_SET(class_name, "any");
 
     size_t len = STRLEN(name) + class_name.length + 3;
     *tofree = alloc(len);
@@ -2695,10 +2695,7 @@ type_name_func(type_T *type, char **tofree)
 	string_T    arg_type;
 
 	if (type->tt_args == NULL)
-	{
-	    arg_type.string = (char_u *)"[unknown]";
-	    arg_type.length = 9;
-	}
+	    STR_LITERAL_SET(arg_type, "[unknown]");
 	else
 	{
 	    arg_type.string = (char_u *)type_name(type->tt_args[i], &arg_free);
@@ -2726,13 +2723,16 @@ type_name_func(type_T *type, char **tofree)
 	STRCPY((char *)ga.ga_data + ga.ga_len, ")");
     else
     {
-	char *ret_free;
+	char *ret_free = NULL;
 	char *ret_name = type_name(type->tt_member, &ret_free);
 	int  len;
 
 	len = (int)STRLEN(ret_name) + 4;
 	if (ga_grow(&ga, len) == FAIL)
+	{
+	    vim_free(ret_free);
 	    goto failed;
+	}
 	STRCPY((char *)ga.ga_data + ga.ga_len, "): ");
 	STRCPY((char *)ga.ga_data + ga.ga_len + 3, ret_name);
 	vim_free(ret_free);

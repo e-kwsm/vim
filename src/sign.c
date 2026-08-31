@@ -254,7 +254,7 @@ insert_sign(buf_T *buf, // buffer to store sign in
         buf->b_signlist = newsign;
 # ifdef FEAT_NETBEANS_INTG
         if (netbeans_active())
-            buf->b_has_sign_column = TRUE;
+            buf->b_has_sign_column = true;
 # endif
     }
     else
@@ -322,9 +322,10 @@ sign_get_info(sign_entry_T *sign)
         return NULL;
 
     dict_add_number(d, "id", sign->se_id);
-    dict_add_string(d, "group",
-                    (sign->se_group == NULL) ? (char_u *)""
-                                             : sign->se_group->sg_name);
+    if (sign->se_group == NULL)
+        dict_add_string_len(d, "group", (char_u *)"", 0);
+    else
+        dict_add_string(d, "group", sign->se_group->sg_name);
     dict_add_number(d, "lnum", sign->se_lnum);
     dict_add_string(d, "name", sign_typenr2name(sign->se_typenr));
     dict_add_number(d, "priority", sign->se_priority);
@@ -1777,32 +1778,40 @@ sign_getinfo(sign_T *sp, dict_T *retdict)
     {
         char_u *p = get_highlight_name_ext(NULL, sp->sn_line_hl - 1, FALSE);
         if (p == NULL)
-            p = (char_u *)"NONE";
-        dict_add_string(retdict, "linehl", p);
+            dict_add_string_len(retdict, "linehl",
+                (char_u *)"NONE", STRLEN_LITERAL("NONE"));
+        else
+            dict_add_string(retdict, "linehl", p);
     }
 
     if (sp->sn_text_hl > 0)
     {
         char_u *p = get_highlight_name_ext(NULL, sp->sn_text_hl - 1, FALSE);
         if (p == NULL)
-            p = (char_u *)"NONE";
-        dict_add_string(retdict, "texthl", p);
+            dict_add_string_len(retdict, "texthl",
+                (char_u *)"NONE", STRLEN_LITERAL("NONE"));
+        else
+            dict_add_string(retdict, "texthl", p);
     }
 
     if (sp->sn_cul_hl > 0)
     {
         char_u *p = get_highlight_name_ext(NULL, sp->sn_cul_hl - 1, FALSE);
         if (p == NULL)
-            p = (char_u *)"NONE";
-        dict_add_string(retdict, "culhl", p);
+            dict_add_string_len(retdict, "culhl",
+                (char_u *)"NONE", STRLEN_LITERAL("NONE"));
+        else
+            dict_add_string(retdict, "culhl", p);
     }
 
     if (sp->sn_num_hl > 0)
     {
         char_u *p = get_highlight_name_ext(NULL, sp->sn_num_hl - 1, FALSE);
         if (p == NULL)
-            p = (char_u *)"NONE";
-        dict_add_string(retdict, "numhl", p);
+            dict_add_string_len(retdict, "numhl",
+                (char_u *)"NONE", STRLEN_LITERAL("NONE"));
+        else
+            dict_add_string(retdict, "numhl", p);
     }
 }
 
@@ -1829,7 +1838,10 @@ sign_getlist(char_u *name, list_T *retlist)
             return;
 
         if (list_append_dict(retlist, dict) == FAIL)
+        {
+            dict_unref(dict);
             return;
+        }
 
         sign_getinfo(sp, dict);
 
@@ -1848,8 +1860,8 @@ get_buffer_signs(buf_T *buf, list_T *l)
     FOR_ALL_SIGNS_IN_BUF(buf, sign)
     {
         dict_T *d = sign_get_info(sign);
-        if (d != NULL)
-            list_append_dict(l, d);
+        if (d != NULL && list_append_dict(l, d) == FAIL)
+            dict_unref(d);
     }
 }
 
@@ -1867,7 +1879,11 @@ sign_get_placed_in_buf(buf_T *buf,
     if (d == NULL)
         return;
 
-    list_append_dict(retlist, d);
+    if (list_append_dict(retlist, d) == FAIL)
+    {
+        dict_unref(d);
+        return;
+    }
 
     dict_add_number(d, "bufnr", (long)buf->b_fnum);
 
@@ -1875,7 +1891,11 @@ sign_get_placed_in_buf(buf_T *buf,
     if (l == NULL)
         return;
 
-    dict_add_list(d, "signs", l);
+    if (dict_add_list(d, "signs", l) == FAIL)
+    {
+        list_unref(l);
+        return;
+    }
 
     sign_entry_T *sign = NULL;
     FOR_ALL_SIGNS_IN_BUF(buf, sign)
@@ -1889,8 +1909,8 @@ sign_get_placed_in_buf(buf_T *buf,
             (lnum == sign->se_lnum && sign_id == sign->se_id))
         {
             dict_T *sdict = sign_get_info(sign);
-            if (sdict != NULL)
-                list_append_dict(l, sdict);
+            if (sdict != NULL && list_append_dict(l, sdict) == FAIL)
+                dict_unref(sdict);
         }
     }
 }
