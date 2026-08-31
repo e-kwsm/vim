@@ -70,6 +70,7 @@ func Test_restricted_mode()
     if has('channel')
       call assert_fails("call ch_logfile('Xlog')", 'E145:')
       call assert_fails("call ch_open('localhost:8765')", 'E145:')
+      call assert_fails("call ch_setoptions('localhost:8765', {})", 'E145:')
     endif
 
     if has('job')
@@ -95,6 +96,7 @@ func Test_restricted_mode()
     if has('unix')
       call assert_fails('cd `pwd`', 'E145:')
     endif
+    call assert_fails("call setqflist([], 'a', {'id': 1, 'quickfixtextfunc': 'tr'})", 'E145:')
 
     call writefile(v:errors, 'Xresult')
     qa!
