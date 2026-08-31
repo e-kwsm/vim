@@ -291,17 +291,13 @@
 	&& !defined(AMIGA)
 # define FEAT_PRINTER
 #endif
-#if defined(FEAT_PRINTER) && ((defined(MSWIN) && defined(MSWINPS)) \
-	|| (!defined(MSWIN) && defined(FEAT_EVAL)))
+#if defined(FEAT_PRINTER) && !defined(FEAT_PRINT_PANGO) \
+    && ((defined(MSWIN) && defined(MSWINPS)) \
+	    || (!defined(MSWIN) && defined(FEAT_EVAL)))
 # define FEAT_POSTSCRIPT
 #endif
-
-/*
- * +gtk_print		Native GTK print dialog for :hardcopy (GTK4).
- *			Uses GtkPrintOperation + Pango/Cairo instead of PostScript.
- */
-#if defined(FEAT_PRINTER) && defined(FEAT_GUI_GTK) && defined(USE_GTK4)
-# define FEAT_GUI_GTK_PRINT
+#if !defined(FEAT_PRINTER) && defined(FEAT_PRINT_PANGO)
+# undef FEAT_PRINT_PANGO
 #endif
 
 /*
@@ -443,6 +439,10 @@
 #  define FEAT_XFONTSET
 # else
 // #  define FEAT_XFONTSET
+# endif
+#else
+# if defined(USE_GTK4)
+#  undef FEAT_XFONTSET
 # endif
 #endif
 
@@ -1096,6 +1096,43 @@
  */
 #if defined(FEAT_EVAL) && defined(FEAT_SYN_HL)
 # define FEAT_PROP_POPUP
+#endif
+
+/*
+ * +image		RGB image rendering inside popup windows.
+ * +image_sixel		terminal backend: emit DEC sixel DCS sequences.
+ * +image_kitty		terminal backend: emit kitty graphics protocol APC
+ *			sequences.  Selected at runtime when the host
+ *			terminal advertises kitty graphics support and
+ *			falls back to sixel otherwise.
+ * +image_gdi		Windows GUI backend: BitBlt a cached DIB section onto
+ *			the GUI canvas.
+ * +image_cairo		Cairo GUI backend: composite a cairo_image_surface_t
+ *			onto gui.surface; covers GTK2/3/4 today.
+ *
+ * The parent FEAT_IMAGE flag enables the popup "image" attribute and the
+ * shared RGB plumbing; at least one backend has to be enabled to actually
+ * paint anything.
+ */
+#if defined(FEAT_HUGE) && defined(FEAT_PROP_POPUP)
+# define FEAT_IMAGE
+#endif
+
+#if defined(FEAT_IMAGE) && !defined(ALWAYS_USE_GUI)
+# define FEAT_IMAGE_SIXEL
+# define FEAT_IMAGE_KITTY
+#endif
+
+#if defined(FEAT_IMAGE) && defined(FEAT_GUI_MSWIN)
+# define FEAT_IMAGE_GDI
+#endif
+
+#if defined(FEAT_IMAGE) && defined(FEAT_GUI_GTK)
+# ifdef USE_GTK4
+#  define FEAT_IMAGE_GDK
+# else
+#  define FEAT_IMAGE_CAIRO
+# endif
 #endif
 
 /*

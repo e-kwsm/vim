@@ -408,6 +408,9 @@ static int	nextchr;	// used for ungetchr()
 #define REG_ZPAREN	2	// \z(\)
 #define REG_NPAREN	3	// \%(\)
 
+// Limit recursive parsing of nested regexp atoms to avoid using up the C stack.
+#define REG_MAX_PAREN_DEPTH	1000
+
 typedef struct
 {
     char_u	*regparse;
@@ -3111,15 +3114,23 @@ vim_regexec_string(
 	char_u *pat = vim_strsave(((nfa_regprog_T *)rmp->regprog)->pattern);
 
 	p_re = BACKTRACKING_ENGINE;
-	vim_regfree(rmp->regprog);
 	if (pat != NULL)
 	{
+	    regprog_T *prev_prog = rmp->regprog;
+
 #ifdef FEAT_EVAL
 	    report_re_switch(pat);
 #endif
 	    rmp->regprog = vim_regcomp(pat, re_flags);
-	    if (rmp->regprog != NULL)
+	    if (rmp->regprog == NULL)
 	    {
+		// Somehow compiling the pattern failed now, put back the
+		// previous one to avoid "regprog" becoming NULL.
+		rmp->regprog = prev_prog;
+	    }
+	    else
+	    {
+		vim_regfree(prev_prog);
 		rmp->regprog->re_in_use = TRUE;
 		result = rmp->regprog->engine->regexec_nl(rmp, line, col, nl);
 		rmp->regprog->re_in_use = FALSE;

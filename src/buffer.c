@@ -736,6 +736,11 @@ aucmd_abort:
 	unblock_autocmds();
     }
 
+    // When a quickfix buffer is deleted from a window, clear the
+    // 'winfixheight' option.
+    if (bt_quickfix(buf) && win_valid && win->w_buffer == buf)
+	win->w_p_wfh = FALSE;
+
     // Remember if the buffer may be hidden soon, or is already hidden.
     hiding_buf = buf->b_nwindows <= 0 || ((win_valid || closed_popup)
 	    && win->w_buffer == buf && buf->b_nwindows == 1);
@@ -1648,7 +1653,8 @@ do_buffer_ext(
 		buf = curbuf->b_next;
 	    else
 		buf = curbuf->b_prev;
-	    if (bt_quickfix(buf) || (buf != curbuf && buf->b_locked_split))
+	    if (bt_quickfix(buf)
+		    || (buf != NULL && buf != curbuf && buf->b_locked_split))
 		buf = NULL;
 	}
     }
@@ -4859,7 +4865,9 @@ build_stl_str_hl_local(
 		p = p - n + 1;
 
 		// Fill up space left over by half a double-wide char.
-		while (++l < stl_items[stl_groupitem[groupdepth]].stl_minwid)
+		int minwid_fixed = MIN(stl_items[stl_groupitem[groupdepth]].stl_minwid,
+				       stl_items[stl_groupitem[groupdepth]].stl_maxwid);
+		while (++l < minwid_fixed)
 		    MB_CHAR2BYTES(fillchar, p);
 
 		// correct the start of the items for the truncation
@@ -4875,25 +4883,30 @@ build_stl_str_hl_local(
 	    {
 		// fill
 		n = stl_items[stl_groupitem[groupdepth]].stl_minwid;
+		int fillchar_len = MB_CHAR2LEN(fillchar);
 		if (n < 0)
 		{
 		    // fill by appending characters
 		    n = 0 - n;
-		    while (l++ < n && p + 1 < out + outlen)
+		    while (l++ < n && p + fillchar_len < out + outlen)
 			MB_CHAR2BYTES(fillchar, p);
 		}
 		else
 		{
 		    // fill by inserting characters
-		    l = (n - l) * MB_CHAR2LEN(fillchar);
-		    mch_memmove(t + l, t, (size_t)(p - t));
+		    n = n - l;
+		    l = n * fillchar_len;
 		    if (p + l >= out + outlen)
-			l = (long)((out + outlen) - p - 1);
+		    {
+			n = (long)((out + outlen) - p - 1) / fillchar_len;
+			l = n * fillchar_len;
+		    }
+		    mch_memmove(t + l, t, (size_t)(p - t));
 		    p += l;
+		    for ( ; n > 0; n--)
+			MB_CHAR2BYTES(fillchar, t);
 		    for (n = stl_groupitem[groupdepth] + 1; n < curitem; n++)
 			stl_items[n].stl_start += l;
-		    for ( ; l > 0; l--)
-			MB_CHAR2BYTES(fillchar, t);
 		}
 	    }
 	    continue;
@@ -5041,7 +5054,8 @@ build_stl_str_hl_local(
 
 	    if (reevaluate)
 		s++;
-	    itemisflag = TRUE;
+	    // %0{} keeps the result verbatim
+	    itemisflag = zeropad ? FALSE : TRUE;
 	    t = p;
 	    while ((*s != '}' || (reevaluate && s[-1] != '%'))
 					  && *s != NUL && p + 1 < out + outlen)
@@ -5078,7 +5092,7 @@ build_stl_str_hl_local(
 	    do_unlet((char_u *)"g:actual_curbuf", TRUE);
 	    do_unlet((char_u *)"g:actual_curwin", TRUE);
 
-	    if (str != NULL && *str != NUL)
+	    if (!zeropad && str != NULL && *str != NUL)
 	    {
 		if (*skipdigits(str) == NUL)
 		{
