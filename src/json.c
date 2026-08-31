@@ -51,6 +51,8 @@ json_encode(typval_T *val, int options)
     // Store bytes in the growarray.
     ga_init2(&ga, 1, 4000);
     json_encode_gap(&ga, val, options);
+    if (options & JSON_NL)
+	ga_append(&ga, NL);
     ga_append(&ga, NUL);
     return ga.ga_data;
 }
@@ -369,29 +371,38 @@ json_encode_item(garray_T *gap, typval_T *val, int copyID, int options)
 		GA_CONCAT_LITERAL(gap, "[]");
 	    else
 	    {
-		ga_append(gap, '[');
-		for (i = 0; i < b->bv_ga.ga_len; i++)
+		int	blen = b->bv_ga.ga_len;
+		char_u	*src;
+		char_u	*dst;
+
+		// Worst case: '[' + ']' + per-byte 3 digits + comma = 2 + 4*blen
+		if (ga_grow(gap, 2 + 4 * blen) == FAIL)
+		    goto theend;
+		src = (char_u *)b->bv_ga.ga_data;
+		dst = (char_u *)gap->ga_data + gap->ga_len;
+		*dst++ = '[';
+		for (i = 0; i < blen; i++)
 		{
-		    int	    byte = blob_get(b, i);
+		    int	    byte = src[i];
 
 		    if (i > 0)
-			ga_append(gap, ',');
-		    // blob bytes are 0-255, use simple conversion
+			*dst++ = ',';
 		    if (byte >= 100)
 		    {
-			ga_append(gap, '0' + byte / 100);
-			ga_append(gap, '0' + (byte / 10) % 10);
-			ga_append(gap, '0' + byte % 10);
+			*dst++ = '0' + byte / 100;
+			*dst++ = '0' + (byte / 10) % 10;
+			*dst++ = '0' + byte % 10;
 		    }
 		    else if (byte >= 10)
 		    {
-			ga_append(gap, '0' + byte / 10);
-			ga_append(gap, '0' + byte % 10);
+			*dst++ = '0' + byte / 10;
+			*dst++ = '0' + byte % 10;
 		    }
 		    else
-			ga_append(gap, '0' + byte);
+			*dst++ = '0' + byte;
 		}
-		ga_append(gap, ']');
+		*dst++ = ']';
+		gap->ga_len = (int)(dst - (char_u *)gap->ga_data);
 	    }
 	    break;
 
@@ -1420,7 +1431,9 @@ item_end:
 	res->v_type = VAR_SPECIAL;
 	res->vval.v_number = VVAL_NONE;
     }
-    semsg(_(e_json_decode_error_at_str), p);
+    // "p" may dangle into a buffer freed by a js_fill() refill in
+    // json_decode_string(); report the position from the current reader.
+    semsg(_(e_json_decode_error_at_str), reader->js_buf + reader->js_used);
 
 theend:
     for (i = 0; i < stack.ga_len; i++)

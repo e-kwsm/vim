@@ -15,11 +15,25 @@
 # ifdef VMS
 #  include "gui_gtk_vms.h"
 # endif
-# include <X11/Intrinsic.h>
+# ifndef USE_GTK4
+#  include <X11/Intrinsic.h>
+# endif
 # pragma GCC diagnostic push
 # pragma GCC diagnostic ignored "-Wstrict-prototypes"
+# if !defined(USE_GTK3) && !defined(USE_GTK4)
+#  pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+# endif
 # include <gtk/gtk.h>
 # pragma GCC diagnostic pop
+# ifdef USE_GTK4
+// Types used in proto files but not available without X11 headers
+typedef void *Widget;
+typedef void *XtAppContext;
+typedef void  Display;
+typedef unsigned long Window;
+typedef unsigned long Atom;
+typedef GdkEvent GdkEventKey;	// GTK4: GdkEventKey merged into GdkEvent
+# endif
 #endif
 
 #ifdef FEAT_GUI_HAIKU
@@ -89,6 +103,15 @@
 							+ gui.border_offset)
 # define FILL_Y(row)	((row) * gui.char_height + gui.border_offset)
 # define Y_2_ROW(y)	(((y) - gui.border_offset) / gui.char_height)
+#endif
+#if defined(FEAT_GUI_GTK) && defined(FEAT_IMAGE)
+// Logical pixels to physical pixels
+# define LOG2PHY(l) (gui.in_use ? (double)(l) * gui.scale : (l))
+ // Physical pixels to logical pixels
+# define PHY2LOG(p) (gui.in_use ? (double)(p) / gui.scale : (p))
+#else
+# define LOG2PHY(l) (l)
+# define PHY2LOG(p) (p)
 #endif
 
 // Indices for arrays of scrollbars
@@ -263,6 +286,10 @@ typedef struct Gui
 #ifdef FEAT_DIRECTX
     bool	directx_enabled;    // DirectX (DirectWrite) rendering active
 #endif
+#if defined(FEAT_GUI_GTK) && defined(USE_GTK4)
+    int		bleed_right;	    // Number of pixels to bleed bg color right
+    int		bleed_bot;	    // Number of pixels to bleed bg color down
+#endif
 
 #ifdef FEAT_MENU
 # ifndef FEAT_GUI_GTK
@@ -344,7 +371,7 @@ typedef struct Gui
 #endif
 
 #ifdef FEAT_GUI_GTK
-# ifndef USE_GTK3
+# if !defined(USE_GTK3) && !defined(USE_GTK4)
     int		visibility;	    // Is shell partially/fully obscured?
 # endif
     GdkCursor	*blank_pointer;	    // Blank pointer
@@ -365,7 +392,7 @@ typedef struct Gui
     GtkWidget	*menubar_h;	    // menubar handle
     GtkWidget	*toolbar_h;	    // toolbar handle
 # endif
-# ifdef USE_GTK3
+# if defined(USE_GTK3) || defined(USE_GTK4)
     GdkRGBA	*fgcolor;	    // GDK-styled foreground color
     GdkRGBA	*bgcolor;	    // GDK-styled background color
     GdkRGBA	*spcolor;	    // GDK-styled special color
@@ -374,9 +401,9 @@ typedef struct Gui
     GdkColor	*bgcolor;	    // GDK-styled background color
     GdkColor	*spcolor;	    // GDK-styled special color
 # endif
-# ifdef USE_GTK3
+# if defined(USE_GTK3) && !defined(USE_GTK4)
     cairo_surface_t *surface;       // drawarea surface
-# else
+# elif !defined(USE_GTK4)
     GdkGC	*text_gc;	    // cached GC for normal text
 # endif
     PangoContext     *text_context; // the context used for all text
@@ -386,13 +413,25 @@ typedef struct Gui
     GtkWidget	*tabline;	    // tab pages line handle
 # endif
 
+# ifndef USE_GTK4
     GtkAccelGroup *accel_group;
+# endif
     GtkWidget	*filedlg;	    // file selection dialog
     char_u	*browse_fname;	    // file name from filedlg
 
     guint32	event_time;
+# ifdef FEAT_GUI_DIALOG
+    // Multiple dialogs not allowed, just tracked for future use.
+    int		dialogs_active;     // number of active GUI dialogs
+    // Suppress focus-in event when focus returns.
+    int		dialog_focus_pending;
+# endif
+    bool	is_x11;	            // active gdk backend in gtk is x11
 # ifdef GDK_WINDOWING_WAYLAND
     bool	is_wayland;	    // active gdk backend in gtk is wayland
+# endif
+# ifdef FEAT_IMAGE
+    double	scale;		    // Current scaling (may be fractional)
 # endif
 #endif	// FEAT_GUI_GTK
 
@@ -462,6 +501,24 @@ typedef struct Gui
 #ifdef FEAT_XIM
     char	*rsrc_input_method;
     char	*rsrc_preedit_type_name;
+#endif
+#if defined(FEAT_GUI_GTK) && defined(USE_GTK4)
+    int decor_height;
+
+    // Size of the form widget last asked for with gui_mch_set_shellsize().
+    // "pending_form_skip" counts how many allocations that do not answer it
+    // may still be ignored.
+    int pending_form_w;
+    int pending_form_h;
+    int pending_form_skip;
+
+    // Used for clipboard functionality in GTK4 GUI
+    GdkContentProvider *regular_provider;
+    GdkContentProvider *primary_provider;
+
+# ifdef FEAT_DND
+    GtkDropTargetAsync *drop_target;
+# endif
 #endif
 } gui_T;
 
@@ -553,7 +610,7 @@ typedef enum
  * For Solaris Studio, that is not the case.  An explicit type cast is needed
  * to suppress warnings on that particular conversion.
  */
-# if defined(__SUNPRO_C) && defined(USE_GTK3)
+# if defined(__SUNPRO_C) && (defined(USE_GTK3) || defined(USE_GTK4))
 #  define FUNC2GENERIC(func) (void *)(func)
 # else
 #  define FUNC2GENERIC(func) G_CALLBACK(func)
