@@ -25,6 +25,10 @@
 
 #include "vim.h"
 
+#if defined(FEAT_IMAGE_GDI)
+void update_popup_images_rect(int left, int top, int right, int bottom);
+#endif
+
 #if defined(FEAT_DIRECTX)
 # include "gui_dwrite.h"
 #endif
@@ -375,6 +379,11 @@ static WPARAM		s_wParam = 0;
 static LPARAM		s_lParam = 0;
 
 static HWND		s_textArea = NULL;
+
+// Set when the text area was painted with the background color only, because
+// the screen contents were not available yet.
+static bool		s_textarea_bg_only = false;
+
 static UINT		s_uMsg = 0;
 
 static char_u		*s_textfield; // Used by dialogs to pass back strings
@@ -1628,6 +1637,10 @@ gui_mch_new_colors(void)
     prevBrush = (HBRUSH)SetClassLongPtr(
 				s_hwnd, GCLP_HBRBACKGROUND, (LONG_PTR)s_brush);
     InvalidateRect(s_hwnd, NULL, TRUE);
+    // The text area is a child window, the invalidation above does not
+    // include it.
+    if (s_textarea_bg_only && s_textArea != NULL)
+	InvalidateRect(s_textArea, NULL, TRUE);
     DeleteObject(prevBrush);
 }
 
@@ -1652,7 +1665,17 @@ gui_mch_open(void)
     // Actually open the window, if not already visible
     // (may be done already in gui_mch_set_shellsize)
     if (!IsWindowVisible(s_hwnd))
+    {
 	ShowWindow(s_hwnd, SW_SHOWDEFAULT);
+
+	// Waiting for the message loop leaves the window undrawn while a
+	// slow VimEnter autocommand runs. The flush presents the DirectX draw.
+	if (s_textArea != NULL)
+	{
+	    UpdateWindow(s_textArea);
+	    gui_mch_flush();
+	}
+    }
 
 #ifdef MSWIN_FIND_REPLACE
     // Init replace string here, so that we keep it when re-opening the
@@ -2593,6 +2616,46 @@ remove_any_timer(void)
     }
 }
 
+#ifdef FEAT_CLIENTSERVER
+// A client message may be handled re-entrantly, e.g. during a redraw while a
+// command line is being read; inserting the keys into the typeahead buffer
+// then corrupts it. Store them here until a safe point.
+static garray_T	server_pending_ga = {0, 0, 0, 0, NULL};
+
+/*
+ * Store keys received from a client, to be inserted into the typeahead buffer
+ * later by server_flush_input().
+ */
+    void
+server_add_input(char_u *str)
+{
+    if (server_pending_ga.ga_data == NULL)
+	ga_init2(&server_pending_ga, 1, 200);
+    ga_concat(&server_pending_ga, str);
+}
+
+/*
+ * Insert postponed keys received from a client, but only when the typeahead
+ * buffer is empty, so that they are not mixed into a command that is currently
+ * being read.
+ */
+    static void
+server_flush_input(void)
+{
+    char_u  *str;
+
+    if (server_pending_ga.ga_len == 0 || typebuf.tb_len != 0)
+	return;
+    str = vim_strnsave(server_pending_ga.ga_data, server_pending_ga.ga_len);
+    server_pending_ga.ga_len = 0;
+    if (str != NULL)
+    {
+	server_to_input_buf(str);
+	vim_free(str);
+    }
+}
+#endif
+
 /*
  * GUI input routine called by gui_wait_for_chars().  Waits for a character
  * from the keyboard.
@@ -2651,6 +2714,10 @@ gui_mch_wait_for_chars(int wtime)
 	    MSG msg;
 
 	    parse_queued_messages();
+# ifdef FEAT_CLIENTSERVER
+	    // Insert keys from a client that were postponed to this safe point.
+	    server_flush_input();
+# endif
 # ifdef FEAT_TIMERS
 	    if (did_add_timer)
 		break;
@@ -2727,6 +2794,207 @@ gui_mch_clear_block(
     rc.bottom = FILL_Y(row2 + 1);
     clear_rect(&rc);
 }
+
+#ifdef FEAT_IMAGE_GDI
+/*
+ * Convert the popup's RGB(A) pixel buffer into a 32-bit BGRX buffer.
+ * "dst" must be large enough for iw * ih * 4 bytes.  When has_alpha is
+ * true, the source has 4 bytes per pixel and the alpha channel is
+ * flattened onto the GUI window background colour (pre-multiplied blend).
+ */
+    static bool
+upload_popup_image_pixels(char_u *dst, char_u *src, int iw, int ih,
+								bool has_alpha)
+{
+    int		y, x;
+    int		stride = iw * 4;
+    int		src_bpp = has_alpha ? 4 : 3;
+    COLORREF	bg = has_alpha ? gui_mch_get_rgb(gui.back_pixel) : 0;
+    int		bg_r = GetRValue(bg);
+    int		bg_g = GetGValue(bg);
+    int		bg_b = GetBValue(bg);
+
+    if (dst == NULL || src == NULL || iw <= 0 || ih <= 0)
+	return false;
+
+    for (y = 0; y < ih; y++)
+    {
+	char_u *s = src + (size_t)y * iw * src_bpp;
+	char_u *d = dst + (size_t)y * stride;
+
+	for (x = 0; x < iw; x++)
+	{
+	    if (has_alpha)
+	    {
+		int a = s[3];
+
+		if (a == 255)
+		{
+		    d[0] = s[2];
+		    d[1] = s[1];
+		    d[2] = s[0];
+		}
+		else if (a == 0)
+		{
+		    d[0] = (char_u)bg_b;
+		    d[1] = (char_u)bg_g;
+		    d[2] = (char_u)bg_r;
+		}
+		else
+		{
+		    d[0] = (char_u)((s[2] * a + bg_b * (255 - a)) / 255);
+		    d[1] = (char_u)((s[1] * a + bg_g * (255 - a)) / 255);
+		    d[2] = (char_u)((s[0] * a + bg_r * (255 - a)) / 255);
+		}
+	    }
+	    else
+	    {
+		d[0] = s[2];	// B
+		d[1] = s[1];	// G
+		d[2] = s[0];	// R
+	    }
+	    d[3] = 0;
+	    s += src_bpp;
+	    d += 4;
+	}
+    }
+    return true;
+}
+
+/*
+ * Build a top-down 32-bit DIB section for the popup's RGB buffer and cache
+ * both the bitmap and a memory DC on the window for fast BitBlt redraws.
+ */
+    static bool
+build_popup_image_hbitmap(win_T *wp)
+{
+    int		iw = wp->w_popup_image_w;
+    int		ih = wp->w_popup_image_h;
+    char_u	*src = wp->w_popup_image_data;
+    BITMAPINFO	bmi;
+    HBITMAP	hbm;
+    HDC		mem_dc;
+    void	*bits = NULL;
+
+    if (src == NULL || iw <= 0 || ih <= 0 || s_hdc == NULL)
+	return false;
+
+    CLEAR_FIELD(bmi);
+    bmi.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
+    bmi.bmiHeader.biWidth = iw;
+    bmi.bmiHeader.biHeight = -ih;	// top-down
+    bmi.bmiHeader.biPlanes = 1;
+    bmi.bmiHeader.biBitCount = 32;
+    bmi.bmiHeader.biCompression = BI_RGB;
+
+    hbm = CreateDIBSection(s_hdc, &bmi, DIB_RGB_COLORS, &bits, NULL, 0);
+    if (hbm == NULL)
+	return false;
+
+    mem_dc = CreateCompatibleDC(s_hdc);
+    if (mem_dc == NULL)
+    {
+	DeleteObject(hbm);
+	return false;
+    }
+
+    SelectObject(mem_dc, hbm);
+    if (!upload_popup_image_pixels((char_u *)bits, src, iw, ih,
+						    wp->w_popup_image_alpha))
+    {
+	DeleteDC(mem_dc);
+	DeleteObject(hbm);
+	return false;
+    }
+
+    wp->w_popup_image_hbitmap = (void *)hbm;
+    wp->w_popup_image_hdc = (void *)mem_dc;
+    wp->w_popup_image_bits = bits;
+    return true;
+}
+
+/*
+ * Release any HBITMAP cached on this popup window.
+ */
+    void
+gui_mch_free_popup_image(win_T *wp)
+{
+    if (wp->w_popup_image_hdc != NULL)
+    {
+	DeleteDC((HDC)wp->w_popup_image_hdc);
+	wp->w_popup_image_hdc = NULL;
+    }
+    if (wp->w_popup_image_hbitmap != NULL)
+    {
+	DeleteObject((HBITMAP)wp->w_popup_image_hbitmap);
+	wp->w_popup_image_hbitmap = NULL;
+    }
+    wp->w_popup_image_bits = NULL;
+}
+
+    bool
+gui_mch_update_popup_image_pixels(win_T *wp)
+{
+    if (wp->w_popup_image_hbitmap == NULL
+	    || wp->w_popup_image_bits == NULL
+	    || wp->w_popup_image_data == NULL)
+	return false;
+
+    return upload_popup_image_pixels((char_u *)wp->w_popup_image_bits,
+	    wp->w_popup_image_data,
+	    wp->w_popup_image_w, wp->w_popup_image_h,
+	    wp->w_popup_image_alpha);
+}
+
+/*
+ * Paint the popup image cached in "wp" onto the GUI canvas.
+ * (row, col) is the top-left text cell of the image area inside the popup
+ * (i.e. inside borders and padding).  The image is drawn at native pixel
+ * size starting at FILL_X(col), FILL_Y(row); the popup auto-sizes itself
+ * to a cell box that fully encloses the image, so any leftover slack is
+ * already filled by the popup background.
+ *
+ * The DIB section is built once on first paint and BitBlt'd thereafter.
+ */
+    void
+gui_mch_draw_popup_image(
+	win_T	*wp,
+	int	 row,
+	int	 col,
+	int	 src_x,
+	int	 src_y,
+	int	 draw_w,
+	int	 draw_h)
+{
+    if (wp->w_popup_image_data == NULL || s_hdc == NULL
+	    || wp->w_popup_image_w <= 0 || wp->w_popup_image_h <= 0
+	    || draw_w <= 0 || draw_h <= 0)
+	return;
+
+    if (wp->w_popup_image_hbitmap == NULL
+	    && !build_popup_image_hbitmap(wp))
+	return;
+
+# if defined(FEAT_DIRECTX)
+    // Commit any pending DirectWrite output so popup text and borders are on
+    // s_hdc before we blit on top.
+    if (IS_ENABLE_DIRECTX())
+	DWriteContext_Flush(s_dwc);
+# endif
+
+    if (wp->w_popup_image_hdc == NULL)
+	return;
+
+    // BitBlt only the visible sub-rect: src offset (src_x, src_y) into the
+    // cached DIB, size (draw_w, draw_h) pixels.  The caller (popupwin.c)
+    // computes these from popup_compute_clip() so a "clipwindow" popup that
+    // overhangs its host window does not paint past the host's content edge.
+    BitBlt(s_hdc,
+	    FILL_X(col), FILL_Y(row),
+	    draw_w, draw_h,
+	    (HDC)wp->w_popup_image_hdc, src_x, src_y, SRCCOPY);
+}
+#endif
 
 /*
  * Clear the whole text window.
@@ -3465,9 +3733,22 @@ _OnPaint(
 
     if (!IsRectEmpty(&ps.rcPaint))
     {
+	// The text area has no background brush, thus undefined pixels remain
+	// visible until the screen contents are drawn.
+	if (!screen_cleared || ScreenLines == NULL)
+	{
+	    clear_rect(&ps.rcPaint);
+	    s_textarea_bg_only = true;
+	}
+	else
+	    s_textarea_bg_only = false;
 	gui_redraw(ps.rcPaint.left, ps.rcPaint.top,
 		ps.rcPaint.right - ps.rcPaint.left + 1,
 		ps.rcPaint.bottom - ps.rcPaint.top + 1);
+#if defined(FEAT_IMAGE_GDI)
+	update_popup_images_rect(ps.rcPaint.left, ps.rcPaint.top,
+		ps.rcPaint.right, ps.rcPaint.bottom);
+#endif
     }
 
     EndPaint(hwnd, &ps);
@@ -8904,11 +9185,11 @@ gui_mch_register_sign(char_u *signfile)
     {
 	int do_load = 1;
 
-	if (!STRICMP(ext, ".bmp"))
+	if (STRICMP(ext, ".bmp") == 0)
 	    sign.uType =  IMAGE_BITMAP;
-	else if (!STRICMP(ext, ".ico"))
+	else if (STRICMP(ext, ".ico") == 0)
 	    sign.uType =  IMAGE_ICON;
-	else if (!STRICMP(ext, ".cur") || !STRICMP(ext, ".ani"))
+	else if (STRICMP(ext, ".cur") == 0 || STRICMP(ext, ".ani") == 0)
 	    sign.uType =  IMAGE_CURSOR;
 	else
 	    do_load = 0;
@@ -8918,7 +9199,7 @@ gui_mch_register_sign(char_u *signfile)
 		    gui.char_width * 2, gui.char_height,
 		    LR_LOADFROMFILE | LR_CREATEDIBSECTION);
 # ifdef FEAT_XPM_W32
-	if (!STRICMP(ext, ".xpm"))
+	if (STRICMP(ext, ".xpm") == 0)
 	{
 	    sign.uType = IMAGE_XPM;
 	    LoadXpmImage((char *)signfile, (HBITMAP *)&sign.hImage,

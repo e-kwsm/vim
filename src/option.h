@@ -277,8 +277,9 @@ typedef enum {
 #define SHM_RECORDING	'q'		// short recording message
 #define SHM_FILEINFO	'F'		// no file info messages
 #define SHM_SEARCHCOUNT  'S'		// no search stats: '[1/10]'
+#define SHM_UNDO	'u'		// undo messages
 #define SHM_POSIX       "AS"		// POSIX value
-#define SHM_ALL		"rmfixlnwaWtToOsAIcCqFS" // all possible flags for 'shm'
+#define SHM_ALL		"rmfixlnwaWtToOsAIcCqFSu" // all possible flags for 'shm'
 #define SHM_LEN		30		// max length of all flags together
 					// plus a NUL character
 
@@ -665,9 +666,11 @@ EXTERN char_u	*p_pvp;		// 'previewpopup'
 EXTERN char_u	*p_pdev;	// 'printdevice'
 # ifdef FEAT_POSTSCRIPT
 EXTERN char_u	*p_penc;	// 'printencoding'
-EXTERN char_u	*p_pexpr;	// 'printexpr'
 EXTERN char_u	*p_pmfn;	// 'printmbfont'
 EXTERN char_u	*p_pmcs;	// 'printmbcharset'
+# endif
+# if defined(FEAT_POSTSCRIPT) || defined(FEAT_PRINT_PANGO)
+EXTERN char_u	*p_pexpr;	// 'printexpr'
 # endif
 EXTERN char_u	*p_pfn;		// 'printfont'
 EXTERN char_u	*p_popt;	// 'printoptions'
@@ -685,7 +688,7 @@ EXTERN int	p_guipty;	// 'guipty'
 #if defined(FEAT_GUI_GTK) || defined(FEAT_GUI_MSWIN)
 EXTERN char_u	*p_guiligatures;  // 'guiligatures'
 #endif
-#if defined(FEAT_GUI_GTK) || defined(FEAT_GUI_X11)
+#if (defined(FEAT_GUI_GTK) && !defined(USE_GTK4)) || defined(FEAT_GUI_X11)
 EXTERN long	p_ghr;		// 'guiheadroom'
 #endif
 #ifdef CURSOR_SHAPE
@@ -1029,6 +1032,7 @@ EXTERN unsigned tc_flags;       // flags from 'tagcase'
 EXTERN long	p_tl;		// 'taglength'
 EXTERN int	p_tr;		// 'tagrelative'
 EXTERN char_u	*p_tags;	// 'tags'
+EXTERN int	p_tagsecure;    // 'tagsecure'
 EXTERN int	p_tgst;		// 'tagstack'
 #if defined(DYNAMIC_TCL)
 EXTERN char_u	*p_tcldll;	// 'tcldll'

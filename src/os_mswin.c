@@ -579,6 +579,12 @@ mch_new_shellsize(void)
     // never used
 }
 
+    void
+mch_calc_cell_size(struct cellsize *cs_out UNUSED)
+{
+    // never used
+}
+
 #endif
 
 /*
@@ -2047,10 +2053,15 @@ Messaging_WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 	    // Remember who sent this, for <client>
 	    clientWindow = sender;
 
-	    // Add the received keys to the input buffer.  The loop waiting
-	    // for the user to do something should check the input buffer.
+	    // Add the received keys to the input buffer.
 	    str = serverConvert(client_enc, (char_u *)data->lpData, &tofree);
-	    server_to_input_buf(str);
+# ifdef FEAT_GUI
+	    if (gui.in_use)
+		// The GUI may get here re-entrantly, so insert the keys later.
+		server_add_input(str);
+	    else
+# endif
+		server_to_input_buf(str);
 	    vim_free(tofree);
 
 # ifdef FEAT_GUI
@@ -2250,16 +2261,14 @@ enumWindowsGetServer(HWND hwnd, LPARAM lparam)
     static BOOL CALLBACK
 enumWindowsGetNames(HWND hwnd, LPARAM lparam)
 {
-    garray_T	*ga = (garray_T *)lparam;
+    list_T	*list = (list_T *)lparam;
     char	server[MAX_PATH];
 
     // Get the title of the window
     if (getVimServerName(hwnd, server, sizeof(server)) == 0)
 	return TRUE;
 
-    // Add the name to the list
-    ga_concat(ga, (char_u *)server);
-    GA_CONCAT_LITERAL(ga, "\n");
+    list_append_string(list, (char_u *)server, -1);
     return TRUE;
 }
 
@@ -2365,17 +2374,17 @@ serverSetName(char_u *name)
     }
 }
 
-    char_u *
+    list_T *
 serverGetVimNames(void)
 {
-    garray_T ga;
+    list_T *list = list_alloc();
 
-    ga_init2(&ga, 1, 100);
+    if (list == NULL)
+	return NULL;
 
-    enum_windows(enumWindowsGetNames, (LPARAM)(&ga));
-    ga_append(&ga, NUL);
+    enum_windows(enumWindowsGetNames, (LPARAM)list);
 
-    return ga.ga_data;
+    return list;
 }
 
     int

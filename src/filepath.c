@@ -442,27 +442,29 @@ repeat:
 
 	if (p != NULL)
 	{
+	    size_t  dirnamelen = 0;
+
 	    if (c == '.')
 	    {
-		size_t	namelen;
-
 		mch_dirname(dirname, MAXPATHL);
 		if (has_homerelative)
 		{
 		    s = vim_strsave(dirname);
 		    if (s != NULL)
 		    {
-			home_replace(NULL, s, dirname, MAXPATHL, TRUE);
+			dirnamelen = home_replace(NULL, s, dirname, MAXPATHL, TRUE);
 			vim_free(s);
 		    }
 		}
-		namelen = STRLEN(dirname);
+
+		if (dirnamelen == 0)
+		    dirnamelen = STRLEN(dirname);
 
 		// Do not call shorten_fname() here since it removes the prefix
 		// even though the path does not have a prefix.
-		if (fnamencmp(p, dirname, namelen) == 0)
+		if (fnamencmp(p, dirname, dirnamelen) == 0)
 		{
-		    p += namelen;
+		    p += dirnamelen;
 		    if (vim_ispathsep(*p))
 		    {
 			while (*p && vim_ispathsep(*p))
@@ -480,11 +482,11 @@ repeat:
 	    }
 	    else
 	    {
-		home_replace(NULL, p, dirname, MAXPATHL, TRUE);
+		dirnamelen = home_replace(NULL, p, dirname, MAXPATHL, TRUE);
 		// Only replace it when it starts with '~'
 		if (*dirname == '~')
 		{
-		    s = vim_strsave(dirname);
+		    s = vim_strnsave(dirname, dirnamelen);
 		    if (s != NULL)
 		    {
 			*fnamep = s;
@@ -584,6 +586,10 @@ repeat:
 	    }
 	    *fnamelen = l;
 	}
+
+	// The name was replaced by the short name, "tail" points into the
+	// previous name.
+	tail = gettail(*fnamep);
     }
 #endif // MSWIN
 
@@ -2724,7 +2730,7 @@ f_filecopy(typval_T *argvars, typval_T *rettv)
  * 'src'.
  * If anything fails (except when out of space) dst equals src.
  */
-    void
+    size_t
 home_replace(
     buf_T	*buf,	// when not NULL, check for help files
     char_u	*src,	// input file name
@@ -2737,21 +2743,19 @@ home_replace(
     size_t	len;
     char_u	*homedir_env, *homedir_env_orig;
     char_u	*p;
+    char_u	*dst_start;
 
     if (src == NULL)
     {
 	*dst = NUL;
-	return;
+	return 0;
     }
 
     /*
      * If the file is a help file, remove the path completely.
      */
     if (buf != NULL && buf->b_help)
-    {
-	vim_snprintf((char *)dst, dstlen, "%s", gettail(src));
-	return;
-    }
+	return vim_snprintf_safelen((char *)dst, dstlen, "%s", gettail(src));
 
     /*
      * We check both the value of the $HOME environment variable and the
@@ -2793,6 +2797,7 @@ home_replace(
 
     if (!one)
 	src = skipwhite(src);
+    dst_start = dst;		// remember the start
     while (*src && dstlen > 0)
     {
 	/*
@@ -2842,6 +2847,8 @@ home_replace(
 
     if (homedir_env != homedir_env_orig)
 	vim_free(homedir_env);
+
+    return (size_t)(dst - dst_start);
 }
 
 /*
@@ -3193,7 +3200,7 @@ vim_fnamencmp(char_u *x, char_u *y, size_t len)
     char_u  *
 concat_fnames(char_u *fname1, size_t fname1len, char_u *fname2, size_t fname2len, int sep, string_T *ret)
 {
-    ret->string = alloc(fname1len + (sep ? STRLEN_LITERAL(PATHSEPSTR) : 0) + fname2len + 1);
+    ret->string = alloc(fname1len + (sep ? sizeof(PATHSEP) : 0) + fname2len + 1);
     if (ret->string == NULL)
 	ret->length = 0;
     else
@@ -3203,7 +3210,7 @@ concat_fnames(char_u *fname1, size_t fname1len, char_u *fname2, size_t fname2len
 	if (sep && *ret->string != NUL && !after_pathsep(ret->string, ret->string + ret->length))
 	{
 	    STRCPY(ret->string + ret->length, PATHSEPSTR);
-	    ret->length += STRLEN_LITERAL(PATHSEPSTR);
+	    ret->length += sizeof(PATHSEP);
 	}
 	STRCPY(ret->string + ret->length, fname2);
 	ret->length += fname2len;
@@ -3571,6 +3578,7 @@ dos_expandpath(
     char_u		*matchname;
     int			ok;
     char_u		*p_alt;
+    int			use_short_name;
 
     // Expanding "**" may take a long time, check for CTRL-C.
     if (stardepth > 0)
@@ -3665,6 +3673,10 @@ dos_expandpath(
     // remember the pattern or file name being looked for
     matchname = vim_strsave(s);
 
+    // Only match against the alternate (8.3) file name when the pattern looks
+    // like a short name, it contains a '~'.
+    use_short_name = vim_strchr(s, '~') != NULL;
+
     len = (size_t)(s - buf);
     // If "**" is by itself, this is the first time we encounter it and more
     // is following then find matches without any directory.
@@ -3694,7 +3706,8 @@ dos_expandpath(
 	// Do not use the alternate filename when the file name ends in '~',
 	// because it picks up backup files: short name for "foo.vim~" is
 	// "foo~1.vim", which matches "*.vim".
-	if (*wfb.cAlternateFileName == NUL || p[STRLEN(p) - 1] == '~')
+	if (!use_short_name || *wfb.cAlternateFileName == NUL
+						  || p[STRLEN(p) - 1] == '~')
 	    p_alt = NULL;
 	else
 	    p_alt = utf16_to_enc(wfb.cAlternateFileName, NULL);
