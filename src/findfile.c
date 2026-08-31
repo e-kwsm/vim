@@ -2412,6 +2412,10 @@ expand_path_option(
     {
 	buflen = copy_option_part(&path_option, buf, MAXPATHL, " ,");
 
+	// do not expand backticks, could have been set via a modeline
+	if (vim_strchr(buf, '`') != NULL)
+	    continue;
+
 	if (buf[0] == '.' && (buf[1] == NUL || vim_ispathsep(buf[1])))
 	{
 	    size_t  plen;
@@ -2674,7 +2678,7 @@ uniquefy_paths(
 	    continue;
 	}
 
-	rel_pathsize = 1 + STRLEN_LITERAL(PATHSEPSTR) + STRLEN(short_name) + 1;
+	rel_pathsize = 1 + sizeof(PATHSEP) + STRLEN(short_name) + 1;
 	rel_path = alloc(rel_pathsize);
 	if (rel_path == NULL)
 	    goto theend;

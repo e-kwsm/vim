@@ -435,6 +435,8 @@ write_viminfo_bufferlist(FILE *fp)
     fputs(_("\n# Buffer list:\n"), fp);
     FOR_ALL_BUFFERS(buf)
     {
+	size_t	linelen;
+
 	if (buf->b_fname == NULL
 		|| !buf->b_p_bl
 		|| bt_quickfix(buf)
@@ -445,8 +447,8 @@ write_viminfo_bufferlist(FILE *fp)
 	if (max_buffers-- == 0)
 	    break;
 	putc('%', fp);
-	home_replace(NULL, buf->b_ffname, line, MAXPATHL, TRUE);
-	vim_snprintf_add((char *)line, LINE_BUF_LEN, "\t%ld\t%d",
+	linelen = home_replace(NULL, buf->b_ffname, line, MAXPATHL, TRUE);
+	vim_snprintf((char *)line + linelen, LINE_BUF_LEN - linelen, "\t%ld\t%d",
 			(long)buf->b_last_cursor.lnum,
 			buf->b_last_cursor.col);
 	viminfo_writestring(fp, line);
@@ -1474,7 +1476,7 @@ write_viminfo_sub_string(FILE *fp)
  */
 
     static int
-read_viminfo_search_pattern(vir_T *virp, int force)
+read_viminfo_search_pattern(vir_T *virp, int force, int writing)
 {
     char_u	*lp;
     int		idx = -1;
@@ -1541,16 +1543,19 @@ read_viminfo_search_pattern(vir_T *virp, int force)
 									TRUE);
 	    if (val != NULL)
 	    {
-		set_last_search_pat(val, idx, magic, setlast);
-		vim_free(val);
-		spat->no_scs = no_scs;
-		spat->off.line = off_line;
-		spat->off.end = off_end;
-		spat->off.off = off;
+		if (!writing)
+		{
+		    set_last_search_pat(val, idx, magic, setlast);
+		    spat->no_scs = no_scs;
+		    spat->off.line = off_line;
+		    spat->off.end = off_end;
+		    spat->off.off = off;
 #ifdef FEAT_SEARCH_EXTRA
-		if (setlast)
-		    set_no_hlsearch(!hlsearch_on);
+		    if (setlast)
+			set_no_hlsearch(!hlsearch_on);
 #endif
+		}
+		vim_free(val);
 	    }
 	}
     }
@@ -1706,7 +1711,7 @@ read_viminfo_register(vir_T *virp, int force)
 	    if (size == limit)
 	    {
 		string_T *new_array = (string_T *)
-					   alloc(limit * 2 * sizeof(string_T));
+				    alloc((size_t)limit * 2 * sizeof(string_T));
 
 		if (new_array == NULL)
 		{
@@ -2912,7 +2917,7 @@ read_viminfo_up_to_marks(
 	    case '/':	    // Search string
 	    case '&':	    // Substitute search string
 	    case '~':	    // Last search string, followed by '/' or '&'
-		eof = read_viminfo_search_pattern(virp, forceit);
+		eof = read_viminfo_search_pattern(virp, forceit, writing);
 		break;
 	    case '$':
 		eof = read_viminfo_sub_string(virp, forceit);
