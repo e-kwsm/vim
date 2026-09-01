@@ -403,6 +403,24 @@ f_log10(typval_T *argvars, typval_T *rettv)
 }
 
 /*
+ * "log2()" function
+ */
+    void
+f_log2(typval_T *argvars, typval_T *rettv)
+{
+    float_T	f = 0.0;
+
+    if (in_vim9script() && check_for_float_or_nr_arg(argvars, 0) == FAIL)
+	return;
+
+    rettv->v_type = VAR_FLOAT;
+    if (get_float_arg(argvars, &f) == OK)
+	rettv->vval.v_float = log2(f);
+    else
+	rettv->vval.v_float = 0.0;
+}
+
+/*
  * "pow()" function
  */
     void

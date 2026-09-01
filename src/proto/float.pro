@@ -15,6 +15,7 @@ void f_fmod(typval_T *argvars, typval_T *rettv);
 void f_isinf(typval_T *argvars, typval_T *rettv);
 void f_isnan(typval_T *argvars, typval_T *rettv);
 void f_log(typval_T *argvars, typval_T *rettv);
+void f_log2(typval_T *argvars, typval_T *rettv);
 void f_log10(typval_T *argvars, typval_T *rettv);
 void f_pow(typval_T *argvars, typval_T *rettv);
 float_T vim_round(float_T f);
