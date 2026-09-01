@@ -399,6 +399,7 @@ listener_remove({id})		Number	remove a listener callback
 localtime()			Number	current time
 log({expr})			Float	natural logarithm (base e) of {expr}
 log10({expr})			Float	logarithm of Float {expr} to base 10
+log2({expr})			Float	logarithm of Float {expr} to base 2
 luaeval({expr} [, {expr}])	any	evaluate |Lua| expression
 map({expr1}, {expr2})		List/Dict/Blob/String
 					change each item in {expr1} to {expr2}
@@ -7066,6 +7067,22 @@ log10({expr})						*log10()*
 
 		Can also be used as a |method|: >
 			Compute()->log10()
+<
+		Return type: |Float|
+
+
+log2({expr})						*log2()*
+		Return the logarithm of Float {expr} to base 2 as a |Float|.
+		{expr} must evaluate to a |Float| or a |Number|.
+		Returns 0.0 if {expr} is not a |Float| or a |Number|.
+		Examples: >
+			:echo log2(0.5)
+<			-1.0 >
+			:echo log2(10)
+<			3.321928
+
+		Can also be used as a |method|: >
+			Compute()->log2()
 <
 		Return type: |Float|
 

@@ -8973,6 +8973,7 @@ location-list-file-window	quickfix.txt	/*location-list-file-window*
 location-list-window	quickfix.txt	/*location-list-window*
 log()	builtin.txt	/*log()*
 log10()	builtin.txt	/*log10()*
+log2()	builtin.txt	/*log2()*
 logiPat	pi_logipat.txt	/*logiPat*
 logiPat-arg	pi_logipat.txt	/*logiPat-arg*
 logiPat-caveat	pi_logipat.txt	/*logiPat-caveat*

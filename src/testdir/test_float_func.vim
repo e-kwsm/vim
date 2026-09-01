@@ -41,6 +41,18 @@ func Test_log()
   call assert_fails('call log("")', 'E808:')
 endfunc
 
+func Test_log2()
+  call assert_equal('0.0', string(log2(1.0)))
+  call assert_equal('2.0', string(log2(4.0)))
+  call assert_equal('3.321928', string(log2(10.0)))
+  eval 10.0->log2()->string()->assert_equal('3.321928')
+  call assert_equal('-inf', string(log2(0.0)))
+  call assert_equal('nan', string(log2(-1.0)))
+  call assert_equal('inf', string(log2(1.0/0.0)))
+  call assert_equal('nan', string(log2(0.0/0.0)))
+  call assert_fails('call log2("")', 'E808:')
+endfunc
+
 func Test_log10()
   call assert_equal('0.0', string(log10(1.0)))
   call assert_equal('2.0', string(log10(100.0)))

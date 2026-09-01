@@ -2530,6 +2530,8 @@ static const funcentry_T global_functions[] =
 			ret_float,	    f_log},
     {"log10",		1, 1, FEARG_1,	    arg1_float_or_nr,
 			ret_float,	    f_log10},
+    {"log2",		1, 1, FEARG_1,	    arg1_float_or_nr,
+			ret_float,	    f_log2},
     {"luaeval",		1, 2, FEARG_1,	    arg2_string_any,
 			ret_any,
 #ifdef FEAT_LUA

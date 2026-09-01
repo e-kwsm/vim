@@ -904,6 +904,7 @@ Floating point computation:				*float-functions*
 	fmod()			remainder of division
 	exp()			exponential
 	log()			natural logarithm (logarithm to base e)
+	log2()			logarithm to base 2
 	log10()			logarithm to base 10
 	pow()			value of x to the exponent y
 	sqrt()			square root
