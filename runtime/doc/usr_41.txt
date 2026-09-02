@@ -907,6 +907,7 @@ Floating point computation:				*float-functions*
 	log10()			logarithm to base 10
 	pow()			value of x to the exponent y
 	sqrt()			square root
+	hypot()			hypotenuse
 	sin()			sine
 	cos()			cosine
 	tan()			tangent

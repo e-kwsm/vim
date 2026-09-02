@@ -338,6 +338,27 @@ f_fmod(typval_T *argvars, typval_T *rettv)
 	rettv->vval.v_float = 0.0;
 }
 
+/*
+ * "hypot()" function
+ */
+    void
+f_hypot(typval_T *argvars, typval_T *rettv)
+{
+    float_T	fx = 0.0, fy = 0.0;
+
+    if (in_vim9script()
+	    && (check_for_float_or_nr_arg(argvars, 0) == FAIL
+		|| check_for_float_or_nr_arg(argvars, 1) == FAIL))
+	return;
+
+    rettv->v_type = VAR_FLOAT;
+    if (get_float_arg(argvars, &fx) == OK
+				     && get_float_arg(&argvars[1], &fy) == OK)
+	rettv->vval.v_float = hypot(fx, fy);
+    else
+	rettv->vval.v_float = 0.0;
+}
+
 #if defined(HAVE_MATH_H)
 /*
  * "isinf()" function
