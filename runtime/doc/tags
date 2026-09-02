@@ -8557,6 +8557,7 @@ html-indenting	indent.txt	/*html-indenting*
 html.vim	syntax.txt	/*html.vim*
 htmlos.vim	syntax.txt	/*htmlos.vim*
 http	pi_netrw.txt	/*http*
+hypot()	builtin.txt	/*hypot()*
 i	insert.txt	/*i*
 i'	motion.txt	/*i'*
 i(	motion.txt	/*i(*

@@ -12,6 +12,7 @@ void f_exp(typval_T *argvars, typval_T *rettv);
 void f_float2nr(typval_T *argvars, typval_T *rettv);
 void f_floor(typval_T *argvars, typval_T *rettv);
 void f_fmod(typval_T *argvars, typval_T *rettv);
+void f_hypot(typval_T *argvars, typval_T *rettv);
 void f_isinf(typval_T *argvars, typval_T *rettv);
 void f_isnan(typval_T *argvars, typval_T *rettv);
 void f_log(typval_T *argvars, typval_T *rettv);

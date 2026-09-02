@@ -2430,6 +2430,8 @@ static const funcentry_T global_functions[] =
 			ret_number_bool,    f_hlset},
     {"hostname",	0, 0, 0,	    NULL,
 			ret_string,	    f_hostname},
+    {"hypot",		2, 2, FEARG_1,	    arg2_float_or_nr,
+			ret_float,	    f_hypot},
     {"iconv",		3, 3, FEARG_1,	    arg3_string,
 			ret_string,	    f_iconv},
     {"id",		1, 1, FEARG_1,	    NULL,

@@ -335,6 +335,7 @@ hlID({name})			Number	syntax ID of highlight group {name}
 hlexists({name})		Number	|TRUE| if highlight group {name} exists
 hlget([{name} [, {resolve}]])	List	get highlight group attributes
 hlset({list})			Number	set highlight group attributes
+hypot({expr1}, {expr2})		Float	hypotenuse of {expr1} and {expr2}
 hostname()			String	name of the machine Vim is running on
 iconv({expr}, {from}, {to})	String	convert encoding of {expr}
 id({item})			String	get unique identity string of item
@@ -6046,6 +6047,23 @@ hostname()						*hostname()*
 		256 characters long are truncated.
 
 		Return type: |String|
+
+
+hypot({expr1}, {expr2})					*hypot()*
+		Return the square root of {expr1} * {expr1} + {expr2} *
+		{expr2}, as a |Float|.  {expr1} and {expr2} must evaluate to a
+		|Float| or a |Number|.  Returns 0.0 if {expr1} or {expr2} is
+		not a |Float| or a |Number|.
+		Examples: >
+			:echo hypot(3, 4)
+<			5.0 >
+			:echo hypot(-1.0e200, 1.0e200)
+<			1.414214e200
+
+		Can also be used as a |method|: >
+			Compute()->hypot(1)
+<
+		Return type: |Float|
 
 
 iconv({string}, {from}, {to})				*iconv()*

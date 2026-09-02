@@ -30,6 +30,17 @@ func Test_sqrt()
   call assert_fails('call sqrt("")', 'E808:')
 endfunc
 
+func Test_hypot()
+  call assert_equal('5.0', string(hypot(3, 4)))
+  call assert_equal('1.414214e200', string(hypot(-1.0e200, 1.0e200)))
+  call assert_equal('inf', string(hypot(0.0, 1.0/0.0)))
+  eval 0.0->hypot(1.0/0.0)->string()->assert_equal('inf')
+  call assert_equal('inf', string(hypot(1.0/0.0, 1.0)))
+  call assert_equal('nan', string(hypot(0.0/0.0, 1.0)))
+  call assert_fails('call hypot("", -1)', 'E808:')
+  call assert_fails('call hypot(-1, "")', 'E808:')
+endfunc
+
 func Test_log()
   call assert_equal('0.0', string(log(1.0)))
   call assert_equal('-0.693147', string(log(0.5)))
