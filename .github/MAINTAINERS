@@ -230,6 +230,7 @@ runtime/ftplugin/html.vim				@dkearns
 runtime/ftplugin/http.vim				@ribru17
 runtime/ftplugin/hyprlang.vim				@ribru17
 runtime/ftplugin/i3config.vim				@hiqua
+runtime/ftplugin/icalendar.vim				@anakin4747
 runtime/ftplugin/icon.vim				@dkearns
 runtime/ftplugin/indent.vim				@dkearns
 runtime/ftplugin/ishd.vim				@dkearns
@@ -278,6 +279,7 @@ runtime/ftplugin/modula3.vim				@dkearns
 runtime/ftplugin/mojo.vim				@ribru17
 runtime/ftplugin/mp.vim					@lifepillar
 runtime/ftplugin/mss.vim				@Freed-Wu
+runtime/ftplugin/nasm.vim				@selenebun
 runtime/ftplugin/nginx.vim				@chr4
 runtime/ftplugin/nickel.vim				@ribru17
 runtime/ftplugin/nim.vim				@ribru17
@@ -316,6 +318,7 @@ runtime/ftplugin/rasi.vim				@fymyte
 runtime/ftplugin/readline.vim				@dkearns
 runtime/ftplugin/remind.vim				@joereynolds
 runtime/ftplugin/rescript.vim				@ribru17
+runtime/ftplugin/robot.vim				@dawidd6
 runtime/ftplugin/routeros.vim				@zainin
 runtime/ftplugin/rst.vim				@marshallward
 runtime/ftplugin/ruby.vim				@tpope @dkearns
@@ -600,6 +603,7 @@ runtime/syntax/hollywood.vim				@sodero
 runtime/syntax/html.vim					@dkearns
 runtime/syntax/htmlangular.vim				@dlvandenberg
 runtime/syntax/i3config.vim				@hiqua
+runtime/syntax/icalendar.vim				@anakin4747
 runtime/syntax/icon.vim					@dkearns
 runtime/syntax/indent.vim				@dkearns
 runtime/syntax/j.vim					@glts
@@ -725,6 +729,7 @@ runtime/syntax/sshdconfig.vim				@Jakuje
 runtime/syntax/sshpublickey.vim				@fionn
 runtime/syntax/sshknownhosts.vim			@fionn
 runtime/syntax/sudoers.vim				@e-kwsm
+runtime/syntax/svelte.vim				@231tr0n
 runtime/syntax/svn.vim					@hdima
 runtime/syntax/swayconfig.vim				@jamespeapen
 runtime/syntax/swig.vim					@jmarrec
