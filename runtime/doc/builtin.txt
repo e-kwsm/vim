@@ -1,4 +1,4 @@
-*builtin.txt*	For Vim version 9.2.  Last change: 2026 Aug 25
+*builtin.txt*	For Vim version 9.2.  Last change: 2026 Sep 25
 
 
 		  VIM REFERENCE MANUAL	  by Bram Moolenaar
@@ -2242,7 +2242,7 @@ cosh({expr})						*cosh()*
 			:echo cosh(0.5)
 <			1.127626 >
 			:echo cosh(-0.5)
-<			-1.127626
+<			1.127626
 
 		Can also be used as a |method|: >
 			Compute()->cosh()
@@ -5009,7 +5009,8 @@ getqflist([{what}])					*getqflist()*
 			valid	|TRUE|: recognized error message
 			user_data
 				custom data associated with the item, can be
-				any type.
+				any type.  This entry is present only when
+				user data was set for this item.
 
 		When there is no error list or it's empty, an empty list is
 		returned.  Quickfix list entries with a non-existing buffer
@@ -5051,6 +5052,11 @@ getqflist([{what}])					*getqflist()*
 			qfbufnr number of the buffer displayed in the quickfix
 				window.  Returns 0 if the quickfix buffer is
 				not present.  See |quickfix-buffer|.
+			quickfixtextfunc
+				function to get the text to display in the
+				quickfix window.  Returns an empty string if
+				this function is not set for the list.  See
+				|quickfix-window-function|.
 			size	number of entries in the quickfix list
 			title	get the list title |quickfix-title|
 			winid	get the quickfix |window-ID|
@@ -5082,6 +5088,9 @@ getqflist([{what}])					*getqflist()*
 				0
 			qfbufnr	number of the buffer displayed in the quickfix
 				window.  If not present, set to 0.
+			quickfixtextfunc
+				'quickfixtextfunc' setting of the list.  If
+				not present, set to "".
 			size	number of entries in the quickfix list.  If
 				not present, set to 0.
 			title	quickfix list title text.  If not present, set
@@ -5224,7 +5233,7 @@ getregionpos({pos1}, {pos2} [, {opts}])			*getregionpos()*
 		describing the buffer text segments bound by {pos1} and
 		{pos2}.
 		The segments are a pair of positions for every line: >
-			[[{start_pos}, {end_pos}], ...]
+			[[{startpos}, {endpos}], ...]
 <
 		The position is a |List| with four numbers:
 		    [bufnum, lnum, col, off]
@@ -5250,6 +5259,31 @@ getregionpos({pos1}, {pos2} [, {opts}])			*getregionpos()*
 					beyond the end of a line, a "col"
 					value of 0 is used for both positions.
 					(default: |FALSE|)
+
+			bounds		If |TRUE|, return only the outer
+					bounds of the region as a single
+					pair: >
+						[[{startpos}, {endpos}]]
+<					{startpos} is the start position on
+					the first line of the region and
+					{endpos} the end position on its last
+					line.  The lines in between are not
+					visited, which is much faster for a
+					large region.
+					(default: |FALSE|)
+
+		Using "bounds" with the same {opts} is equivalent to taking
+		the outer positions of the full result: >
+			let full = getregionpos(pos1, pos2, opts)
+			let bounds = [[full[0][0], full[-1][1]]]
+<		When the full result is empty, e.g. because {pos1} and {pos2}
+		are in different buffers, the result is empty as well.
+		Note that the two positions then come from different lines, so
+		they describe a diagonal of the region and not its shape.  For
+		a blockwise region they are the start of the first line and
+		the end of the last line, not the corners of the block.
+		Likewise, when the first line is empty and "eol" is |FALSE|,
+		{startpos} has a "col" of 0 while {endpos} may not.
 
 		Can also be used as a |method|: >
 			getpos('.')->getregionpos(getpos("'a"))
@@ -6720,7 +6754,7 @@ libcallnr({libname}, {funcname}, {argument})		*libcallnr()*
 		third argument: >
 			GetValue()->libcallnr("libc.so", "printf")
 <
-		Return type: |String|
+		Return type: |Number|
 
 
 line({expr} [, {winid}])				*line()*
@@ -8209,7 +8243,7 @@ pow({x}, {y})						*pow()*
 		Can also be used as a |method|: >
 			Compute()->pow(3)
 <
-		Return type: |Number|
+		Return type: |Float|
 
 
 preinserted()						*preinserted()*
@@ -8665,7 +8699,7 @@ pum_getpos()						*pum_getpos()*
 		The values are the same as in |v:event| during
 		|CompleteChanged|.
 
-		Return type: dict<any>
+		Return type: dict<number>
 
 
 pumvisible()						*pumvisible()*
@@ -8767,6 +8801,8 @@ range({expr} [, {max} [, {stride}]])			*range()*
 		When the maximum is one before the start the result is an
 		empty list.  When the maximum is more than one before the
 		start this is an error.
+		The list can have at most 2147483647 items and {stride} must
+		fit in a 32 bit number, otherwise |E1510| is given.
 		Examples: >
 			range(4)		" [0, 1, 2, 3]
 			range(2, 4)		" [2, 3, 4]
@@ -9510,6 +9546,9 @@ screenpos({winid}, {lnum}, {col})			*screenpos()*
 		as if 'conceallevel' is zero.  You can set the cursor to the
 		right position and use |screencol()| to get the value with
 		|conceal| taken into account.
+		|virtual-text| above the line occupies its own screen line and
+		is counted: the first character of the line is then on the
+		screen line below it.
 		If the position is in a closed fold the screen position of the
 		first character is returned, {col} is not used.
 		Returns an empty Dict if {winid} is invalid.
@@ -10073,6 +10112,8 @@ setcellwidths({list})					*setcellwidths()*
 		match with what Vim knows about each emoji.  If it doesn't
 		look right you need to adjust the {list} argument.
 
+		|getcellwidths()| can be used to get the overrides later.
+
 		Return type: void
 
 
@@ -10403,7 +10444,10 @@ setqflist({list} [, {action} [, {what}]])		*setqflist()*
 				:call setqflist([], 'r')
 <
 		'u'	Like 'r', but tries to preserve the current selection
-			in the quickfix list.
+			in the quickfix list.  The entry nearest to the
+			previously selected one becomes the current entry.
+			Proximity is determined by comparing the file, then
+			the line number and then the column number.
 		'f'	All the quickfix lists in the quickfix stack are
 			freed.
 
@@ -12182,6 +12226,7 @@ terminalprops()						*terminalprops()*
 		   mouse		mouse type supported
 		   kitty		whether Kitty terminal was detected
 		   decrqm		whether sending DECRQM sequences work
+		   rgb			whether the terminal has true color  **
 
 		** value 'u' for unknown, 'y' for yes, 'n' for no
 
@@ -12203,6 +12248,9 @@ terminalprops()						*terminalprops()*
 
 		If "decrqm" is 'y', then Vim will query support for the
 		'termsync' and 'termresize' ("inband") options.
+
+		"rgb" is 'y' when 't_Co' is 16777216, as it is for the
+		"xterm-direct" terminal entry.  See |xterm-true-color|.
 
 		Also see:
 		- 'ambiwidth' - detected by using |t_u7|.
@@ -12699,6 +12747,10 @@ virtcol({expr} [, {list} [, {winid}]])			*virtcol()*
 		Virtual editing is active in the current mode, a position
 		beyond the end of the line can be returned.  Also see
 		'virtualedit'
+
+		|virtual-text| above the line occupies its own screen line and
+		is counted like a wrapped line: with a window 80 columns wide
+		the first character of the line is then in virtual column 81.
 
 		If {list} is present and non-zero then virtcol() returns a
 		List with the first and last screen position occupied by the
