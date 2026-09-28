@@ -2,7 +2,7 @@
 " Language:	   Vim script
 " Maintainer:	   Hirohito Higashi <h.east.727 ATMARK gmail.com>
 "	   Doug Kearns <dougkearns@gmail.com>
-" Last Change:	   2026 Aug 29
+" Last Change:	   2026 Sep 20
 " Former Maintainer: Charles E. Campbell
 
 " DO NOT CHANGE DIRECTLY.
@@ -351,12 +351,18 @@ syn region vimSubscriptBrackets	contained
       \ contains=@vimExprList
 syn match  vimSubscriptDot	contained	"\."	nextgroup=vimVar,vimVarKey,vimUserFunc,vimUserFuncKey
 
-syn match vimVar	      contained	"\<\h[a-zA-Z0-9#_]*\>"	nextgroup=vimSubscriptBrackets,vimSubscriptDot contains=vim9Super,vim9This
+syn match vimVar	      contained	"\<\h\w*\>"		nextgroup=vimSubscriptBrackets,vimSubscriptDot contains=vim9Super,vim9This
 " dict-key only
 syn match vimVarKey     contained	"\<\d\w*\>"		nextgroup=vimSubscriptBrackets,vimSubscriptDot
-syn match vimVar		"\<[bwglstav]:\h[a-zA-Z0-9#_]*\>"	nextgroup=vimSubscriptBrackets,vimSubscriptDot contains=vimVarScope
+syn match vimVar		"\<[bwglstav]:\h\w*\>"	nextgroup=vimSubscriptBrackets,vimSubscriptDot contains=vimVarScope
+" autoload prefix
+syn match vimVar
+      \ "\<\%(g:\)\=\h\w*\%(#\w\+\)\+\>"		nextgroup=vimSubscriptBrackets,vimSubscriptDot contains=vimVarScope
 syn match vimVar		"\<a:\%(000\|1\=[0-9]\|20\)\>"	nextgroup=vimSubscriptBrackets,vimSubscriptDot contains=vimVarScope
-syn match vimFBVar      contained	"\<[bwglsta]:\h[a-zA-Z0-9#_]*\>"	nextgroup=vimSubscriptBrackets,vimSubscriptDot contains=vimVarScope
+syn match vimFBVar      contained	"\<[bwglsta]:\h\w*\>"	nextgroup=vimSubscriptBrackets,vimSubscriptDot contains=vimVarScope
+" autoload prefix
+syn match vimFBVar      contained
+      \ "\<\%(g:\)\=\h\w*\%(#\w\+\)\+\>"		nextgroup=vimSubscriptBrackets,vimSubscriptDot contains=vimVarScope
 
 " match the scope prefix independently of the retrofitted scope dictionary
 syn match vimVarScope   contained	"\<[bwglstav]:"
@@ -902,6 +908,8 @@ syn region	vimGlobalPattern	contained
       \ start=+\z([^[:space:][:alnum:]\\"|:.-]\)+
       \ skip="\\."
       \ end="\z1"
+      \ excludenl
+      \ end="$"
       \ skipwhite nextgroup=vimCmdStart,@vimRange,@vimCmdList
       \ contains=@vimSubstList
 syn match	vimGlobal	contained        "g\%[lobal]\>!\=[:.-]\@!"	skipwhite nextgroup=vimGlobalPattern contains=vimBang
@@ -1147,7 +1155,8 @@ syn match	vimMapLhs	contained	"\%(.\|\S\)\+"			contains=vimCtrlChar,vimNotation
 syn match	vimMapLhs	contained	+\%(.\|\S\)\+\ze\s*\n\s*\%(\\\|["#]\\ \)+	contains=vimCtrlChar,vimNotation,vimMapLeader skipwhite skipnl nextgroup=vimMapRhsContinue
 
 syn match	vimMapBang	contained	"\a\@1<=!"		skipwhite nextgroup=vimMapMod,vimMapLhs
-syn match	vimMapMod	contained	"\%#=1<\%(buffer\|expr\|nowait\|script\|silent\|special\|unique\)\+>" contains=vimMapModKey,vimMapModErr skipwhite nextgroup=vimMapMod,vimMapLhs
+syn match	vimMapMod	contained
+      \ "\%#=1<\%(buffer\|expr\|nowait\|script\|silent\|special\|unique\)>"	skipwhite nextgroup=vimMapMod,vimMapLhs contains=vimMapModKey,vimMapModErr
 syn region	vimMapRhs	contained
       \ start="\S"
       \ skip=+\\|\|\@1<=|\|\n\s*\%(\\\|["#]\\ \)+
@@ -1418,8 +1427,26 @@ syn match	vimSubstFlags	contained	"[&cegiIlnpr#]\+"	skipwhite nextgroup=vimSubst
 syn match	vimSubstCount	contained	"\d\+\>"
 " TODO: Vim9 illegal separators for abbreviated :s form are [-.:], :su\%[...] required
 "     : # is allowed but "not recommended" (see :h pattern-delimiter)
-syn region	vimSubstPat	contained	matchgroup=vimSubstDelim start="\z([!#$%&'()*+,-./:;<=>?@[\]^_`{}~]\)"rs=s+1 skip="\\\\\|\\\z1" end="\z1"re=e-1,me=e-1	contains=@vimSubstList	nextgroup=vimSubstRep4	oneline
-syn region	vimSubstRep4	contained	matchgroup=vimSubstDelim start="\z(.\)" skip="\\\\\|\\\z1" end="\z1" matchgroup=vimNotation end="<[cC][rR]>"	contains=@vimSubstRepList	nextgroup=vimSubstFlagErr	oneline
+syn region	vimSubstPat	contained
+      \ matchgroup=vimSubstDelim
+      \ start="\z([!#$%&'()*+,-./:;<=>?@[\]^_`{}~]\)"rs=s+1
+      \ skip="\\\\\|\\\z1"
+      \ end="\z1"re=e-1,me=e-1
+      \ excludenl
+      \ end="$"
+      \ nextgroup=vimSubstRep4
+      \ contains=@vimSubstList
+syn region	vimSubstRep4	contained
+      \ matchgroup=vimSubstDelim
+      \ start="\z(.\)"
+      \ skip="\\\\\|\\\z1"
+      \ end="\z1"
+      \ matchgroup=vimNotation
+      \ end="<[cC][rR]>"
+      \ excludenl
+      \ end="$"
+      \ contains=@vimSubstRepList
+      \ nextgroup=vimSubstFlagErr
 syn region	vimCollection	contained 	transparent	start="\\\@<!\[" skip="\\\[" end="\]"	contains=vimCollClass
 syn match	vimCollClassErr	contained	"\[:.\{-\}:\]"
 syn match	vimCollClass	contained 	transparent	"\%#=1\[:\(alnum\|alpha\|blank\|cntrl\|digit\|graph\|lower\|print\|punct\|space\|upper\|xdigit\|retu\%[rn]\|tab\|escape\|backspace\):\]"
@@ -1626,7 +1653,7 @@ syn keyword	vimSyncLinecont	contained	linecont	skipwhite	nextgroup=vimSynRegPat
 syn match	vimSyncLines	contained	"\<lines="		nextgroup=vimNumber
 syn match	vimSyncLines	contained	"\<minlines="		nextgroup=vimNumber
 syn match	vimSyncLines	contained	"\<maxlines="		nextgroup=vimNumber
-syn match	vimSyncGroupName	contained	"\<\h\w*\>"	skipwhite	nextgroup=vimSyncKey
+syn match	vimSyncGroupName	contained	"\<\h\w*\>"	skipwhite	nextgroup=vimSyncKey,vimSynRegPat
 syn match	vimSyncKey	contained	"\<grouphere\>"	skipwhite	nextgroup=vimSyncGroup
 syn match	vimSyncKey	contained	"\<groupthere\>"	skipwhite	nextgroup=vimSyncGroup
 syn match	vimSyncGroup	contained	"\<\h\w*\>"	skipwhite	nextgroup=vimSynRegPat,vimSyncNone
