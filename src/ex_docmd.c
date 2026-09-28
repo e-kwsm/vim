@@ -824,7 +824,7 @@ do_cmdline(
 	if (next_cmdline == NULL
 #ifdef FEAT_EVAL
 		&& !force_abort
-		&& cstack.cs_idx < 0
+		&& (cstack.cs_idx < 0 || source_dryrun)
 		&& !(getline_is_func && func_has_abort(real_cookie))
 #endif
 							)
@@ -1215,7 +1215,10 @@ do_cmdline(
      */
     while (!((got_int
 #ifdef FEAT_EVAL
-		    || (did_emsg && (force_abort || in_vim9script()))
+		    // With ":source ++dryrun" an error does not stop the
+		    // script, nothing is executed anyway.
+		    || (did_emsg && (force_abort
+				       || (in_vim9script() && !source_dryrun)))
 		    || did_throw
 #endif
 	     )
@@ -1751,6 +1754,39 @@ comment_start(char_u *p, int starts_with_colon UNUSED)
 #define CURRENT_TAB_NR current_tab_nr(curtab)
 #define LAST_TAB_NR current_tab_nr(NULL)
 
+#ifdef FEAT_EVAL
+/*
+ * Return TRUE if the command "cmdidx" is executed with ":source ++dryrun":
+ * one that defines something.  "no_keyword" is TRUE for a Vim9 assignment,
+ * which is CMD_var without the ":var" keyword.
+ */
+    static int
+dryrun_executes(cmdidx_T cmdidx, int no_keyword)
+{
+    switch (cmdidx)
+    {
+	case CMD_vim9script:
+	case CMD_scriptencoding:
+	case CMD_scriptversion:
+	case CMD_import:
+	case CMD_def:
+	case CMD_function:
+	case CMD_class:
+	case CMD_abstract:
+	case CMD_interface:
+	case CMD_enum:
+	case CMD_type:
+	    return TRUE;
+	case CMD_var:
+	case CMD_const:
+	case CMD_final:
+	    return !no_keyword;
+	default:
+	    return FALSE;
+    }
+}
+#endif
+
 /*
  * Execute one Ex command.
  *
@@ -1912,6 +1948,12 @@ do_one_cmd(
 	p = find_ex_command(&ea, NULL, NULL, NULL);
 
 #ifdef FEAT_EVAL
+    // With ":source ++dryrun" only a command that defines something is
+    // executed, also inside a block that is not active.
+    if (source_dryrun)
+	ea.skip = did_emsg || got_int || did_throw
+				    || !dryrun_executes(ea.cmdidx, p == ea.cmd);
+
 # ifdef FEAT_PROFILE
     // Count this line for profiling if skip is TRUE.
     if (do_profiling == PROF_YES
@@ -2482,6 +2524,16 @@ do_one_cmd(
 	    case CMD_endtry:
 	    case CMD_function:
 	    case CMD_def:
+				break;
+
+	    // commands that read a block of lines
+	    case CMD_abstract:
+	    case CMD_autocmd:
+	    case CMD_class:
+	    case CMD_command:
+	    case CMD_enum:
+	    case CMD_interface:
+	    case CMD_loadkeymap:
 				break;
 
 	    // Commands that handle '|' themselves.  Check: A command should
@@ -4107,11 +4159,18 @@ find_ex_command(
 	    && (eap->cmdidx < 0 ||
 		(cmdnames[eap->cmdidx].cmd_argt & EX_NONWHITE_OK) == 0))
     {
-	char_u *cmd = vim_strnsave(eap->cmd, p - eap->cmd);
+	// A name that goes on with an underscore is not this command with an
+	// argument: "ch_log" is not ":change".  Leave it to be reported as an
+	// invalid command.
+	if (*p != '_')
+	{
+	    char_u *cmd = vim_strnsave(eap->cmd, p - eap->cmd);
 
-	semsg(_(e_command_str_not_followed_by_white_space_str), cmd, eap->cmd);
+	    semsg(_(e_command_str_not_followed_by_white_space_str), cmd,
+								    eap->cmd);
+	    vim_free(cmd);
+	}
 	eap->cmdidx = CMD_SIZE;
-	vim_free(cmd);
     }
 #endif
 
@@ -4169,6 +4228,10 @@ modifier_len(char_u *cmd)
 	p = skipwhite(skipdigits(cmd + 1));
     for (i = 0; i < (int)ARRAY_LENGTH(cmdmod_info_tab); ++i)
     {
+	// cmdmod_info_tab[] is sorted by name: once the first letter is past
+	// the command's first letter no later entry can match.
+	if (cmdmod_info_tab[i].name[0] > *p)
+	    break;
 	for (j = 0; p[j] != NUL; ++j)
 	    if (p[j] != cmdmod_info_tab[i].name[j])
 		break;
@@ -5781,6 +5844,12 @@ expand_argopt(
     static void
 ex_autocmd(exarg_T *eap)
 {
+    if (eap->skip)
+    {
+	skip_cmd_block(eap);
+	return;
+    }
+
     /*
      * Disallow autocommands from .exrc and .vimrc in current
      * directory for security reasons.
@@ -9043,6 +9112,8 @@ redraw_cmd(int clear)
     validate_cursor();
     update_topline();
     update_screen(clear ? UPD_CLEAR : VIsual_active ? UPD_INVERTED : 0);
+    if ((State & MODE_CMDLINE) == 0)
+	setcursor(); // put cursor back where it belongs
     if (need_maketitle)
 	maketitle();
 #if defined(MSWIN) && (!defined(FEAT_GUI_MSWIN) || defined(VIMDLL))
