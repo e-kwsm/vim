@@ -2417,6 +2417,20 @@ set_var_lval(
 		    return;
 		}
 
+		// In Vim9 script a String v: variable only takes a String.
+		if (in_vim9script() && STRNCMP(lp->ll_name, "v:", 2) == 0
+			&& tv.v_type == VAR_STRING)
+		{
+		    where_T	where = WHERE_INIT;
+
+		    if (check_typval_type(&t_string, rettv, where) == FAIL)
+		    {
+			clear_tv(&tv);
+			*endp = cc;
+			return;
+		    }
+		}
+
 		if ((di == NULL
 			 || (!var_check_ro(di->di_flags, lp->ll_name, FALSE)
 			   && !tv_check_lock(&di->di_tv, lp->ll_name, FALSE)))
@@ -3344,7 +3358,7 @@ eval_regfree(char_u *pat, regprog_T *prog)
     eval_prog_re = eval_compile_re;
 }
 
-#if defined(EXITFREE) || defined(PROTO)
+#if defined(EXITFREE)
     void
 free_eval_regcomp_cache(void)
 {
